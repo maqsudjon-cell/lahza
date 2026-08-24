@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler pages dev public --compatibility-date=2026-08-01 --r2=PHOTOS --port 8788",
-    "deploy": "wrangler pages deploy public"
+    "dev": "wrangler pages dev",
+    "deploy": "wrangler pages deploy"
   },
   "dependencies": {
     "qrcode-generator": "^2.0.4"

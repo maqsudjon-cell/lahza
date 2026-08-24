@@ -6,27 +6,33 @@ QR'ga tutadi va rasm qo'shadi.
 
 ---
 
-## Ishga tushirish (bir martalik, ~10 daqiqa)
+## Ishga tushirish
 
-### 1. Cloudflare akkaunti
+Deploy **GitHub orqali** boradi: `main` ga push qilsangiz Cloudflare o'zi
+qayta quradi. Terminaldan hech narsa qilish shart emas.
 
-[dash.cloudflare.com](https://dash.cloudflare.com) — bepul ro'yxatdan o'ting.
+> **GitHub Pages'da ishlamaydi.** Rasm yuklash, ZIP va QR uchun server tomoni
+> kerak — u Cloudflare Pages Functions'da turadi. Shuning uchun repo
+> Cloudflare Pages'ga ulanadi, GitHub Pages'ga emas.
 
-### 2. R2 bucket yarating
+Quyidagilar Cloudflare panelida ([dash.cloudflare.com](https://dash.cloudflare.com))
+bir marta bajariladi.
 
-Panelda **R2 → Create bucket**, nomi: `lahza-photos`.
+### 1. R2 bucket
 
-> R2 birinchi marta yoqilganda karta ma'lumotini so'raydi, lekin 10 GB saqlash
-> va yuklab olish (egress) **bepul** — pul yechilishi uchun shu limitdan oshish
-> kerak. Narxlarni yoqishdan oldin o'zingiz tasdiqlab oling: narxlar o'zgarishi
-> mumkin.
+**R2 → Create bucket**, nomi aynan: `lahza-photos`
 
-### 3. Avtomatik o'chirish qoidasini qo'ying
+(Nomni o'zgartirsangiz, `wrangler.toml` dagi `bucket_name` ni ham o'zgartiring.)
 
-Bu **eng muhim qadam** — usiz saqlash hajmi cheksiz o'sadi va xarajat oyma-oy
-ko'payadi.
+> R2 birinchi marta yoqilganda karta so'raydi. 10 GB saqlash va **cheksiz
+> yuklab olish** bepul — pul yechilishi uchun shundan oshish kerak. Narxlarni
+> yoqishdan oldin o'zingiz tasdiqlab oling.
 
-Bucket → **Settings → Object lifecycle rules → Add rule**:
+### 2. Avtomatik o'chirish qoidasi
+
+**Eng muhim qadam.** Usiz saqlash hajmi cheksiz o'sadi va hisob oyma-oy ko'payadi.
+
+**R2 → lahza-photos → Settings → Object lifecycle rules → Add rule**
 
 | Maydon | Qiymat |
 |---|---|
@@ -37,30 +43,36 @@ Bucket → **Settings → Object lifecycle rules → Add rule**:
 
 Bu son `lib/store.js` dagi `RETENTION_DAYS` bilan bir xil bo'lishi shart.
 
-### 4. Deploy
+### 3. Repoga ulash
 
-```bash
-npx wrangler login
-npx wrangler pages deploy public --project-name lahza
-```
+**Workers & Pages → Create → Pages → Connect to Git**
+→ `maqsudjon-cell/lahza` → **Save and Deploy**
 
-Birinchi deploydan keyin Cloudflare panelida:
-**Workers & Pages → lahza → Settings → Bindings → Add → R2 bucket**
-· Variable name: `PHOTOS` · Bucket: `lahza-photos`
+Sozlamalarni qo'lda kiritish shart emas: `wrangler.toml` da `public` papkasi
+ham, R2 ulanishi (`PHOTOS`) ham yozilgan — Cloudflare o'shani o'qiydi.
 
-Keyin domenni ulang: **Custom domains → Set up a domain**.
+Agar birinchi deploydan keyin rasm yuklashda xato chiqsa, ulanish
+qo'llanmaganini bildiradi. U holda: **Settings → Bindings → Add → R2 bucket**
+· Variable name `PHOTOS` · Bucket `lahza-photos` → keyin **Retry deployment**.
+
+### 4. Tekshirish
+
+`<loyiha>.pages.dev` ochiladi. Albom yarating, telefondan QR'ni skanerlab
+rasm qo'shing, keyin ZIP'ni yuklab oling.
+
+Domen keyin ulanadi: **Custom domains → Set up a domain**.
 
 ---
 
-## Lokal ishlash
+## Lokal ishlash (ixtiyoriy)
 
 ```bash
 npm install
-npx wrangler pages dev --port 8791
+npx wrangler pages dev            # localhost:8788
+npx wrangler pages dev --ip 0.0.0.0   # telefondan sinash uchun
 ```
 
-R2 lokal rejimda ishlaydi — fayllar `.wrangler/` papkasiga tushadi, haqiqiy
-bucket'ga tegilmaydi.
+R2 lokal rejimda `.wrangler/` papkasiga yozadi, haqiqiy bucket'ga tegmaydi.
 
 ---
 
