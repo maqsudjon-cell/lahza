@@ -1,5 +1,5 @@
 import qrcode from 'qrcode-generator';
-import { readEvent } from '../../../lib/store.js';
+import { readEvent } from '../../lib/store.js';
 
 /**
  * GET /api/qr/:id — albom havolasining QR kodi, SVG ko'rinishida.
@@ -7,8 +7,8 @@ import { readEvent } from '../../../lib/store.js';
  * SVG tanlangani bejiz emas: QR chop etiladi va A5 qog'ozda ham, katta
  * plakatda ham bir xil aniq chiqishi kerak. PNG kattalashtirilganda buziladi.
  */
-export async function onRequestGet({ params, env, request }) {
-  const meta = await readEvent(env.PHOTOS, params.id);
+export async function qrSvg(request, env, id) {
+  const meta = await readEvent(env.PHOTOS, id);
   if (!meta) return new Response('Topilmadi', { status: 404 });
 
   const url = new URL(request.url);
@@ -21,7 +21,7 @@ export async function onRequestGet({ params, env, request }) {
   qr.make();
 
   const count = qr.getModuleCount();
-  const quiet = 2;                 // atrofdagi bo'sh maydon (modullarda)
+  const quiet = 2;
   const size  = count + quiet * 2;
 
   let path = '';

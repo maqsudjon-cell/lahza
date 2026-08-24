@@ -1,4 +1,4 @@
-import { err, readEvent, listPhotos, fullKey, safeFilename } from '../../../lib/store.js';
+import { err, readEvent, listPhotos, fullKey, safeFilename } from '../../lib/store.js';
 
 /* ==========================================================================
    GET /api/zip/:id?k=manageKey
@@ -57,8 +57,8 @@ class Writer {
 
 /* --- Yo'l ---------------------------------------------------------------- */
 
-export async function onRequestGet({ params, env, request }) {
-  const meta = await readEvent(env.PHOTOS, params.id);
+export async function zipAlbum(request, env, id) {
+  const meta = await readEvent(env.PHOTOS, id);
   if (!meta) return err('Albom topilmadi', 404);
 
   const key = new URL(request.url).searchParams.get('k') || '';

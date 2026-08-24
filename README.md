@@ -12,8 +12,8 @@ Deploy **GitHub orqali** boradi: `main` ga push qilsangiz Cloudflare o'zi
 qayta quradi. Terminaldan hech narsa qilish shart emas.
 
 > **GitHub Pages'da ishlamaydi.** Rasm yuklash, ZIP va QR uchun server tomoni
-> kerak — u Cloudflare Pages Functions'da turadi. Shuning uchun repo
-> Cloudflare Pages'ga ulanadi, GitHub Pages'ga emas.
+> kerak. U Cloudflare **Worker**da turadi, statik sahifalar esa o'sha
+> Worker'ning `[assets]` sozlamasidan beriladi — bitta loyiha, bitta deploy.
 
 Quyidagilar Cloudflare panelida ([dash.cloudflare.com](https://dash.cloudflare.com))
 bir marta bajariladi.
@@ -45,15 +45,17 @@ Bu son `lib/store.js` dagi `RETENTION_DAYS` bilan bir xil bo'lishi shart.
 
 ### 3. Repoga ulash
 
-**Workers & Pages → Create → Pages → Connect to Git**
-→ `maqsudjon-cell/lahza` → **Save and Deploy**
+**Workers & Pages → Create → Workers → Connect to Git**
+→ `maqsudjon-cell/lahza`
 
-Sozlamalarni qo'lda kiritish shart emas: `wrangler.toml` da `public` papkasi
-ham, R2 ulanishi (`PHOTOS`) ham yozilgan — Cloudflare o'shani o'qiydi.
+| Sozlama | Qiymat |
+|---|---|
+| Build command | (bo'sh) |
+| Deploy command | `npx wrangler deploy` |
+| Root directory | `/` |
 
-Agar birinchi deploydan keyin rasm yuklashda xato chiqsa, ulanish
-qo'llanmaganini bildiradi. U holda: **Settings → Bindings → Add → R2 bucket**
-· Variable name `PHOTOS` · Bucket `lahza-photos` → keyin **Retry deployment**.
+Boshqa hech narsa kiritish shart emas: `wrangler.toml` da kirish nuqtasi
+(`src/index.js`), statik papka (`public`) va R2 ulanishi (`PHOTOS`) yozilgan.
 
 ### 4. Tekshirish
 
@@ -68,8 +70,8 @@ Domen keyin ulanadi: **Custom domains → Set up a domain**.
 
 ```bash
 npm install
-npx wrangler pages dev            # localhost:8788
-npx wrangler pages dev --ip 0.0.0.0   # telefondan sinash uchun
+npx wrangler dev                    # localhost:8787
+npx wrangler dev --ip 0.0.0.0       # telefondan sinash uchun
 ```
 
 R2 lokal rejimda `.wrangler/` papkasiga yozadi, haqiqiy bucket'ga tegmaydi.
@@ -79,7 +81,7 @@ R2 lokal rejimda `.wrangler/` papkasiga yozadi, haqiqiy bucket'ga tegmaydi.
 ## Tuzilma
 
 ```
-public/                 statik sahifalar
+public/                 statik sahifalar ([assets] orqali beriladi)
   index.html            bosh sahifa (SEO)
   yaratish/             albom yaratish
   e/                    mehmon sahifasi — yuklash va galereya
@@ -88,16 +90,20 @@ public/                 statik sahifalar
   assets/
     base.css            dizayn tizimi (ranglar, tipografika, komponentlar)
     compress.js         rasm quvuri — brauzerda siqish
-functions/              Cloudflare Pages Functions (API)
-  api/event.js          POST  albom yaratish
-  api/event/[id].js     GET   albom ma'lumoti
-  api/photos/[id].js    GET   rasmlar ro'yxati
-  api/upload/[id].js    POST  rasm yuklash
-  api/zip/[id].js       GET   butun albom ZIP holida (kalit talab qiladi)
-  api/qr/[id].js        GET   QR kod, SVG
-  f/[[path]].js         GET   R2'dan rasm berish
+src/
+  index.js              Worker kirish nuqtasi va yo'naltirish
+  routes/
+    event.js            POST /api/event · GET /api/event/:id
+    photos.js           GET  /api/photos/:id
+    upload.js           POST /api/upload/:id
+    zip.js              GET  /api/zip/:id   (kalit talab qiladi)
+    qr.js               GET  /api/qr/:id
+    file.js             GET  /f/:albom/:tur/:rasm
 lib/store.js            umumiy backend mantiq
 ```
+
+Statik faylga mos kelgan so'rov Worker'gacha yetib bormaydi — bosh sahifa va
+galereya CDN tezligida ochiladi, Worker faqat API uchun uyg'onadi.
 
 ### R2'dagi kalitlar
 
@@ -144,6 +150,7 @@ tugash tartibi ekrandagi tartibga mos kelmaydi.
 - ZIP: `unzip -t` CRC tekshiruvidan o'tdi; noto'g'ri kalitda 403
 - QR: `cv2.QRCodeDetector` bilan dekodlanib, to'g'ri havola chiqdi
 - Brauzer quvuri: 4032×3024 → 1920×1440, yuklash 201
+- Workers'ga o'tkazilgach barcha yo'llar qayta sinovdan o'tkazildi
 
 ## Hali qilinmagan
 

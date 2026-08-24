@@ -1,6 +1,12 @@
 name = "lahza"
-pages_build_output_dir = "public"
+main = "src/index.js"
 compatibility_date = "2026-08-01"
+
+# Statik sahifalar. Mos fayl topilsa Worker umuman ishga tushmaydi —
+# shuning uchun galereya va bosh sahifa CDN tezligida ochiladi.
+[assets]
+directory = "./public"
+binding = "ASSETS"
 
 # Barcha rasm va meta shu bucket'da. Cloudflare panelida shu nom bilan
 # R2 bucket yarating (yoki nomni bu yerda o'zgartiring).

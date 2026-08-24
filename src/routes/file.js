@@ -1,13 +1,8 @@
 /**
  * GET /f/{eventId}/{p|t}/{photoId} — R2'dan rasm beradi.
- * Bu yo'l orqali chiqadigan trafik uchun Cloudflare pul olmaydi (R2 egress = 0),
- * shuning uchun galereyani cheksiz ko'rish mumkin.
+ * Bu yo'l orqali chiqadigan trafik uchun Cloudflare pul olmaydi (R2 egress = 0).
  */
-export async function onRequestGet({ params, env, request }) {
-  const parts = params.path || [];
-  if (parts.length !== 3) return new Response('Topilmadi', { status: 404 });
-
-  const [eventId, kind, photoId] = parts;
+export async function serveFile(request, env, { eventId, kind, photoId }) {
   if (kind !== 'p' && kind !== 't') return new Response('Topilmadi', { status: 404 });
 
   const inm = request.headers.get('if-none-match');

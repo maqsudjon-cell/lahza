@@ -1,10 +1,10 @@
 import {
   json, err, newEventId, newManageKey, metaKey,
-  cleanTitle, cleanDate, RETENTION_DAYS,
+  cleanTitle, cleanDate, readEvent, publicMeta, RETENTION_DAYS,
 } from '../../lib/store.js';
 
 /** POST /api/event — yangi albom yaratadi. */
-export async function onRequestPost({ request, env }) {
+export async function createEvent(request, env) {
   let body;
   try {
     body = await request.json();
@@ -24,10 +24,7 @@ export async function onRequestPost({ request, env }) {
   const expiresAt = new Date(now.getTime() + RETENTION_DAYS * 86400000);
 
   const meta = {
-    id,
-    title,
-    date,
-    manageKey,
+    id, title, date, manageKey,
     createdAt: now.toISOString(),
     expiresAt: expiresAt.toISOString(),
   };
@@ -37,4 +34,11 @@ export async function onRequestPost({ request, env }) {
   });
 
   return json({ id, manageKey, title, date, expiresAt: meta.expiresAt }, 201);
+}
+
+/** GET /api/event/:id — mehmon sahifasi uchun ochiq ma'lumot. */
+export async function getEvent(request, env, id) {
+  const meta = await readEvent(env.PHOTOS, id);
+  if (!meta) return err('Albom topilmadi', 404);
+  return json(publicMeta(meta), 200, { 'cache-control': 'public, max-age=60' });
 }
