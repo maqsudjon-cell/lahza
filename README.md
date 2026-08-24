@@ -93,6 +93,7 @@ public/                 statik sahifalar ([assets] orqali beriladi)
 src/
   index.js              Worker kirish nuqtasi va yo'naltirish
   routes/
+    seo.js              GET  /robots.txt · /sitemap.xml (manzil so'rovdan olinadi)
     event.js            POST /api/event · GET /api/event/:id
     photos.js           GET  /api/photos/:id
     upload.js           POST /api/upload/:id
@@ -140,6 +141,16 @@ protsessor vaqtini yeydi, hajmni esa deyarli kamaytirmaydi.
 
 **Lightbox tartibi DOM'dan olinadi.** Rasmlar parallel yuklangani uchun
 tugash tartibi ekrandagi tartibga mos kelmaydi.
+
+**Dizayn — sof oq/qora, Inter + IBM Plex Mono.** flarestamina.com bilan bir
+oilada: soch tolasidek chegaralar, soyalar deyarli yo'q, raqamlar va
+yorliqlar mono shriftda. Rang faqat bitta joyda — sarlavha ostidagi ingichka
+gradient chiziq.
+
+**robots.txt va sitemap.xml Worker tomonidan hosil qilinadi.** Manzil
+so'rovning o'zidan olinadi, shuning uchun domen qo'shilganda hech narsani
+qo'lda tahrirlash kerak emas. Albom sahifalari (`/e/`, `/boshqarish/`,
+`/qr/`) indekslashdan chiqarilgan — ular shaxsiy.
 
 ---
 

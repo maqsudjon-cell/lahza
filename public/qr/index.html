@@ -7,75 +7,70 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/base.css">
 <style>
-  /* Bu sahifa stolga qo'yiladigan qog'oz. Ekranda ko'rinishi — qog'ozning
+  /* Bu sahifa stolga qo'yiladigan qog'oz. Ekranda ko'rinishi qog'ozning
      ko'rinishi bilan bir xil bo'lishi kerak, shuning uchun A5 nisbatida. */
   .toolbar {
     position: sticky; top: 0; z-index: 5;
-    background: var(--bg); border-bottom: 1px solid var(--line);
-    padding: 14px var(--pad);
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    padding: 13px var(--pad);
   }
-  .toolbar .wrap { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+  .toolbar .wrap { display: flex; gap: 12px; align-items: center; justify-content: space-between; max-width: var(--wrap); }
+  .toolbar .btn { padding: 9px 18px; min-height: 40px; font-size: .875rem; }
 
-  .stage { padding: 32px var(--pad) 64px; display: grid; place-items: center; }
+  .stage { padding: 32px var(--pad) 56px; display: grid; place-items: center; }
 
   .sheet {
-    width: 148mm;
-    max-width: 100%;
+    width: 148mm; max-width: 100%;
     aspect-ratio: 148 / 210;
-    background: #FFFFFF;
-    color: #1A1A18;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    box-shadow: var(--shadow-m);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 14mm 12mm;
-    gap: 0;
+    background: #ffffff;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgb(10 10 10 / .12), 0 18px 50px -24px rgb(10 10 10 / .35);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    padding: 15mm 13mm;
   }
+
+  /* Qog'oz har doim oq-qora. Sahifaning qorong'i rejimi unga tegmasligi kerak,
+     aks holda base.css dagi umumiy matn rangi oq fonda oqarib ketadi. */
+  .sheet, .sheet * { color: #0a0a0a; }
+  .sheet .kicker, .sheet .date, .sheet .hint { color: #6b6b6b; }
+  .sheet .foot { color: #9a9a9a; }
 
   .sheet .kicker {
-    font-size: 3.1mm; letter-spacing: .28em; text-transform: uppercase;
-    color: #8C7B5F; font-weight: 600; margin-bottom: 7mm;
+    font-family: var(--mono);
+    font-size: 2.9mm; letter-spacing: .24em; text-transform: uppercase;
+    margin-bottom: 8mm;
   }
   .sheet .names {
-    font-family: var(--display); font-weight: 500;
-    font-size: 9mm; line-height: 1.12; margin: 0 0 3mm;
+    font-size: 10mm; line-height: 1.08; font-weight: 600;
+    letter-spacing: -.03em; margin: 0 0 3mm;
   }
   .sheet .date {
-    font-size: 3.2mm; letter-spacing: .2em; text-transform: uppercase;
-    color: #7A756B; margin-bottom: 10mm;
+    font-family: var(--mono);
+    font-size: 3mm; letter-spacing: .18em; text-transform: uppercase;
+    margin-bottom: 11mm;
   }
-  .sheet .hair { width: 26mm; height: 1px; background: #D6D1C4; margin: 0 0 10mm; }
 
   .sheet .qr {
-    width: 62mm; height: 62mm;
+    width: 64mm; height: 64mm;
     padding: 3mm; background: #fff;
-    border: 1px solid #E5E1D8; border-radius: 2mm;
+    box-shadow: 0 0 0 1px rgb(10 10 10 / .12);
+    border-radius: 1.5mm;
   }
   .sheet .qr img { width: 100%; height: 100%; }
 
-  /* Bu qog'oz — u har doim oq va qora. Sahifaning qorong'i rejimi unga
-     tegmasligi kerak, aks holda base.css dagi umumiy `p` rangi oq fonda
-     oqarib ketadi. */
-  .sheet, .sheet * { color: #1A1A18; }
-  .sheet .kicker { color: #8C7B5F; }
-  .sheet .date, .sheet .hint { color: #7A756B; }
-  .sheet .foot { color: #B3ADA1; }
-
   .sheet .call {
-    font-family: var(--display); font-size: 5.6mm; line-height: 1.3;
-    margin: 9mm 0 3mm; max-width: 96mm;
+    font-size: 5.2mm; line-height: 1.28; font-weight: 600; letter-spacing: -.02em;
+    margin: 10mm 0 3.5mm; max-width: 98mm;
   }
-  .sheet .hint { font-size: 3.4mm; color: #7A756B; line-height: 1.5; max-width: 92mm; margin: 0; }
+  .sheet .hint { font-size: 3.3mm; line-height: 1.5; max-width: 92mm; margin: 0; }
   .sheet .foot {
     margin-top: auto; padding-top: 8mm;
-    font-size: 2.8mm; letter-spacing: .18em; text-transform: uppercase; color: #B3ADA1;
+    font-family: var(--mono);
+    font-size: 2.7mm; letter-spacing: .2em; text-transform: uppercase;
   }
 
   @media print {
@@ -85,10 +80,10 @@
     .stage { padding: 0; display: block; }
     .sheet {
       width: 148mm; height: 210mm; aspect-ratio: auto;
-      border: 0; border-radius: 0; box-shadow: none;
+      border-radius: 0; box-shadow: none;
       page-break-inside: avoid;
     }
-    /* Fon ranglari va nozik chiziqlar chop etilishi uchun */
+    .sheet .qr { box-shadow: none; border: 0.3mm solid #ddd; }
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
@@ -104,7 +99,7 @@
 
 <div class="stage">
   <div class="sheet" id="sheet">
-    <span class="spinner" style="color:#7A756B"></span>
+    <span class="spinner" style="color:#6b6b6b"></span>
   </div>
 </div>
 
@@ -140,9 +135,7 @@ document.getElementById('print').addEventListener('click', () => window.print())
     <div class="kicker">Umumiy albom</div>
     <h1 class="names">${esc(meta.title)}</h1>
     <div class="date">${formatDate(meta.date)}</div>
-    <div class="hair"></div>
-
-    <div class="qr">
+        <div class="qr">
       <img src="/api/qr/${encodeURIComponent(meta.id)}" alt="QR kod" width="240" height="240">
     </div>
 

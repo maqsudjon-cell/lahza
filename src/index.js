@@ -13,6 +13,7 @@ import { uploadPhoto } from './routes/upload.js';
 import { zipAlbum } from './routes/zip.js';
 import { qrSvg } from './routes/qr.js';
 import { serveFile } from './routes/file.js';
+import { robots, sitemap } from './routes/seo.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -21,6 +22,9 @@ export default {
     const method = request.method;
 
     try {
+      if (url.pathname === '/robots.txt')  return robots(request);
+      if (url.pathname === '/sitemap.xml') return sitemap(request);
+
       // /f/{eventId}/{p|t}/{photoId}
       if (seg[0] === 'f' && seg.length === 4) {
         if (method !== 'GET' && method !== 'HEAD') return err('Faqat GET', 405);

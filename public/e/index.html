@@ -5,30 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Albom · Lahza</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#14130F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/base.css">
 <style>
   /* Sahifa ustun bo'lib cho'ziladi: albom bo'sh bo'lsa ham yuklash paneli
      ekranning pastida turadi, kontent ostida osilib qolmaydi. */
   body { min-height: 100svh; display: flex; flex-direction: column; }
-  main { flex: 1 0 auto; }
+  /* width:100% shart: flex ustunda `.wrap` ning `margin:0 auto` si `stretch`ni
+     bekor qiladi va element kontent kengligiga qisqarib qoladi. */
+  main { flex: 1 0 auto; width: 100%; }
   .dock { flex: none; }
 
   .hero {
     padding: clamp(36px, 9vw, 68px) 0 clamp(24px, 5vw, 36px);
     text-align: center;
   }
-  .hero .names { margin-bottom: 10px; }
+  .hero .names { margin-bottom: 12px; }
   .hero .date {
-    font-size: .8125rem;
-    letter-spacing: .16em;
+    font-family: var(--mono);
+    font-size: .75rem;
+    letter-spacing: .14em;
     text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 600;
+    color: var(--subtle);
   }
 
   /* Yuklash paneli sahifa pastida qotib turadi — mehmon galereyani ko'rib
@@ -38,16 +40,16 @@
     bottom: 0;
     z-index: 20;
     padding: 12px var(--pad) calc(12px + env(safe-area-inset-bottom));
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    background: color-mix(in oklab, var(--bg) 88%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--border);
   }
-  .dock-inner { max-width: var(--maxw); margin: 0 auto; }
+  .dock-inner { max-width: var(--wrap); margin: 0 auto; }
 
   .progress-card {
     background: var(--surface);
-    border: 1px solid var(--line);
+    border: 1px solid var(--border);
     border-radius: var(--r-m);
     padding: 14px 16px;
     margin-bottom: 10px;
@@ -66,7 +68,7 @@
     justify-content: space-between;
     gap: 12px;
     padding: 0 0 14px;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--border);
     margin-bottom: 14px;
   }
 
@@ -82,20 +84,20 @@
   .tile.pending::after {
     content: "";
     position: absolute; inset: 0;
-    background: color-mix(in srgb, var(--bg) 55%, transparent);
+    background: color-mix(in oklab, var(--bg) 55%, transparent);
   }
   .tile.pending .spinner {
     position: absolute;
     top: 50%; left: 50%;
     margin: -9px 0 0 -9px;
-    color: var(--ink);
+    color: var(--fg);
     z-index: 1;
   }
   .tile.failed::after {
     content: "!";
     position: absolute; inset: 0;
     display: grid; place-items: center;
-    background: color-mix(in srgb, var(--err) 82%, transparent);
+    background: color-mix(in oklab, #dc2626 82%, transparent);
     color: #fff; font-weight: 700; font-size: 20px;
   }
 </style>
@@ -442,5 +444,7 @@ async function onPick(e) {
   } catch { /* galereya bo'sh qoladi, yuklash baribir ishlaydi */ }
 })();
 </script>
+<script data-goatcounter="https://lahza.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

@@ -5,43 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Albomni boshqarish · Lahza</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#14130F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/base.css">
 <style>
   body { padding: 32px 0 64px; }
   .brand {
-    font-family: var(--display); font-size: 1.05rem; letter-spacing: .04em;
-    text-decoration: none; color: var(--muted); display: inline-block; margin-bottom: 24px;
+    font-weight: 600; font-size: 1.0625rem; letter-spacing: -.03em;
+    color: var(--subtle); display: inline-block; margin-bottom: 24px;
   }
+  .brand:hover { color: var(--fg); }
   .qr-card { display: grid; grid-template-columns: 132px 1fr; gap: 22px; align-items: center; }
   @media (max-width: 520px) { .qr-card { grid-template-columns: 1fr; text-align: center; justify-items: center; } }
-  .qr-card img { width: 132px; height: 132px; border-radius: var(--r-s); border: 1px solid var(--line); }
+  .qr-card img { width: 132px; height: 132px; border-radius: var(--r-s); border: 1px solid var(--border); }
 
   .linkbox {
     display: flex; align-items: center; gap: 8px;
-    background: var(--surface-2); border: 1px solid var(--line-2);
+    background: var(--surface-2); border: 1px solid var(--border-strong);
     border-radius: var(--r-m); padding: 6px 6px 6px 14px;
   }
-  .linkbox code {
+  .linkbox code { font-family: var(--mono);
     flex: 1 1 auto; min-width: 0; font-size: .875rem;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fg);
   }
   .linkbox .btn { padding: 9px 16px; min-height: 40px; font-size: .875rem; flex: none; }
 
   .stat { display: flex; gap: 28px; flex-wrap: wrap; }
-  .stat b { font-family: var(--display); font-size: 2rem; font-weight: 500; display: block; line-height: 1.1; }
-  .stat span { font-size: .8125rem; color: var(--muted); letter-spacing: .04em; }
+  .stat b { font-size: 2.125rem; font-weight: 600; display: block; line-height: 1; letter-spacing: -.04em; }
+  .stat span { font-family: var(--mono); font-size: .6875rem; color: var(--subtle); letter-spacing: .1em; }
 
   .album-item {
-    display: block; padding: 16px 18px; border: 1px solid var(--line);
+    display: block; padding: 16px 18px; border: 1px solid var(--border);
     border-radius: var(--r-m); background: var(--surface); text-decoration: none;
     margin-bottom: 10px;
   }
-  .album-item:hover { border-color: var(--accent); }
+  .album-item:hover { border-color: var(--fg); }
 </style>
 </head>
 <body>
@@ -201,5 +202,7 @@ function render(meta, count) {
   }
 })();
 </script>
+<script data-goatcounter="https://lahza.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
