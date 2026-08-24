@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lahza — to'y va tadbir mehmonlarining suratlari bitta albomda</title>
+<meta name="description" content="Stolga bitta QR kod qo'ying — mehmonlar o'z suratlarini bitta albomga yuklaydi. Ilova o'rnatish va ro'yxatdan o'tish shart emas. Barcha rasmlarni ZIP qilib yuklab oling.">
+<!-- Domen aniqlangach shu yerga canonical qo'shiladi: <link rel="canonical" href="https://SIZNING-DOMEN/"> -->
+<meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14130F" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Lahza — mehmonlarning suratlari bitta albomda">
+<meta property="og:description" content="To'yda 300 mehmon rasm oladi, ular 15 xil guruhga tarqab ketadi. Lahza hammasini bitta joyga yig'adi.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="uz_UZ">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/base.css">
+<style>
+  .nav {
+    padding: 22px 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo {
+    font-family: var(--display); font-size: 1.2rem; letter-spacing: .04em;
+    text-decoration: none; color: var(--ink);
+  }
+
+  .hero { padding: clamp(48px, 11vw, 104px) 0 clamp(40px, 8vw, 76px); text-align: center; }
+  .hero h1 { max-width: 15ch; margin: 0 auto 22px; }
+  .hero .lede {
+    font-size: clamp(1.0625rem, 2.4vw, 1.25rem);
+    max-width: 46ch; margin: 0 auto 34px; color: var(--ink-2);
+  }
+
+  section { padding: clamp(48px, 9vw, 88px) 0; }
+  section > .wrap > h2 { margin-bottom: 14px; }
+  .section-lede { max-width: 52ch; margin-bottom: 40px; }
+
+  .steps { display: grid; gap: 20px; grid-template-columns: 1fr; counter-reset: s; }
+  @media (min-width: 760px) { .steps { grid-template-columns: repeat(3, 1fr); gap: 28px; } }
+  .step { counter-increment: s; }
+  .step::before {
+    content: counter(s);
+    font-family: var(--display); font-size: 1.5rem; color: var(--accent);
+    display: block; margin-bottom: 12px;
+    border-top: 1px solid var(--line); padding-top: 14px;
+  }
+  .step h3 { margin-bottom: 7px; }
+  .step p { margin: 0; font-size: .9375rem; }
+
+  .split { display: grid; gap: 32px; align-items: center; }
+  @media (min-width: 860px) { .split { grid-template-columns: 1fr 1fr; gap: 64px; } }
+
+  .compare { border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; }
+  .compare > div { padding: 22px 24px; }
+  .compare > div + div { border-top: 1px solid var(--line); }
+  .compare .before { background: var(--surface-2); }
+  .compare .after { background: var(--surface); }
+  .compare h3 { font-family: var(--ui); font-size: .75rem; letter-spacing: .14em;
+                text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .compare p { margin: 0; }
+
+  .faq details {
+    border-top: 1px solid var(--line);
+    padding: 20px 0;
+  }
+  .faq details:last-of-type { border-bottom: 1px solid var(--line); }
+  .faq summary {
+    cursor: pointer; font-weight: 600; list-style: none;
+    display: flex; justify-content: space-between; gap: 16px; align-items: baseline;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--accent); font-size: 1.3rem; line-height: 1; }
+  .faq details[open] summary::after { content: "−"; }
+  .faq details p { margin: 12px 0 0; max-width: 62ch; }
+
+  .cta { text-align: center; padding-bottom: clamp(56px, 10vw, 100px); }
+
+  footer.site {
+    border-top: 1px solid var(--line);
+    padding: 30px 0; color: var(--muted); font-size: .875rem;
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="nav">
+    <a class="logo" href="/">Lahza</a>
+    <a class="btn btn-ghost" href="/yaratish/">Albom yaratish</a>
+  </nav>
+</div>
+
+<header class="hero wrap">
+  <p class="eyebrow">To'y · nikoh · tadbir</p>
+  <h1>Mehmonlaringiz olgan suratlar bitta joyda</h1>
+  <p class="lede">
+    Stolga bitta QR kod qo'yasiz. Mehmon skanerlaydi va o'z rasmlarini
+    albomingizga qo'shadi — ilova o'rnatmasdan, ro'yxatdan o'tmasdan.
+  </p>
+  <a class="btn btn-primary btn-lg" href="/yaratish/">Albom yaratish</a>
+  <p class="small muted" style="margin-top:16px">Bir daqiqada tayyor</p>
+</header>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="compare">
+      <div class="before">
+        <h3>Hozir qanday</h3>
+        <p>Suratlar o'nlab Telegram guruhida, WhatsApp'da va Instagram
+        story'larida tarqab ketadi. Bir haftadan keyin ularning yarmi yo'qoladi.
+        Kelin-kuyov o'z to'yidagi suratlarning ko'pini umuman ko'rmaydi.</p>
+      </div>
+      <div class="after">
+        <h3>Lahza bilan</h3>
+        <p>Hammasi bitta albomda. Ertasi kuni kelin-kuyov barcha rasmlarni
+        bitta ZIP faylda yuklab oladi — hech kimdan so'ramasdan, hech kimni
+        kutmasdan.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Qanday ishlaydi</h2>
+    <p class="section-lede muted">Uch qadam. Texnik bilim talab qilinmaydi.</p>
+    <div class="steps">
+      <div class="step">
+        <h3>Albom yarating</h3>
+        <p>Ism va sanani kiritasiz. Tayyor QR varaqasini chop etasiz —
+        A5 o'lchamda, stolga qo'yish uchun.</p>
+      </div>
+      <div class="step">
+        <h3>Mehmonlar rasm qo'shadi</h3>
+        <p>Kamerani QR'ga tutadi, sahifa ochiladi, rasm tanlaydi.
+        Bo'ldi. Parol yo'q, ro'yxat yo'q, yuklab olinadigan ilova yo'q.</p>
+      </div>
+      <div class="step">
+        <h3>Hammasini yuklab olasiz</h3>
+        <p>Bitta tugma — barcha rasmlar bitta ZIP faylda,
+        telefoningizga yoki kompyuteringizga.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap split">
+    <div>
+      <h2>Tez bo'lishi shart edi</h2>
+      <p>To'yxonada Wi-Fi yo'q, mobil internet sekin, mehmon esa uzoq
+      kutmaydi. Shuning uchun rasmlar telefonning o'zida, yuborishdan oldin
+      siqiladi va bir nechtasi bir vaqtda yuklanadi.</p>
+      <p class="muted small">
+        Natijada odatdagi telefon surati bir necha o'n barobar kichrayadi va
+        sekin tarmoqda ham soniyalarda yuklanadi — sifatga sezilarli ta'sir
+        qilmagan holda.
+      </p>
+    </div>
+    <div>
+      <h2>Mehmoningiz 60 yoshda bo'lishi mumkin</h2>
+      <p>Sahifada bitta katta tugma bor: <strong>Rasm qo'shish</strong>.
+      Boshqa hech narsa yo'q. Ism kiritish ham majburiy emas.</p>
+      <p class="muted small">
+        Ko'p mahsulot aynan shu yerda yiqiladi — ro'yxatdan o'tish so'raydi
+        va mehmon chiqib ketadi.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap narrow">
+    <h2 style="margin-bottom:28px">Ko'p so'raladigan savollar</h2>
+
+    <details>
+      <summary>Mehmon ilova o'rnatishi kerakmi?</summary>
+      <p>Yo'q. Sahifa oddiy brauzerda ochiladi — telefonning o'zida bor
+      brauzerda. Hech narsa o'rnatilmaydi va hech qanday ruxsat so'ralmaydi.</p>
+    </details>
+
+    <details>
+      <summary>Albom qancha vaqt saqlanadi?</summary>
+      <p>60 kun. Shu vaqt ichida albom ochiq turadi va barcha rasmlarni
+      yuklab olishingiz mumkin. Muddat tugagach rasmlar o'chiriladi —
+      shuning uchun albomni birinchi kunlardayoq yuklab olib qo'ying.</p>
+    </details>
+
+    <details>
+      <summary>Albomni begonalar ko'ra oladimi?</summary>
+      <p>Albom havolasi tasodifiy belgilardan iborat va qidiruv tizimlariga
+      berilmaydi. Uni faqat havolani bilgan odam — ya'ni QR kodni skanerlagan
+      mehmoningiz ko'ra oladi.</p>
+    </details>
+
+    <details>
+      <summary>Rasm sifati pasayadimi?</summary>
+      <p>Rasmlar galereyada tez ochilishi uchun o'lchami moslashtiriladi.
+      Chop etish yoki katta ekran uchun yetarli sifat saqlanadi. Fotografning
+      professional suratlari o'rnini bosmaydi — bu mehmonlar telefonidagi
+      lahzalar uchun.</p>
+    </details>
+
+    <details>
+      <summary>Nechta rasm yuklash mumkin?</summary>
+      <p>Bitta albomga 1500 tagacha. Bitta mehmon bir vaqtning o'zida
+      40 tagacha rasm tanlashi mumkin, keyin yana qo'sha oladi.</p>
+    </details>
+
+    <details>
+      <summary>Faqat to'y uchunmi?</summary>
+      <p>Yo'q. Nikoh to'yi, bitiruv kechasi, tug'ilgan kun, konferensiya,
+      korporativ tadbir — mehmon ko'p bo'lgan har qanday marosimga to'g'ri
+      keladi.</p>
+    </details>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2 style="margin-bottom:14px">Keyingi to'yingiz uchun tayyorlang</h2>
+    <p class="muted" style="max-width:44ch;margin:0 auto 28px">
+      Albom yaratish bir daqiqa vaqt oladi. QR varaqasini bugun chop etib
+      qo'ysangiz bo'ladi.
+    </p>
+    <a class="btn btn-primary btn-lg" href="/yaratish/">Albom yaratish</a>
+  </div>
+</section>
+
+<div class="wrap">
+  <footer class="site">
+    <span>Lahza</span>
+    <span><a href="/boshqarish/">Albomlarim</a></span>
+  </footer>
+</div>
+
+</body>
+</html>

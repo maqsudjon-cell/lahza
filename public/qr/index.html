@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR varaqasi · Lahza</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/base.css">
+<style>
+  /* Bu sahifa stolga qo'yiladigan qog'oz. Ekranda ko'rinishi — qog'ozning
+     ko'rinishi bilan bir xil bo'lishi kerak, shuning uchun A5 nisbatida. */
+  .toolbar {
+    position: sticky; top: 0; z-index: 5;
+    background: var(--bg); border-bottom: 1px solid var(--line);
+    padding: 14px var(--pad);
+  }
+  .toolbar .wrap { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+
+  .stage { padding: 32px var(--pad) 64px; display: grid; place-items: center; }
+
+  .sheet {
+    width: 148mm;
+    max-width: 100%;
+    aspect-ratio: 148 / 210;
+    background: #FFFFFF;
+    color: #1A1A18;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: var(--shadow-m);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 14mm 12mm;
+    gap: 0;
+  }
+
+  .sheet .kicker {
+    font-size: 3.1mm; letter-spacing: .28em; text-transform: uppercase;
+    color: #8C7B5F; font-weight: 600; margin-bottom: 7mm;
+  }
+  .sheet .names {
+    font-family: var(--display); font-weight: 500;
+    font-size: 9mm; line-height: 1.12; margin: 0 0 3mm;
+  }
+  .sheet .date {
+    font-size: 3.2mm; letter-spacing: .2em; text-transform: uppercase;
+    color: #7A756B; margin-bottom: 10mm;
+  }
+  .sheet .hair { width: 26mm; height: 1px; background: #D6D1C4; margin: 0 0 10mm; }
+
+  .sheet .qr {
+    width: 62mm; height: 62mm;
+    padding: 3mm; background: #fff;
+    border: 1px solid #E5E1D8; border-radius: 2mm;
+  }
+  .sheet .qr img { width: 100%; height: 100%; }
+
+  /* Bu qog'oz — u har doim oq va qora. Sahifaning qorong'i rejimi unga
+     tegmasligi kerak, aks holda base.css dagi umumiy `p` rangi oq fonda
+     oqarib ketadi. */
+  .sheet, .sheet * { color: #1A1A18; }
+  .sheet .kicker { color: #8C7B5F; }
+  .sheet .date, .sheet .hint { color: #7A756B; }
+  .sheet .foot { color: #B3ADA1; }
+
+  .sheet .call {
+    font-family: var(--display); font-size: 5.6mm; line-height: 1.3;
+    margin: 9mm 0 3mm; max-width: 96mm;
+  }
+  .sheet .hint { font-size: 3.4mm; color: #7A756B; line-height: 1.5; max-width: 92mm; margin: 0; }
+  .sheet .foot {
+    margin-top: auto; padding-top: 8mm;
+    font-size: 2.8mm; letter-spacing: .18em; text-transform: uppercase; color: #B3ADA1;
+  }
+
+  @media print {
+    @page { size: A5 portrait; margin: 0; }
+    html, body { background: #fff !important; }
+    .toolbar, .print-hint { display: none !important; }
+    .stage { padding: 0; display: block; }
+    .sheet {
+      width: 148mm; height: 210mm; aspect-ratio: auto;
+      border: 0; border-radius: 0; box-shadow: none;
+      page-break-inside: avoid;
+    }
+    /* Fon ranglari va nozik chiziqlar chop etilishi uchun */
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <a href="javascript:history.back()" class="small muted" style="text-decoration:none">&larr; Orqaga</a>
+    <button class="btn btn-primary" id="print" type="button">Chop etish / PDF</button>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="sheet" id="sheet">
+    <span class="spinner" style="color:#7A756B"></span>
+  </div>
+</div>
+
+<p class="small muted center print-hint" style="margin:0 0 40px">
+  Chop etish oynasida qog'oz o'lchamini <strong>A5</strong> qilib tanlang.
+  Chiqaruvchi <em>Save as PDF</em> ni tanlasangiz, PDF sifatida saqlanadi.
+</p>
+
+<script type="module">
+const id = new URLSearchParams(location.search).get('i');
+const sheet = document.getElementById('sheet');
+const esc = (s) => String(s).replace(/[&<>"']/g, c =>
+  ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+function formatDate(iso) {
+  const months = ['yanvar','fevral','mart','aprel','may','iyun',
+                  'iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
+  const d = new Date(iso + 'T00:00:00');
+  return Number.isNaN(d.getTime()) ? '' : `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+document.getElementById('print').addEventListener('click', () => window.print());
+
+(async function init() {
+  if (!id) { sheet.textContent = 'Havola to\'liq emas.'; return; }
+
+  const res = await fetch(`/api/event/${encodeURIComponent(id)}`);
+  if (!res.ok) { sheet.textContent = 'Albom topilmadi.'; return; }
+  const meta = await res.json();
+
+  document.title = `${meta.title} — QR varaqasi`;
+  sheet.innerHTML = `
+    <div class="kicker">Umumiy albom</div>
+    <h1 class="names">${esc(meta.title)}</h1>
+    <div class="date">${formatDate(meta.date)}</div>
+    <div class="hair"></div>
+
+    <div class="qr">
+      <img src="/api/qr/${encodeURIComponent(meta.id)}" alt="QR kod" width="240" height="240">
+    </div>
+
+    <p class="call">Bugungi suratlaringizni biz bilan bo'lishing</p>
+    <p class="hint">
+      Telefon kamerangizni QR kodga tuting va ochilgan sahifaga rasmlaringizni
+      qo'shing. Ilova o'rnatish yoki ro'yxatdan o'tish shart emas.
+    </p>
+
+    <div class="foot">Lahza</div>`;
+})();
+</script>
+</body>
+</html>

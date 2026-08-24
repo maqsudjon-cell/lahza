@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Albom yaratish · Lahza</title>
+<meta name="description" content="To'y yoki tadbir uchun umumiy rasm albomi yarating. Bir daqiqada tayyor.">
+<meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14130F" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/base.css">
+<style>
+  body { display: grid; place-items: center; min-height: 100svh; padding: 32px 0; }
+  .box { width: min(520px, calc(100vw - 2 * var(--pad))); }
+  .head { text-align: center; margin-bottom: 28px; }
+  .head h1 { margin-bottom: 10px; }
+  .brand {
+    font-family: var(--display);
+    font-size: 1.05rem;
+    letter-spacing: .04em;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 26px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="box">
+  <div class="head">
+    <a class="brand" href="/">Lahza</a>
+    <h1>Albom yarating</h1>
+    <p class="muted">Bir daqiqada tayyor. Ro'yxatdan o'tish shart emas.</p>
+  </div>
+
+  <form class="card" id="form" novalidate>
+    <label class="field">
+      <span>Tadbir nomi</span>
+      <input class="input" id="title" name="title" required maxlength="70"
+             placeholder="Aziza va Bekzod" autocomplete="off" enterkeyhint="next">
+    </label>
+
+    <label class="field">
+      <span>Sana</span>
+      <input class="input" id="date" name="date" type="date" required>
+    </label>
+
+    <div id="msg" class="note note-err hidden" role="alert" style="margin-bottom:18px"></div>
+
+    <button class="btn btn-primary btn-lg btn-block" id="submit" type="submit">
+      Albomni yaratish
+    </button>
+
+    <p class="small muted center" style="margin:16px 0 0">
+      Albom <strong>60 kun</strong> ochiq turadi. Shu vaqt ichida barcha
+      rasmlarni yuklab olishingiz mumkin.
+    </p>
+  </form>
+
+  <p class="small muted center" style="margin-top:22px">
+    Avval albom yaratganmisiz? <a href="/boshqarish/">Albomlarim</a>
+  </p>
+</div>
+
+<script type="module">
+const form   = document.getElementById('form');
+const submit = document.getElementById('submit');
+const msg    = document.getElementById('msg');
+
+// Standart sana — bugun. To'ylar odatda yaqin kunlarga qo'yiladi.
+document.getElementById('date').value = new Date().toISOString().slice(0, 10);
+
+function showError(text) {
+  msg.textContent = text;
+  msg.classList.remove('hidden');
+}
+
+/** Yaratilgan albomlar brauzerda saqlanadi — akkaunt yo'q, shuning uchun
+    kelin-kuyov o'z albomini shu telefondan qayta topa oladi. */
+function remember(entry) {
+  try {
+    const key = 'lahza.albums';
+    const all = JSON.parse(localStorage.getItem(key) || '[]');
+    all.unshift(entry);
+    localStorage.setItem(key, JSON.stringify(all.slice(0, 30)));
+  } catch { /* shaxsiy rejimda localStorage yopiq bo'lishi mumkin */ }
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  msg.classList.add('hidden');
+
+  const title = document.getElementById('title').value.trim();
+  const date  = document.getElementById('date').value;
+
+  if (title.length < 2) return showError('Tadbir nomini kiriting.');
+  if (!date)            return showError('Sanani tanlang.');
+
+  submit.disabled = true;
+  submit.innerHTML = '<span class="spinner"></span> Yaratilmoqda…';
+
+  try {
+    const res = await fetch('/api/event', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ title, date }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Xatolik');
+
+    remember({ id: data.id, k: data.manageKey, title: data.title, date: data.date });
+    location.href = `/boshqarish/?i=${data.id}&k=${data.manageKey}`;
+  } catch (e) {
+    showError(e.message || 'Ulanishda muammo bo\'ldi. Qaytadan urinib ko\'ring.');
+    submit.disabled = false;
+    submit.textContent = 'Albomni yaratish';
+  }
+});
+</script>
+</body>
+</html>

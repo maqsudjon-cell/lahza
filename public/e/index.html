@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Albom · Lahza</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14130F" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/base.css">
+<style>
+  /* Sahifa ustun bo'lib cho'ziladi: albom bo'sh bo'lsa ham yuklash paneli
+     ekranning pastida turadi, kontent ostida osilib qolmaydi. */
+  body { min-height: 100svh; display: flex; flex-direction: column; }
+  main { flex: 1 0 auto; }
+  .dock { flex: none; }
+
+  .hero {
+    padding: clamp(36px, 9vw, 68px) 0 clamp(24px, 5vw, 36px);
+    text-align: center;
+  }
+  .hero .names { margin-bottom: 10px; }
+  .hero .date {
+    font-size: .8125rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* Yuklash paneli sahifa pastida qotib turadi — mehmon galereyani ko'rib
+     turib ham istalgan payt rasm qo'sha oladi. */
+  .dock {
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    padding: 12px var(--pad) calc(12px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line);
+  }
+  .dock-inner { max-width: var(--maxw); margin: 0 auto; }
+
+  .progress-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-m);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+
+  .empty {
+    text-align: center;
+    padding: clamp(40px, 12vw, 90px) 20px;
+    color: var(--muted);
+  }
+  .empty svg { margin: 0 auto 18px; display: block; opacity: .35; }
+
+  .count-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 0 14px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 14px;
+  }
+
+  footer.site {
+    padding: 40px 0 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: .8125rem;
+  }
+  footer.site a { color: var(--muted); }
+
+  /* Yuklanayotgan rasm katakchasi */
+  .tile.pending::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
+  }
+  .tile.pending .spinner {
+    position: absolute;
+    top: 50%; left: 50%;
+    margin: -9px 0 0 -9px;
+    color: var(--ink);
+    z-index: 1;
+  }
+  .tile.failed::after {
+    content: "!";
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    background: color-mix(in srgb, var(--err) 82%, transparent);
+    color: #fff; font-weight: 700; font-size: 20px;
+  }
+</style>
+</head>
+<body>
+
+<main id="app" class="wrap" aria-live="polite">
+  <div class="hero">
+    <div class="spinner" style="margin:0 auto;color:var(--muted)"></div>
+  </div>
+</main>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Rasm">
+  <button class="lb-close" id="lbClose" aria-label="Yopish">&times;</button>
+  <button class="lb-nav prev" id="lbPrev" aria-label="Oldingi">&#8249;</button>
+  <img id="lbImg" alt="">
+  <button class="lb-nav next" id="lbNext" aria-label="Keyingi">&#8250;</button>
+</div>
+
+<script type="module">
+import { processImageSafe, pool, withCpuLock, CONCURRENCY } from '/assets/compress.js';
+
+const params  = new URLSearchParams(location.search);
+const eventId = (params.get('i') || '').trim();
+const app     = document.getElementById('app');
+
+const MAX_FILES_AT_ONCE = 40;
+
+/* --- Ko'rinish ----------------------------------------------------------- */
+
+function fail(message) {
+  app.innerHTML = `
+    <div class="hero">
+      <h1 class="names">Albom topilmadi</h1>
+      <p class="muted" style="max-width:38ch;margin:14px auto 0">${message}</p>
+    </div>`;
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  const months = ['yanvar','fevral','mart','aprel','may','iyun',
+                  'iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
+  const d = new Date(iso + 'T00:00:00');
+  if (Number.isNaN(d.getTime())) return '';
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function render(meta) {
+  document.title = `${meta.title} · Lahza`;
+  app.innerHTML = `
+    <div class="hero">
+      <h1 class="names">${escapeHtml(meta.title)}</h1>
+      <div class="date">${formatDate(meta.date)}</div>
+    </div>
+
+    <div class="count-line">
+      <span class="eyebrow" id="count">Albom bo'sh</span>
+      <span class="small muted" id="expiry"></span>
+    </div>
+
+    <div id="gallery" class="grid"></div>
+
+    <div class="empty" id="empty">
+      <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="2.5" y="5" width="19" height="15" rx="2.5"/>
+        <circle cx="12" cy="12.5" r="3.6"/>
+        <path d="M8 5l1.4-2h5.2L16 5"/>
+      </svg>
+      <p style="margin:0">Birinchi rasmni siz qo'shing.</p>
+    </div>
+
+    <footer class="site">
+      <a href="/">Lahza</a> bilan yaratilgan
+    </footer>
+  `;
+  if (meta.expiresAt) {
+    const days = Math.ceil((new Date(meta.expiresAt) - Date.now()) / 86400000);
+    if (days > 0) {
+      document.getElementById('expiry').textContent =
+        days > 7 ? `${days} kun ochiq` : `${days} kundan keyin yopiladi`;
+    }
+  }
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+/* --- Galereya ------------------------------------------------------------ */
+
+let observer;
+
+/**
+ * Lightbox tartibi DOM'dan olinadi, alohida massivdan emas.
+ * Sabab: rasmlar parallel yuklanadi va tugash tartibi ekrandagi tartib bilan
+ * mos kelmaydi — massiv bilan ishlaganda "keyingi rasm" noto'g'ri chiqadi.
+ */
+const readyTiles = () => [...document.querySelectorAll('#gallery .tile[data-ready]')];
+const readyIds   = () => readyTiles().map(t => t.dataset.id);
+
+function ensureObserver() {
+  if (observer) return observer;
+  observer = new IntersectionObserver((entries) => {
+    for (const en of entries) {
+      if (!en.isIntersecting) continue;
+      const img = en.target;
+      // Tinglovchi src'dan OLDIN — keshdan kelgan rasmda hodisa o'tkazib
+      // yuborilmasin. Bo'sh katakcha mehmon uchun buzilgan sahifa demak.
+      const reveal = () => img.classList.add('in');
+      img.addEventListener('load', reveal, { once: true });
+      img.addEventListener('error', reveal, { once: true });
+      img.src = img.dataset.src;
+      if (img.complete && img.naturalWidth) reveal();
+      observer.unobserve(img);
+    }
+  }, { rootMargin: '400px 0px' });
+  return observer;
+}
+
+function addTile(photoId, atStart = false) {
+  const gallery = document.getElementById('gallery');
+  const btn = document.createElement('button');
+  btn.className = 'tile';
+  btn.type = 'button';
+  btn.setAttribute('aria-label', 'Rasmni ochish');
+
+  const img = document.createElement('img');
+  img.alt = '';
+  img.loading = 'lazy';
+  img.decoding = 'async';
+  btn.appendChild(img);
+
+  btn.addEventListener('click', () => {
+    if (btn.dataset.ready) openLightbox(btn.dataset.id);
+  });
+
+  if (photoId) markReady(btn, photoId);
+
+  if (atStart) gallery.prepend(btn); else gallery.appendChild(btn);
+  return btn;
+}
+
+/**
+ * Katakchani haqiqiy rasmga bog'laydi.
+ * `fetchThumb` faqat serverdan kelgan rasmlar uchun kerak — endigina
+ * yuklangan rasmning nusxasi telefonning o'zida allaqachon ko'rinib turibdi,
+ * uni qaytadan yuklab olish ortiqcha trafik.
+ */
+function markReady(tile, photoId, fetchThumb = true) {
+  tile.dataset.id = photoId;
+  tile.dataset.ready = '1';
+  if (!fetchThumb) return;
+  const img = tile.querySelector('img');
+  img.dataset.src = `/f/${eventId}/t/${photoId}`;
+  ensureObserver().observe(img);
+}
+
+function updateCount() {
+  const n = readyTiles().length;
+  document.getElementById('count').textContent = n === 0 ? "Albom bo'sh" : `${n} ta rasm`;
+  document.getElementById('empty').classList.toggle('hidden', n > 0);
+}
+
+/* --- Lightbox ------------------------------------------------------------ */
+
+const lb = document.getElementById('lb');
+const lbImg = document.getElementById('lbImg');
+let lbList = [];
+let lbIndex = -1;
+
+function openLightbox(id) {
+  lbList = readyIds();
+  lbIndex = lbList.indexOf(id);
+  if (lbIndex < 0) return;
+  showLightbox();
+  lb.classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function showLightbox() {
+  lbImg.src = `/f/${eventId}/p/${lbList[lbIndex]}`;
+}
+function closeLightbox() {
+  lb.classList.remove('on');
+  lbImg.removeAttribute('src');
+  document.body.style.overflow = '';
+}
+function step(delta) {
+  if (!lbList.length) return;
+  lbIndex = (lbIndex + delta + lbList.length) % lbList.length;
+  showLightbox();
+}
+
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbPrev').addEventListener('click', () => step(-1));
+document.getElementById('lbNext').addEventListener('click', () => step(1));
+lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+document.addEventListener('keydown', (e) => {
+  if (!lb.classList.contains('on')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') step(-1);
+  if (e.key === 'ArrowRight') step(1);
+});
+
+/* --- Yuklash ------------------------------------------------------------- */
+
+function buildDock() {
+  const dock = document.createElement('div');
+  dock.className = 'dock';
+  dock.innerHTML = `
+    <div class="dock-inner">
+      <div id="progressWrap" class="progress-card hidden">
+        <div class="row between" style="margin-bottom:10px">
+          <span class="small" id="progressText">Tayyorlanmoqda…</span>
+          <span class="small muted mono" id="progressCount"></span>
+        </div>
+        <div class="bar"><i id="progressBar"></i></div>
+      </div>
+      <label class="btn btn-primary btn-lg btn-block" for="picker">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Rasm qo'shish
+      </label>
+      <input id="picker" type="file" accept="image/*" multiple class="sr-only">
+      <p class="small muted center" style="margin:10px 0 0">
+        Ro'yxatdan o'tish shart emas · rasmlaringiz asl sifatda saqlanadi
+      </p>
+    </div>`;
+  document.body.appendChild(dock);
+  document.getElementById('picker').addEventListener('change', onPick);
+}
+
+let busy = false;
+
+async function onPick(e) {
+  const files = Array.from(e.target.files || []).filter(f => f.type.startsWith('image/'));
+  e.target.value = '';
+  if (!files.length || busy) return;
+
+  if (files.length > MAX_FILES_AT_ONCE) {
+    alert(`Bir vaqtda ${MAX_FILES_AT_ONCE} tagacha rasm yuklash mumkin. Qolganini keyin qo'shing.`);
+    files.length = MAX_FILES_AT_ONCE;
+  }
+
+  busy = true;
+  const wrap  = document.getElementById('progressWrap');
+  const bar   = document.getElementById('progressBar');
+  const text  = document.getElementById('progressText');
+  const label = document.getElementById('progressCount');
+  wrap.classList.remove('hidden');
+  text.textContent = 'Yuklanmoqda…';
+
+  let done = 0, failed = 0;
+  const tick = () => {
+    bar.style.width = ((done + failed) / files.length * 100) + '%';
+    label.textContent = `${done + failed} / ${files.length}`;
+  };
+  tick();
+
+  // Har bir fayl uchun darhol katakcha ko'rsatamiz — mehmon nima
+  // bo'layotganini ko'rib turadi, kutish qisqaroq tuyuladi.
+  const tiles = files.map(file => {
+    const tile = addTile(null, true);
+    tile.classList.add('pending');
+    tile.insertAdjacentHTML('beforeend', '<span class="spinner"></span>');
+    // Ko'rib turish uchun mahalliy nusxa — serverga yetib borishini kutmaymiz.
+    const url = URL.createObjectURL(file);
+    const img = tile.querySelector('img');
+    img.src = url;
+    img.addEventListener('load', () => {
+      img.classList.add('in');
+      URL.revokeObjectURL(url);
+    }, { once: true });
+    return tile;
+  });
+
+  await pool(files, CONCURRENCY, async (file, i) => {
+    const tile = tiles[i];
+    try {
+      // Siqish navbat bilan (protsessor), yuklash parallel (tarmoq).
+      const { full, thumb } = await withCpuLock(() => processImageSafe(file));
+      const fd = new FormData();
+      fd.append('full', full, 'f.jpg');
+      if (thumb) fd.append('thumb', thumb, 't.jpg');
+
+      const res = await fetch(`/api/upload/${encodeURIComponent(eventId)}`, {
+        method: 'POST', body: fd,
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const { id } = await res.json();
+
+      tile.classList.remove('pending');
+      tile.querySelector('.spinner')?.remove();
+      markReady(tile, id, false);
+      done++;
+    } catch (err) {
+      console.error(err);
+      tile.classList.remove('pending');
+      tile.classList.add('failed');
+      tile.querySelector('.spinner')?.remove();
+      failed++;
+    }
+    tick();
+    updateCount();
+  });
+
+  text.textContent = failed
+    ? `${done} ta yuklandi, ${failed} tasi yuklanmadi`
+    : `${done} ta rasm qo'shildi. Rahmat!`;
+  bar.style.width = '100%';
+  busy = false;
+  setTimeout(() => wrap.classList.add('hidden'), failed ? 6000 : 2600);
+}
+
+/* --- Ishga tushirish ----------------------------------------------------- */
+
+(async function init() {
+  if (!eventId) return fail('Havola to\'liq emas. QR kodni qaytadan skanerlab ko\'ring.');
+
+  let meta;
+  try {
+    const res = await fetch(`/api/event/${encodeURIComponent(eventId)}`);
+    if (res.status === 404) return fail('Bunday albom yo\'q yoki muddati tugagan.');
+    if (!res.ok) throw new Error('server');
+    meta = await res.json();
+  } catch {
+    return fail('Internetga ulanishda muammo bo\'ldi. Sahifani yangilab ko\'ring.');
+  }
+
+  render(meta);
+  buildDock();
+  updateCount();
+
+  try {
+    const res = await fetch(`/api/photos/${encodeURIComponent(eventId)}`);
+    if (res.ok) {
+      const list = await res.json();
+      for (const p of list.photos) addTile(p.id);
+      updateCount();
+    }
+  } catch { /* galereya bo'sh qoladi, yuklash baribir ishlaydi */ }
+})();
+</script>
+</body>
+</html>

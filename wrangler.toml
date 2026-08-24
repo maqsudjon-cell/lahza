@@ -1,0 +1,9 @@
+name = "lahza"
+pages_build_output_dir = "public"
+compatibility_date = "2026-08-01"
+
+# Barcha rasm va meta shu bucket'da. Cloudflare panelida shu nom bilan
+# R2 bucket yarating (yoki nomni bu yerda o'zgartiring).
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "lahza-photos"

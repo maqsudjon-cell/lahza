@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Albomni boshqarish · Lahza</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14130F" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/base.css">
+<style>
+  body { padding: 32px 0 64px; }
+  .brand {
+    font-family: var(--display); font-size: 1.05rem; letter-spacing: .04em;
+    text-decoration: none; color: var(--muted); display: inline-block; margin-bottom: 24px;
+  }
+  .qr-card { display: grid; grid-template-columns: 132px 1fr; gap: 22px; align-items: center; }
+  @media (max-width: 520px) { .qr-card { grid-template-columns: 1fr; text-align: center; justify-items: center; } }
+  .qr-card img { width: 132px; height: 132px; border-radius: var(--r-s); border: 1px solid var(--line); }
+
+  .linkbox {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface-2); border: 1px solid var(--line-2);
+    border-radius: var(--r-m); padding: 6px 6px 6px 14px;
+  }
+  .linkbox code {
+    flex: 1 1 auto; min-width: 0; font-size: .875rem;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink);
+  }
+  .linkbox .btn { padding: 9px 16px; min-height: 40px; font-size: .875rem; flex: none; }
+
+  .stat { display: flex; gap: 28px; flex-wrap: wrap; }
+  .stat b { font-family: var(--display); font-size: 2rem; font-weight: 500; display: block; line-height: 1.1; }
+  .stat span { font-size: .8125rem; color: var(--muted); letter-spacing: .04em; }
+
+  .album-item {
+    display: block; padding: 16px 18px; border: 1px solid var(--line);
+    border-radius: var(--r-m); background: var(--surface); text-decoration: none;
+    margin-bottom: 10px;
+  }
+  .album-item:hover { border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="wrap narrow" id="app">
+  <div class="center"><span class="spinner" style="color:var(--muted)"></span></div>
+</div>
+
+<script type="module">
+const params = new URLSearchParams(location.search);
+const id  = params.get('i');
+const key = params.get('k');
+const app = document.getElementById('app');
+
+const esc = (s) => String(s).replace(/[&<>"']/g, c =>
+  ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+function formatDate(iso) {
+  const months = ['yanvar','fevral','mart','aprel','may','iyun',
+                  'iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
+  const d = new Date(iso + 'T00:00:00');
+  return Number.isNaN(d.getTime()) ? iso : `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function savedAlbums() {
+  try { return JSON.parse(localStorage.getItem('lahza.albums') || '[]'); }
+  catch { return []; }
+}
+
+/* --- Ro'yxat (havolasiz kirilganda) -------------------------------------- */
+
+function renderList() {
+  const albums = savedAlbums();
+  app.innerHTML = `
+    <a class="brand" href="/">Lahza</a>
+    <h1 style="margin-bottom:8px">Albomlarim</h1>
+    <p class="muted">Shu brauzerda yaratilgan albomlar.</p>
+    ${albums.length
+      ? albums.map(a => `
+        <a class="album-item" href="/boshqarish/?i=${esc(a.id)}&k=${esc(a.k)}">
+          <strong>${esc(a.title)}</strong>
+          <div class="small muted">${esc(formatDate(a.date))}</div>
+        </a>`).join('')
+      : `<div class="note">Hozircha albom yo'q.</div>`}
+    <p style="margin-top:26px"><a class="btn btn-ghost" href="/yaratish/">Yangi albom yaratish</a></p>
+    <p class="small muted" style="margin-top:20px">
+      Albom havolasi faqat shu brauzerda saqlanadi. Boshqa telefondan kirish uchun
+      boshqaruv havolasini o'zingizga saqlab qo'ying.
+    </p>`;
+}
+
+/* --- Bitta albom --------------------------------------------------------- */
+
+function render(meta, count) {
+  const guestUrl = `${location.origin}/e/?i=${meta.id}`;
+  document.title = `${meta.title} · Lahza`;
+
+  const days = meta.expiresAt
+    ? Math.max(0, Math.ceil((new Date(meta.expiresAt) - Date.now()) / 86400000))
+    : null;
+
+  app.innerHTML = `
+    <a class="brand" href="/">Lahza</a>
+    <h1 style="margin-bottom:6px">${esc(meta.title)}</h1>
+    <p class="muted" style="margin-bottom:30px">${esc(formatDate(meta.date))}</p>
+
+    <div class="card stack stack-24" style="margin-bottom:18px">
+      <div class="qr-card">
+        <img src="/api/qr/${encodeURIComponent(meta.id)}" alt="Albom QR kodi" width="132" height="132">
+        <div>
+          <h3 style="margin-bottom:6px">Mehmonlar uchun havola</h3>
+          <p class="small muted" style="margin-bottom:12px">
+            Bu QR kodni stollarga qo'ying. Mehmon skanerlaydi va rasm qo'shadi —
+            ilova o'rnatmasdan, ro'yxatdan o'tmasdan.
+          </p>
+          <div class="linkbox">
+            <code id="link">${esc(guestUrl)}</code>
+            <button class="btn btn-ghost" id="copy" type="button">Nusxa</button>
+          </div>
+        </div>
+      </div>
+
+      <hr class="rule">
+
+      <div class="row" style="gap:10px">
+        <a class="btn btn-primary" href="/qr/?i=${encodeURIComponent(meta.id)}" target="_blank" rel="noopener">
+          QR varaqasini chop etish
+        </a>
+        <a class="btn btn-ghost" href="/e/?i=${encodeURIComponent(meta.id)}" target="_blank" rel="noopener">
+          Albomni ko'rish
+        </a>
+      </div>
+    </div>
+
+    <div class="card stack stack-24">
+      <div class="stat">
+        <div><b class="mono" id="count">${count}</b><span>RASM</span></div>
+        ${days !== null ? `<div><b class="mono">${days}</b><span>KUN QOLDI</span></div>` : ''}
+      </div>
+
+      <hr class="rule">
+
+      <div>
+        <h3 style="margin-bottom:6px">Barcha rasmlarni yuklab olish</h3>
+        <p class="small muted" style="margin-bottom:14px">
+          Bitta ZIP faylda, asl sifatda. Albom ${days !== null ? `${days} kundan keyin` : 'muddati tugagach'}
+          o'chiriladi — shu vaqtgacha yuklab oling.
+        </p>
+        <a class="btn btn-primary btn-block ${count ? '' : 'hidden'}"
+           href="/api/zip/${encodeURIComponent(meta.id)}?k=${encodeURIComponent(key)}">
+          ZIP faylni yuklab olish
+        </a>
+        ${count ? '' : '<div class="note">Albomda hali rasm yo\'q.</div>'}
+      </div>
+    </div>
+
+    <p class="small muted" style="margin-top:24px">
+      Bu sahifaning havolasini saqlab qo'ying — u albomingizga yagona kalit.
+    </p>`;
+
+  document.getElementById('copy').addEventListener('click', async (e) => {
+    try {
+      await navigator.clipboard.writeText(guestUrl);
+      e.target.textContent = 'Nusxa olindi';
+      setTimeout(() => (e.target.textContent = 'Nusxa'), 1800);
+    } catch {
+      const range = document.createRange();
+      range.selectNodeContents(document.getElementById('link'));
+      const sel = getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  });
+}
+
+/* --- Ishga tushirish ----------------------------------------------------- */
+
+(async function init() {
+  if (!id || !key) return renderList();
+
+  try {
+    const [metaRes, photosRes] = await Promise.all([
+      fetch(`/api/event/${encodeURIComponent(id)}`),
+      fetch(`/api/photos/${encodeURIComponent(id)}`),
+    ]);
+    if (!metaRes.ok) {
+      app.innerHTML = `<a class="brand" href="/">Lahza</a>
+        <div class="note note-err">Albom topilmadi yoki muddati tugagan.</div>`;
+      return;
+    }
+    const meta = await metaRes.json();
+    const count = photosRes.ok ? (await photosRes.json()).photos.length : 0;
+    render(meta, count);
+  } catch {
+    app.innerHTML = `<a class="brand" href="/">Lahza</a>
+      <div class="note note-err">Ulanishda muammo bo'ldi. Sahifani yangilang.</div>`;
+  }
+})();
+</script>
+</body>
+</html>
