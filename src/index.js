@@ -21,6 +21,19 @@ export default {
     const seg = url.pathname.split('/').filter(Boolean);
     const method = request.method;
 
+    // Asosiy domen belgilangan bo'lsa, boshqa manzillar o'shanga yo'naltiriladi.
+    // Usiz Google bitta saytni ikki manzilda ko'radi (workers.dev va o'z
+    // domeni) va reyting ikkiga bo'linadi.
+    const primary = env.PRIMARY_HOST;
+    if (primary && url.hostname !== primary && !url.hostname.endsWith('.localhost')
+        && url.hostname !== 'localhost' && url.hostname !== '127.0.0.1') {
+      const target = new URL(request.url);
+      target.hostname = primary;
+      target.protocol = 'https:';
+      target.port = '';
+      return Response.redirect(target.toString(), 301);
+    }
+
     try {
       if (url.pathname === '/robots.txt')  return robots(request);
       if (url.pathname === '/sitemap.xml') return sitemap(request);

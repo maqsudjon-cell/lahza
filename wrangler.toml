@@ -13,3 +13,8 @@ binding = "ASSETS"
 [[r2_buckets]]
 binding = "PHOTOS"
 bucket_name = "lahza-photos"
+
+# Domen ulangach shu qatorni oching — barcha eski manzillar (workers.dev)
+# asosiy domenga 301 bilan yo'naltiriladi va Google reytingni bo'lmaydi.
+# [vars]
+# PRIMARY_HOST = "chaqnoq.uz"
