@@ -55,7 +55,10 @@
   .faq, .tips-section { content-visibility: auto; contain-intrinsic-size: auto 700px; }
   section + section { border-top: 1px solid var(--border); }
 
-  .hero { padding: clamp(52px, 10vw, 108px) 0 clamp(18px, 3vw, 40px); text-align: center; }
+  /* padding-block — chunki `.hero` da `.wrap` klassi ham bor. Oddiy
+     `padding` qisqartmasi `.wrap` ning yon bo'shliqlarini o'chirib
+     yuboradi va matn ekran chetiga tegib qoladi. */
+  .hero { padding-block: clamp(52px, 10vw, 108px) clamp(18px, 3vw, 40px); text-align: center; }
   .hero .eyebrow { display: block; margin-bottom: 22px; }
   .hero h1 { max-width: 17ch; margin: 0 auto 22px; }
   .hero .lede { font-size: clamp(1.0625rem, 2.2vw, 1.1875rem); max-width: 48ch; margin: 0 auto 32px; }
