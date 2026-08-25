@@ -4,7 +4,12 @@
     {
       "name": "lahza",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["wrangler", "pages", "dev", "--port", "8791"],
+      "runtimeArgs": [
+        "wrangler",
+        "dev",
+        "--port",
+        "8791"
+      ],
       "port": 8791
     }
   ]
