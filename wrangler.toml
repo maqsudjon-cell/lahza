@@ -14,7 +14,9 @@ binding = "ASSETS"
 binding = "PHOTOS"
 bucket_name = "lahza-photos"
 
-# Domen ulangach shu qatorni oching — barcha eski manzillar (workers.dev)
-# asosiy domenga 301 bilan yo'naltiriladi va Google reytingni bo'lmaydi.
-# [vars]
-# PRIMARY_HOST = "chaqnoq.uz"
+# Barcha eski manzillar (workers.dev) asosiy domenga 301 bilan
+# yo'naltiriladi — shunda Google reytingni ikki manzilga bo'lmaydi va
+# chop etilgan eski QR kodlar ham ishlashda davom etadi.
+# Yoqilgan: 2026-08-25, DNS to'liq tarqalgach.
+[vars]
+PRIMARY_HOST = "chaqnoq.uz"
