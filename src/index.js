@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Lahza — Worker kirish nuqtasi.
+   Pufak — Worker kirish nuqtasi.
 
    Statik fayllar `[assets]` orqali beriladi va ular Worker'gacha yetib
    kelmaydi. Bu yerga faqat mos keladigan fayl topilmagan so'rovlar tushadi —

@@ -1,8 +1,23 @@
-# Lahza
+# Pufak
 
 To'y va tadbir mehmonlarining suratlarini bitta QR kod orqali umumiy albomga
 yig'adigan xizmat. Mehmon ilova o'rnatmaydi, ro'yxatdan o'tmaydi — kamerani
 QR'ga tutadi va rasm qo'shadi.
+
+---
+
+## Nom va infratuzilma
+
+Foydalanuvchi ko'radigan brend — **Pufak**. Lekin ichki nomlar ataylab
+o'zgartirilmagan:
+
+| Nima | Nomi | Nega |
+|---|---|---|
+| Cloudflare Worker | `lahza` | nomi o'zgarsa Git ulanishi uziladi va deploy buziladi |
+| R2 bucket | `lahza-photos` | bucket nomini o'zgartirib bo'lmaydi, saqlangan rasmlar yo'qoladi |
+| GitHub repo | `maqsudjon-cell/lahza` | Cloudflare shu repoga ulangan |
+
+Bu foydalanuvchiga ko'rinmaydi — sayt `pufak.uz` domenida ochiladi.
 
 ---
 

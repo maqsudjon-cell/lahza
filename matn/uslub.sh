@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bosh sahifa matn uslubini almashtirish:
+# Pufak — bosh sahifa matn uslubini almashtirish:
 #   ./matn/uslub.sh oddiy   — tinch, tushuntiruvchi uslub
 #   ./matn/uslub.sh saul    — to'g'ridan-to'g'ri, reklama uslubi
 set -euo pipefail

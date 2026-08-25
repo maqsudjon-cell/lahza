@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Albomni boshqarish · Lahza</title>
+<title>Albomni boshqarish · Pufak</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
@@ -77,8 +77,14 @@ function formatDate(iso) {
 }
 
 function savedAlbums() {
-  try { return JSON.parse(localStorage.getItem('lahza.albums') || '[]'); }
-  catch { return []; }
+  try {
+    const now = JSON.parse(localStorage.getItem('pufak.albums') || '[]');
+    if (now.length) return now;
+    // Brend nomi o'zgargunga qadar yaratilgan albomlar yo'qolmasin.
+    const old = JSON.parse(localStorage.getItem('lahza.albums') || '[]');
+    if (old.length) localStorage.setItem('pufak.albums', JSON.stringify(old));
+    return old;
+  } catch { return []; }
 }
 
 /* --- Ro'yxat (havolasiz kirilganda) -------------------------------------- */
@@ -86,7 +92,7 @@ function savedAlbums() {
 function renderList() {
   const albums = savedAlbums();
   app.innerHTML = `
-    <a class="brand" href="/">Lahza</a>
+    <a class="brand" href="/">Pufak</a>
     <h1 style="margin-bottom:8px">Albomlarim</h1>
     <p class="muted">Shu brauzerda yaratilgan albomlar.</p>
     ${albums.length
@@ -107,14 +113,14 @@ function renderList() {
 
 function render(meta, count) {
   const guestUrl = `${location.origin}/e/?i=${meta.id}`;
-  document.title = `${meta.title} · Lahza`;
+  document.title = `${meta.title} · Pufak`;
 
   const days = meta.expiresAt
     ? Math.max(0, Math.ceil((new Date(meta.expiresAt) - Date.now()) / 86400000))
     : null;
 
   app.innerHTML = `
-    <a class="brand" href="/">Lahza</a>
+    <a class="brand" href="/">Pufak</a>
     <h1 style="margin-bottom:6px">${esc(meta.title)}</h1>
     <p class="muted" style="margin-bottom:30px">${esc(formatDate(meta.date))}</p>
 
@@ -198,7 +204,7 @@ function render(meta, count) {
       fetch(`/api/photos/${encodeURIComponent(id)}`),
     ]);
     if (!metaRes.ok) {
-      app.innerHTML = `<a class="brand" href="/">Lahza</a>
+      app.innerHTML = `<a class="brand" href="/">Pufak</a>
         <div class="note note-err">Albom topilmadi yoki muddati tugagan.</div>`;
       return;
     }
@@ -206,12 +212,12 @@ function render(meta, count) {
     const count = photosRes.ok ? (await photosRes.json()).photos.length : 0;
     render(meta, count);
   } catch {
-    app.innerHTML = `<a class="brand" href="/">Lahza</a>
+    app.innerHTML = `<a class="brand" href="/">Pufak</a>
       <div class="note note-err">Ulanishda muammo bo'ldi. Sahifani yangilang.</div>`;
   }
 })();
 </script>
-<script data-goatcounter="https://lahza.goatcounter.com/count"
+<script data-goatcounter="https://pufak.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
