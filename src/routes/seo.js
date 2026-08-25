@@ -9,6 +9,7 @@
 const PUBLIC_PAGES = [
   { path: '/',          priority: '1.0' },
   { path: '/yaratish/', priority: '0.8' },
+  { path: '/manbalar/', priority: '0.2' },
 ];
 
 export function robots(request) {
@@ -17,6 +18,7 @@ export function robots(request) {
     'User-agent: *',
     'Allow: /$',
     'Allow: /yaratish/',
+    'Allow: /manbalar/',
     '',
     '# Albom havolalari shaxsiy — ular qidiruvga tushmasligi kerak',
     'Disallow: /e/',

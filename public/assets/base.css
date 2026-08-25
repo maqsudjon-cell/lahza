@@ -23,7 +23,7 @@
   /* Yagona rangli urg'u — faqat kerak joyda ishlatiladi */
   --rail: linear-gradient(90deg, #2dd4bf, #38bdf8 32%, #818cf8 64%, #e879f9 100%);
 
-  --sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sans: Inter, "Inter fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --wrap: 72rem;
@@ -69,6 +69,17 @@
   --border-strong: color-mix(in oklab, #f5f5f5 22%, transparent);
   --card:       0 0 0 1px rgb(255 255 255 / .1);
   --card-hover: 0 0 0 1px rgb(255 255 255 / .18);
+}
+
+/* Inter yuklanguncha tizim shrifti ishlatiladi. `size-adjust` o'lchamlarni
+   moslaydi — aks holda shrift almashganda matn "sakrab" ketadi. */
+@font-face {
+  font-family: "Inter fallback";
+  src: local("Helvetica Neue"), local("Arial"), local("Roboto");
+  size-adjust: 107%;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
 }
 
 /* --- Asos ---------------------------------------------------------------- */
@@ -130,6 +141,24 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .rule { height: 1px; background: var(--border); border: 0; margin: 0; }
+
+/* Klaviatura bilan yuradiganlar uchun: Tab bosilganda birinchi bo'lib
+   chiqadi va menyudan sakrab o'tishga imkon beradi. */
+.skip {
+  position: absolute; left: 12px; top: -60px; z-index: 100;
+  background: var(--fg); color: var(--bg);
+  padding: 10px 18px; border-radius: var(--r-m);
+  font-size: .875rem; font-weight: 500;
+  transition: top .15s ease;
+}
+.skip:focus { top: 12px; }
+
+/* Tanlangan matn ham tizimning bir qismi */
+::selection { background: var(--fg); color: var(--bg); }
+
+/* Sichqoncha bilan bosilganda halqa chiqmaydi, Tab bilan — chiqadi */
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radius: 2px; }
 
 .rail { height: 2px; background: var(--rail); border-radius: var(--r-pill); }
 
