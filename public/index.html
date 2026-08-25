@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lahza — to'y mehmonlarining suratlari bitta albomda</title>
-<meta name="description" content="Stolga bitta QR kod qo'ying. Mehmonlar o'z suratlarini bitta albomga yuklaydi — ilova o'rnatmasdan, ro'yxatdan o'tmasdan. Hammasini ZIP qilib yuklab oling.">
+<title>Lahza — to'y suratlaringiz bitta albomda | QR orqali yig'ish</title>
+<meta name="description" content="To'y suratlaringiz mehmonlarning telefonida qolib ketmasin. Stolga bitta QR kod qo'ying — mehmonlar rasm qo'shadi, hammasi bitta albomda to'planadi. Ilovasiz, bepul.">
 <link rel="canonical" href="https://lahza.maqsudjon-polatov.workers.dev/">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
@@ -249,6 +249,52 @@
   .tips h3 { margin-bottom: 8px; }
   .tips p { margin: 0; font-size: .9375rem; }
 
+  /* ── Qo'shimcha animatsiyalar ─────────────────────────────────────── */
+
+  /* Aylantirilganda yuqori panel ajralib turadi */
+  .nav { transition: box-shadow .25s ease, border-color .25s ease; }
+  html.scrolled .nav { box-shadow: 0 1px 0 var(--border), 0 8px 24px -20px rgb(10 10 10 / .3); }
+
+  /* QR kartochka ustidan yurib o'tuvchi skaner chizig'i */
+  html.anim .qr-card { position: relative; overflow: hidden; }
+  html.anim .qr-card::after {
+    content: "";
+    position: absolute; left: 0; right: 0; height: 34%;
+    top: -40%;
+    background: linear-gradient(rgba(255,255,255,0), rgba(120,190,255,.28), rgba(255,255,255,0));
+    animation: skaner 3.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes skaner {
+    0%, 12%   { top: -40%; }
+    55%, 100% { top: 105%; }
+  }
+
+  /* Bosqichlar birin-ketin chiqadi */
+  html.anim .steps .step { opacity: 0; transform: translateY(12px);
+    transition: opacity .55s ease var(--sd, 0ms), transform .55s cubic-bezier(.22,.68,.24,1) var(--sd, 0ms); }
+  html.anim .steps.shown .step { opacity: 1; transform: none; }
+  .steps .step:nth-child(2) { --sd: 110ms; }
+  .steps .step:nth-child(3) { --sd: 220ms; }
+
+  /* Ko'rsatkichlar ham navbat bilan */
+  html.anim .specs .spec { opacity: 0; transform: translateY(12px);
+    transition: opacity .55s ease var(--sd, 0ms), transform .55s cubic-bezier(.22,.68,.24,1) var(--sd, 0ms); }
+  html.anim .specs.shown .spec { opacity: 1; transform: none; }
+  .specs .spec:nth-child(2) { --sd: 100ms; }
+  .specs .spec:nth-child(3) { --sd: 200ms; }
+
+  /* Lentadagi surat sekin yaqinlashadi */
+  html.anim .band img { transform: scale(1.06); transition: transform 1.6s cubic-bezier(.22,.68,.24,1); }
+  html.anim .band.shown img { transform: scale(1); }
+
+  /* Tugmalar bosilganda va ustiga kelganda jonli */
+  .btn-primary { transition: opacity .15s ease, transform .16s cubic-bezier(.22,.9,.3,1), box-shadow .2s ease; }
+  .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 20px -12px rgb(10 10 10 / .5); }
+
+  /* Telefondagi raqam sanab chiqadi — JS `--n` ni o'zgartiradi */
+  .phone .meta .count { font-variant-numeric: tabular-nums; }
+
   footer.site { border-top: 1px solid var(--border); padding: 26px 0; }
   footer.site .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
   footer.site, footer.site a { color: var(--subtle); font-size: .8125rem; }
@@ -367,14 +413,15 @@
 
 <header class="hero wrap">
   <span class="eyebrow reveal">To'y · nikoh · tadbir</span>
-  <h1 class="reveal" style="--d:70ms">Mehmonlaringiz olgan suratlar bitta joyda</h1>
+  <h1 class="reveal" style="--d:70ms">To'y o'tadi.<br>Suratlar qayerda qoladi?</h1>
   <div class="rail reveal" style="--d:140ms"></div>
   <p class="lede reveal" style="--d:190ms">
-    Stolga bitta QR kod qo'yasiz. Mehmon skanerlaydi va o'z rasmlarini
-    albomingizga qo'shadi — ilova o'rnatmasdan, ro'yxatdan o'tmasdan.
+    Mehmonlarning telefonida. Guruhlarda ko'milib.
+    Story'larda — ertaga o'chadi.<br>
+    <strong>Stolga qo'yilgan bitta QR kod buni tugatadi.</strong>
   </p>
-  <a class="btn btn-primary btn-lg reveal" style="--d:250ms" href="/yaratish/">Albom yaratish</a>
-  <p class="small muted reveal" style="--d:300ms;margin-top:14px">Bepul · bir daqiqada tayyor</p>
+  <a class="btn btn-primary btn-lg reveal" style="--d:250ms" href="/yaratish/">Albomni hoziroq yarating</a>
+  <p class="small muted reveal" style="--d:300ms;margin-top:14px">Bepul. Bir daqiqa. Karta so'ralmaydi.</p>
 
   <div class="showcase reveal" style="--d:360ms">
     <div class="qr-card">
@@ -397,7 +444,7 @@
         <div class="phone-notch"></div>
         <h4>Aziza va Bekzod</h4>
         <div class="when">12 sentabr 2026</div>
-        <div class="meta"><span>418 ta rasm</span><span>60 kun</span></div>
+        <div class="meta"><span><b class="count" data-to="418">418</b> ta rasm</span><span>60 kun</span></div>
         <div class="mini-grid">
           <img src="/assets/img/g1.webp" alt="" loading="lazy" width="420" height="420">
           <img src="/assets/img/g2.webp" alt="" loading="lazy" width="420" height="420">
@@ -419,16 +466,17 @@
   <div class="wrap">
     <div class="compare reveal">
       <div class="now">
-        <span class="eyebrow">Hozir qanday</span>
-        <p>Suratlar o'nlab Telegram guruhida, WhatsApp'da va Instagram
-        story'larida tarqab ketadi. Bir haftadan keyin ularning yarmi yo'qoladi.
-        Kelin-kuyov o'z to'yidagi suratlarning ko'pini umuman ko'rmaydi.</p>
+        <span class="eyebrow">Hozir nima bo'lyapti</span>
+        <p>Bir mehmon guruhga tashlaydi. Ikkinchisi story qiladi. Uchinchisi
+        umuman yubormaydi. Bir haftadan keyin story o'chadi, guruh to'ladi,
+        eski xabarlar ko'milib ketadi. Kelin-kuyov esa o'z to'yini
+        boshqalarning telefonida qoldiradi.</p>
       </div>
       <div class="after">
-        <span class="eyebrow">Lahza bilan</span>
-        <p>Hammasi bitta albomda. Ertasi kuni kelin-kuyov barcha rasmlarni
-        bitta ZIP faylda yuklab oladi — hech kimdan so'ramasdan, hech kimni
-        kutmasdan.</p>
+        <span class="eyebrow">Nima bo'lishi kerak</span>
+        <p>Bitta QR. Bitta albom. Ertasi kuni hammasi bitta faylda
+        sizda bo'ladi. Hech kimdan so'ramaysiz, hech kimni kutmaysiz,
+        hech narsa yo'qolmaydi.</p>
       </div>
     </div>
   </div>
@@ -445,30 +493,30 @@
 <section>
   <div class="wrap">
     <div class="head">
-      <h2 class="reveal">Qanday ishlaydi</h2>
-      <p>Uch qadam. Texnik bilim talab qilinmaydi.</p>
+      <h2 class="reveal">Uch qadam. Tamom.</h2>
+      <p>Kompyuter kerak emas. Dasturchi kerak emas. Telefon yetadi.</p>
     </div>
     <div class="steps reveal">
       <div class="step">
         <figure><img src="/assets/img/s1.webp" alt="To'yxona, stollar bezatilgan" loading="lazy" width="720" height="450"></figure>
         <span class="num">01</span>
         <h3>Albom yarating</h3>
-        <p>Ism va sanani kiritasiz. Tayyor QR varaqasini chop etasiz —
-        A5 o'lchamda, stolga qo'yish uchun.</p>
+        <p>Ism, sana — bo'ldi. QR varaqasi tayyor holda chiqadi.
+        Chop etasiz va stolga qo'yasiz.</p>
       </div>
       <div class="step">
         <figure><img src="/assets/img/s2.webp" alt="Mehmonlar stolda birga surat olmoqda" loading="lazy" width="720" height="450"></figure>
         <span class="num">02</span>
         <h3>Mehmonlar rasm qo'shadi</h3>
-        <p>Kamerani QR'ga tutadi, sahifa ochiladi, rasm tanlaydi. Bo'ldi.
-        Parol yo'q, ro'yxat yo'q, o'rnatiladigan ilova yo'q.</p>
+        <p>Kamerani tutadi. Rasmni tanlaydi. Tamom.
+        Parol yo'q. Ro'yxat yo'q. Ilova yo'q.</p>
       </div>
       <div class="step">
         <figure><img src="/assets/img/s3.webp" alt="Mehmonlar konfetti sochmoqda" loading="lazy" width="720" height="450"></figure>
         <span class="num">03</span>
         <h3>Hammasini yuklab olasiz</h3>
-        <p>Bitta tugma — barcha rasmlar bitta ZIP faylda, telefoningizga
-        yoki kompyuteringizga.</p>
+        <p>Bitta tugma bosasiz — hamma surat bitta faylda
+        sizning qurilmangizda.</p>
       </div>
     </div>
   </div>
@@ -477,9 +525,9 @@
 <section>
   <div class="wrap">
     <div class="head">
-      <h2 class="reveal">Sekin internetda ham ishlaydi</h2>
-      <p>To'yxonada Wi-Fi yo'q, mehmon esa uzoq kutmaydi. Shuning uchun
-      asosiy ish telefonning o'zida bajariladi.</p>
+      <h2 class="reveal">To'yxonada internet sekin.<br>Bizga farqi yo'q.</h2>
+      <p>Mehmon uzoq kutsa — chiqib ketadi. Shuning uchun og'ir ishni
+      telefonning o'zi bajaradi, tarmoqqa esa eng kamini yuboradi.</p>
     </div>
     <dl class="specs reveal">
       <div class="spec">
@@ -510,8 +558,8 @@
     <h2 class="sr-only">Narx</h2>
     <div class="amount" style="margin-top:18px">Bepul</div>
     <p style="max-width:38ch;margin:0 auto">
-      Lahza endi ishga tushdi. Hozircha albom yaratish butunlay bepul —
-      cheklov ham, karta ham yo'q.
+      Ha, haqiqatan bepul. Karta so'ralmaydi, obuna yo'q,
+      sinov muddati tugamaydi.
     </p>
     <ul>
       <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span>Bitta albomga 1500 tagacha rasm</span></li>
@@ -529,8 +577,8 @@
 <section>
   <div class="wrap narrow">
     <div class="head reveal">
-      <h2>To'y suratlarini qanday yo'qotmaslik kerak</h2>
-      <p>Bir necha oddiy qoida — Lahza ishlatasizmi yoki yo'qmi, baribir asqotadi.</p>
+      <h2>To'y suratlarini yo'qotmang</h2>
+      <p>To'rtta qoida. Lahza ishlatasizmi yoki yo'qmi — baribir asqotadi.</p>
     </div>
 
     <div class="tips reveal">
@@ -568,7 +616,7 @@
 
 <section class="faq">
   <div class="wrap narrow">
-    <div class="head reveal"><h2>Savollar</h2></div>
+    <div class="head reveal"><h2>Savolingiz bormi?</h2></div>
 
     <details>
       <summary>Mehmon ilova o'rnatishi kerakmi?</summary>
@@ -623,12 +671,12 @@
 
 <section style="text-align:center">
   <div class="wrap">
-    <h2 style="margin-bottom:14px">Keyingi to'yingiz uchun tayyorlang</h2>
+    <h2 style="margin-bottom:14px">Keyingi to'y qachon?</h2>
     <p style="max-width:42ch;margin:0 auto 30px">
-      Albom yaratish bir daqiqa vaqt oladi. QR varaqasini bugun chop etib
-      qo'ysangiz bo'ladi.
+      Albom bir daqiqada tayyor bo'ladi. QR varaqasini bugun chop etib
+      qo'ying — to'y kuni bosh qotirmaysiz.
     </p>
-    <a class="btn btn-primary btn-lg" href="/yaratish/">Albom yaratish</a>
+    <a class="btn btn-primary btn-lg" href="/yaratish/">Albomni hoziroq yarating</a>
   </div>
 </section>
 
