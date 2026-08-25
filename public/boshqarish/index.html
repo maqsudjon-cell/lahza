@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Albomni boshqarish · Pufak</title>
+<title>Albomni boshqarish · Chaqnoq</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
@@ -76,14 +76,22 @@ function formatDate(iso) {
   return Number.isNaN(d.getTime()) ? iso : `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
+const ALBOM_KALITI = 'chaqnoq.albums';
+// Brend ikki marta o'zgargan — eski kalitlardagi albomlar yo'qolmasligi kerak.
+const ESKI_KALITLAR = ['pufak.albums', 'lahza.albums'];
+
 function savedAlbums() {
   try {
-    const now = JSON.parse(localStorage.getItem('pufak.albums') || '[]');
-    if (now.length) return now;
-    // Brend nomi o'zgargunga qadar yaratilgan albomlar yo'qolmasin.
-    const old = JSON.parse(localStorage.getItem('lahza.albums') || '[]');
-    if (old.length) localStorage.setItem('pufak.albums', JSON.stringify(old));
-    return old;
+    const bor = JSON.parse(localStorage.getItem(ALBOM_KALITI) || '[]');
+    if (bor.length) return bor;
+    for (const k of ESKI_KALITLAR) {
+      const eski = JSON.parse(localStorage.getItem(k) || '[]');
+      if (eski.length) {
+        localStorage.setItem(ALBOM_KALITI, JSON.stringify(eski));
+        return eski;
+      }
+    }
+    return [];
   } catch { return []; }
 }
 
@@ -92,7 +100,7 @@ function savedAlbums() {
 function renderList() {
   const albums = savedAlbums();
   app.innerHTML = `
-    <a class="brand" href="/">Pufak</a>
+    <a class="brand" href="/">Chaqnoq</a>
     <h1 style="margin-bottom:8px">Albomlarim</h1>
     <p class="muted">Shu brauzerda yaratilgan albomlar.</p>
     ${albums.length
@@ -113,14 +121,14 @@ function renderList() {
 
 function render(meta, count) {
   const guestUrl = `${location.origin}/e/?i=${meta.id}`;
-  document.title = `${meta.title} · Pufak`;
+  document.title = `${meta.title} · Chaqnoq`;
 
   const days = meta.expiresAt
     ? Math.max(0, Math.ceil((new Date(meta.expiresAt) - Date.now()) / 86400000))
     : null;
 
   app.innerHTML = `
-    <a class="brand" href="/">Pufak</a>
+    <a class="brand" href="/">Chaqnoq</a>
     <h1 style="margin-bottom:6px">${esc(meta.title)}</h1>
     <p class="muted" style="margin-bottom:30px">${esc(formatDate(meta.date))}</p>
 
@@ -204,7 +212,7 @@ function render(meta, count) {
       fetch(`/api/photos/${encodeURIComponent(id)}`),
     ]);
     if (!metaRes.ok) {
-      app.innerHTML = `<a class="brand" href="/">Pufak</a>
+      app.innerHTML = `<a class="brand" href="/">Chaqnoq</a>
         <div class="note note-err">Albom topilmadi yoki muddati tugagan.</div>`;
       return;
     }
@@ -212,12 +220,12 @@ function render(meta, count) {
     const count = photosRes.ok ? (await photosRes.json()).photos.length : 0;
     render(meta, count);
   } catch {
-    app.innerHTML = `<a class="brand" href="/">Pufak</a>
+    app.innerHTML = `<a class="brand" href="/">Chaqnoq</a>
       <div class="note note-err">Ulanishda muammo bo'ldi. Sahifani yangilang.</div>`;
   }
 })();
 </script>
-<script data-goatcounter="https://pufak.goatcounter.com/count"
+<script data-goatcounter="https://chaqnoq.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
