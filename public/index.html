@@ -19,6 +19,7 @@
 <style>
   .nav {
     position: sticky; top: 0; z-index: 30;
+    background: var(--bg);
     background: color-mix(in oklab, var(--bg) 85%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -95,6 +96,7 @@
   /* Orqa fondagi yumshoq yorug'lik — vizualni sahifadan ajratib turadi */
   .showcase::before {
     content: ""; position: absolute; inset: auto 0 8%; height: 62%;
+    background: radial-gradient(60% 100% at 50% 100%, rgba(128,128,128,.1), transparent 70%);
     background: radial-gradient(60% 100% at 50% 100%, color-mix(in oklab, var(--fg) 7%, transparent), transparent 70%);
     z-index: -1;
   }

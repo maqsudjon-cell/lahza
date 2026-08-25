@@ -14,7 +14,7 @@
 <style>
   /* Sahifa ustun bo'lib cho'ziladi: albom bo'sh bo'lsa ham yuklash paneli
      ekranning pastida turadi, kontent ostida osilib qolmaydi. */
-  body { min-height: 100svh; display: flex; flex-direction: column; }
+  body { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
   /* width:100% shart: flex ustunda `.wrap` ning `margin:0 auto` si `stretch`ni
      bekor qiladi va element kontent kengligiga qisqarib qoladi. */
   main { flex: 1 0 auto; width: 100%; }
@@ -40,6 +40,7 @@
     bottom: 0;
     z-index: 20;
     padding: 12px var(--pad) calc(12px + env(safe-area-inset-bottom));
+    background: var(--bg);
     background: color-mix(in oklab, var(--bg) 88%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -84,6 +85,7 @@
   .tile.pending::after {
     content: "";
     position: absolute; inset: 0;
+    background: rgba(128,128,128,.4);
     background: color-mix(in oklab, var(--bg) 55%, transparent);
   }
   .tile.pending .spinner {
@@ -97,6 +99,7 @@
     content: "!";
     position: absolute; inset: 0;
     display: grid; place-items: center;
+    background: rgba(220, 38, 38, .82);
     background: color-mix(in oklab, #dc2626 82%, transparent);
     color: #fff; font-weight: 700; font-size: 20px;
   }

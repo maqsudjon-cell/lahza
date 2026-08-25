@@ -88,6 +88,21 @@
     font-size: 1.8cqw; letter-spacing: .2em; text-transform: uppercase;
   }
 
+  /* Konteyner so'rovlari yo'q brauzerlar (Safari 16 dan eski, Chrome 105
+     dan eski) uchun eski `mm` o'lchamlari. Bunday brauzerda varaqa tor
+     ekranga sig'maydi, lekin matn to'g'ri proporsiyada qoladi va chop
+     etishda muammosiz chiqadi. */
+  @supports not (container-type: inline-size) {
+    .sheet-inner { padding: 15mm 13mm; }
+    .sheet .kicker { font-size: 2.9mm; margin-bottom: 8mm; }
+    .sheet .names  { font-size: 10mm; margin: 0 0 3mm; }
+    .sheet .date   { font-size: 3mm; margin-bottom: 11mm; }
+    .sheet .qr     { width: 64mm; height: 64mm; padding: 3mm; border-radius: 1.5mm; }
+    .sheet .call   { font-size: 5.2mm; margin: 10mm 0 3.5mm; max-width: 98mm; }
+    .sheet .hint   { font-size: 3.3mm; max-width: 92mm; }
+    .sheet .foot   { padding-top: 8mm; font-size: 2.7mm; }
+  }
+
   @media print {
     @page { size: A5 portrait; margin: 0; }
     html, body { background: #fff !important; }
