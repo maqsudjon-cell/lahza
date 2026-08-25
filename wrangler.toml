@@ -2,11 +2,16 @@ name = "lahza"
 main = "src/index.js"
 compatibility_date = "2026-08-01"
 
-# Statik sahifalar. Mos fayl topilsa Worker umuman ishga tushmaydi —
-# shuning uchun galereya va bosh sahifa CDN tezligida ochiladi.
+# Statik sahifalar.
+#
+# `run_worker_first` — Worker HAR BIR so'rovdan oldin ishlaydi. Usiz mos
+# fayl topilsa Worker chetlab o'tiladi va PRIMARY_HOST yo'naltirishi
+# bosh sahifada umuman ishlamaydi (aynan shu xato bo'lgan edi).
+# Worker o'z ishini bajargach `env.ASSETS.fetch()` bilan faylni beradi.
 [assets]
 directory = "./public"
 binding = "ASSETS"
+run_worker_first = true
 
 # Barcha rasm va meta shu bucket'da. Cloudflare panelida shu nom bilan
 # R2 bucket yarating (yoki nomni bu yerda o'zgartiring).

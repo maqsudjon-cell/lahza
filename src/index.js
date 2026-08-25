@@ -1,9 +1,9 @@
 /* ==========================================================================
    Chaqnoq — Worker kirish nuqtasi.
 
-   Statik fayllar `[assets]` orqali beriladi va ular Worker'gacha yetib
-   kelmaydi. Bu yerga faqat mos keladigan fayl topilmagan so'rovlar tushadi —
-   ya'ni API va rasm yo'llari.
+   `run_worker_first` yoqilgani uchun har bir so'rov shu yerdan o'tadi:
+   avval domen tekshiriladi, keyin API va rasm yo'llari, oxirida statik
+   fayl `env.ASSETS.fetch()` orqali beriladi.
    ========================================================================== */
 
 import { err } from '../lib/store.js';
