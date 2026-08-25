@@ -10,8 +10,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/base.css">
 <style>
-  /* Bu sahifa stolga qo'yiladigan qog'oz. Ekranda ko'rinishi qog'ozning
-     ko'rinishi bilan bir xil bo'lishi kerak, shuning uchun A5 nisbatida. */
+  /* Bu sahifa stolga qo'yiladigan qog'oz.
+     Varaqa A5 (148mm) kengligida, lekin telefon ekrani undan tor. Shuning
+     uchun ichkaridagi barcha o'lchamlar `cqw` — varaqa kengligining ulushi.
+     148mm = 100cqw, ya'ni 1mm = 0.676cqw. Natijada varaqa qanchalik
+     kichraysa, matn ham shunchalik kichrayadi va chop etishda o'lcham
+     aynan A5 uchun mo'ljallangandek chiqadi. */
   .toolbar {
     position: sticky; top: 0; z-index: 5;
     background: var(--bg); border-bottom: 1px solid var(--border);
@@ -20,57 +24,68 @@
   .toolbar .wrap { display: flex; gap: 12px; align-items: center; justify-content: space-between; max-width: var(--wrap); }
   .toolbar .btn { padding: 9px 18px; min-height: 40px; font-size: .875rem; }
 
-  .stage { padding: 32px var(--pad) 56px; display: grid; place-items: center; }
+  /* minmax(0,1fr) shart: ustun `auto` bo'lsa varaqaning kontent kengligiga
+     cho'ziladi va `max-width:100%` hech narsani cheklamay qo'yadi. */
+  .stage {
+    padding: 28px var(--pad) 48px;
+    display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center;
+  }
 
   .sheet {
-    width: 148mm; max-width: 100%;
+    width: 148mm;
+    max-width: 100%;
     aspect-ratio: 148 / 210;
     background: #ffffff;
     border-radius: 3px;
     box-shadow: 0 0 0 1px rgb(10 10 10 / .12), 0 18px 50px -24px rgb(10 10 10 / .35);
+    container-type: inline-size;
+    display: flex;
+    overflow: hidden;
+  }
+  .sheet-inner {
+    width: 100%;
+    padding: 10.1cqw 8.8cqw;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center;
-    padding: 15mm 13mm;
   }
 
-  /* Qog'oz har doim oq-qora. Sahifaning qorong'i rejimi unga tegmasligi kerak,
-     aks holda base.css dagi umumiy matn rangi oq fonda oqarib ketadi. */
+  /* Qog'oz har doim oq-qora — sahifaning qorong'i rejimi unga tegmaydi */
   .sheet, .sheet * { color: #0a0a0a; }
   .sheet .kicker, .sheet .date, .sheet .hint { color: #6b6b6b; }
   .sheet .foot { color: #9a9a9a; }
 
   .sheet .kicker {
     font-family: var(--mono);
-    font-size: 2.9mm; letter-spacing: .24em; text-transform: uppercase;
-    margin-bottom: 8mm;
+    font-size: 1.96cqw; letter-spacing: .24em; text-transform: uppercase;
+    margin-bottom: 5.4cqw;
   }
   .sheet .names {
-    font-size: 10mm; line-height: 1.08; font-weight: 600;
-    letter-spacing: -.03em; margin: 0 0 3mm;
+    font-size: 6.8cqw; line-height: 1.08; font-weight: 600;
+    letter-spacing: -.03em; margin: 0 0 2cqw;
   }
   .sheet .date {
     font-family: var(--mono);
-    font-size: 3mm; letter-spacing: .18em; text-transform: uppercase;
-    margin-bottom: 11mm;
+    font-size: 2cqw; letter-spacing: .18em; text-transform: uppercase;
+    margin-bottom: 7.4cqw;
   }
 
   .sheet .qr {
-    width: 64mm; height: 64mm;
-    padding: 3mm; background: #fff;
+    width: 43.2cqw; height: 43.2cqw;
+    padding: 2cqw; background: #fff;
     box-shadow: 0 0 0 1px rgb(10 10 10 / .12);
-    border-radius: 1.5mm;
+    border-radius: 1cqw;
   }
   .sheet .qr img { width: 100%; height: 100%; }
 
   .sheet .call {
-    font-size: 5.2mm; line-height: 1.28; font-weight: 600; letter-spacing: -.02em;
-    margin: 10mm 0 3.5mm; max-width: 98mm;
+    font-size: 3.5cqw; line-height: 1.28; font-weight: 600; letter-spacing: -.02em;
+    margin: 6.8cqw 0 2.4cqw; max-width: 66cqw;
   }
-  .sheet .hint { font-size: 3.3mm; line-height: 1.5; max-width: 92mm; margin: 0; }
+  .sheet .hint { font-size: 2.2cqw; line-height: 1.5; max-width: 62cqw; margin: 0; }
   .sheet .foot {
-    margin-top: auto; padding-top: 8mm;
+    margin-top: auto; padding-top: 5.4cqw;
     font-family: var(--mono);
-    font-size: 2.7mm; letter-spacing: .2em; text-transform: uppercase;
+    font-size: 1.8cqw; letter-spacing: .2em; text-transform: uppercase;
   }
 
   @media print {
@@ -79,7 +94,7 @@
     .toolbar, .print-hint { display: none !important; }
     .stage { padding: 0; display: block; }
     .sheet {
-      width: 148mm; height: 210mm; aspect-ratio: auto;
+      width: 148mm; max-width: none; height: 210mm; aspect-ratio: auto;
       border-radius: 0; box-shadow: none;
       page-break-inside: avoid;
     }
@@ -98,8 +113,10 @@
 </div>
 
 <div class="stage">
-  <div class="sheet" id="sheet">
-    <span class="spinner" style="color:#6b6b6b"></span>
+  <div class="sheet">
+    <div class="sheet-inner" id="sheet">
+      <span class="spinner" style="color:#6b6b6b"></span>
+    </div>
   </div>
 </div>
 

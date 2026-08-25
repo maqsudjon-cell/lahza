@@ -18,12 +18,21 @@
     color: var(--subtle); display: inline-block; margin-bottom: 24px;
   }
   .brand:hover { color: var(--fg); }
-  .qr-card { display: grid; grid-template-columns: 132px 1fr; gap: 22px; align-items: center; }
-  @media (max-width: 520px) { .qr-card { grid-template-columns: 1fr; text-align: center; justify-items: center; } }
+  /* minmax(0,1fr) va min-width:0 shart — aks holda ichkaridagi uzun havola
+     grid ustunini qisqarishga qo'ymaydi va sahifa chetdan chiqib ketadi. */
+  .qr-card { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 22px; align-items: center; }
+  .qr-card > * { min-width: 0; }
+  /* `justify-items: center` bu yerda ISHLATILMAYDI: u grid elementini
+     cho'zilishdan kontent kengligiga o'tkazadi va uzun havola yana
+     sahifani chetdan chiqarib yuboradi. Markazlash matn orqali qilinadi. */
+  @media (max-width: 520px) {
+    .qr-card { grid-template-columns: minmax(0, 1fr); text-align: center; }
+    .qr-card > img { margin-inline: auto; }
+  }
   .qr-card img { width: 132px; height: 132px; border-radius: var(--r-s); border: 1px solid var(--border); }
 
   .linkbox {
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: center; gap: 8px; min-width: 0; width: 100%;
     background: var(--surface-2); border: 1px solid var(--border-strong);
     border-radius: var(--r-m); padding: 6px 6px 6px 14px;
   }
