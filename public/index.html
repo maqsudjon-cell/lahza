@@ -214,7 +214,10 @@
   .step figure { margin: 0 0 16px; border-radius: var(--r-s); overflow: hidden; background: var(--surface-2); }
   .step figure img { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
 
-  .band { margin: 0; position: relative; border-top: 1px solid var(--border); }
+  /* overflow:hidden shart — ichkaridagi surat animatsiya boshida
+     scale(1.06) bo'ladi va kesilmasa sahifani chetdan chiqarib yuboradi
+     (430px ekranda 13px). */
+  .band { margin: 0; position: relative; overflow: hidden; border-top: 1px solid var(--border); }
   .band img { width: 100%; height: clamp(220px, 34vw, 420px); object-fit: cover; display: block; }
   .band figcaption {
     position: absolute; left: 0; right: 0; bottom: 0;
