@@ -265,6 +265,25 @@ input, select, textarea { max-width: 100%; min-width: 0; }
   }
 }
 
+/* --- Animatsiyalar -------------------------------------------------------
+   `.anim` klassi <html> ga faqat JS ishlaganda va foydalanuvchi harakatni
+   cheklamagan bo'lsa qo'shiladi. Ya'ni JS ishlamasa yoki xato bersa,
+   kontent oddiy holicha ko'rinadi — hech narsa yashirin qolmaydi. */
+
+html.anim .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .65s cubic-bezier(.22,.68,.24,1),
+              transform .65s cubic-bezier(.22,.68,.24,1);
+  transition-delay: var(--d, 0ms);
+  will-change: opacity, transform;
+}
+html.anim .reveal.shown { opacity: 1; transform: none; }
+
+/* Ko'rgazma tugagach `will-change` ni olib tashlaymiz — u xotirada
+   qatlam ushlab turadi va uzun sahifada telefonni sekinlashtiradi. */
+html.anim .reveal.shown.done { will-change: auto; transition-delay: 0ms; }
+
 /* --- Galereya ------------------------------------------------------------ */
 
 .grid {

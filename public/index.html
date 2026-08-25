@@ -5,17 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lahza — to'y mehmonlarining suratlari bitta albomda</title>
 <meta name="description" content="Stolga bitta QR kod qo'ying. Mehmonlar o'z suratlarini bitta albomga yuklaydi — ilova o'rnatmasdan, ro'yxatdan o'tmasdan. Hammasini ZIP qilib yuklab oling.">
-<!-- Domen aniqlangach shu yerga canonical qo'shiladi -->
+<link rel="canonical" href="https://lahza.maqsudjon-polatov.workers.dev/">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta property="og:title" content="Lahza — mehmonlarning suratlari bitta albomda">
 <meta property="og:description" content="To'yda 300 mehmon rasm oladi, ular o'nlab guruhga tarqab ketadi. Lahza hammasini bitta joyga yig'adi.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="uz_UZ">
+<meta property="og:url" content="https://lahza.maqsudjon-polatov.workers.dev/">
+<meta property="og:site_name" content="Lahza">
+<meta property="og:image" content="https://lahza.maqsudjon-polatov.workers.dev/assets/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="To'yda mehmonlar birga surat olmoqda">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lahza — mehmonlarning suratlari bitta albomda">
+<meta name="twitter:description" content="Stolga bitta QR kod qo'ying. Mehmonlar rasm qo'shadi — ilova o'rnatmasdan.">
+<meta name="twitter:image" content="https://lahza.maqsudjon-polatov.workers.dev/assets/img/og.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/base.css">
+<script>
+  /* `.anim` birinchi chizishdan OLDIN qo'yiladi — aks holda kontent avval
+     ko'rinib, keyin yashirinib qoladi va sakrash sezilib turadi. */
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches
+      && typeof IntersectionObserver === 'function') {
+    document.documentElement.classList.add('anim');
+  }
+</script>
 <style>
   .nav {
     position: sticky; top: 0; z-index: 30;
@@ -207,10 +225,136 @@
   }
   .band + section { border-top: 0; }
 
+  /* Telefondagi suratlar birin-ketin paydo bo'ladi — mehmonlar rasm
+     qo'shayotgani shunday ko'rinadi. Kechikish JS'dan `--d` orqali keladi. */
+  html.anim .mini-grid img {
+    opacity: 0;
+    transform: scale(.82);
+    transition: opacity .5s ease, transform .5s cubic-bezier(.2,.9,.25,1);
+    transition-delay: var(--d, 0ms);
+  }
+  html.anim .mini-grid.filled img { opacity: 1; transform: none; }
+
+  /* Kartochkadan telefonga qarab yurgan nozik ishora */
+  html.anim .flow svg path { stroke-dasharray: 46; animation: oq 2.6s ease-in-out infinite; }
+  @keyframes oq {
+    0%, 22%  { stroke-dashoffset: 46; opacity: .35; }
+    45%, 70% { stroke-dashoffset: 0;  opacity: 1; }
+    100%     { stroke-dashoffset: -46; opacity: .35; }
+  }
+
+  .tips { display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-l); overflow: hidden; }
+  @media (min-width: 700px) { .tips { grid-template-columns: 1fr 1fr; } }
+  .tips article { background: var(--bg); padding: clamp(20px, 3vw, 26px); }
+  .tips h3 { margin-bottom: 8px; }
+  .tips p { margin: 0; font-size: .9375rem; }
+
   footer.site { border-top: 1px solid var(--border); padding: 26px 0; }
   footer.site .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
   footer.site, footer.site a { color: var(--subtle); font-size: .8125rem; }
 </style>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebSite",
+   "@id": "https://lahza.maqsudjon-polatov.workers.dev/#website",
+   "name": "Lahza",
+   "url": "https://lahza.maqsudjon-polatov.workers.dev/",
+   "inLanguage": "uz-UZ",
+   "description": "To'y va tadbir mehmonlarining suratlarini bitta QR kod orqali umumiy albomga yig'adigan xizmat."
+  },
+  {
+   "@type": "SoftwareApplication",
+   "@id": "https://lahza.maqsudjon-polatov.workers.dev/#app",
+   "name": "Lahza",
+   "url": "https://lahza.maqsudjon-polatov.workers.dev/",
+   "applicationCategory": "MultimediaApplication",
+   "operatingSystem": "Web, iOS, Android",
+   "inLanguage": "uz-UZ",
+   "image": "https://lahza.maqsudjon-polatov.workers.dev/assets/img/og.jpg",
+   "description": "Stolga bitta QR kod qo'yasiz — mehmonlar o'z suratlarini bitta albomga yuklaydi. Ilova o'rnatish va ro'yxatdan o'tish shart emas. Barcha rasmlarni bitta ZIP faylda yuklab olasiz.",
+   "featureList": [
+    "QR kod orqali surat yig'ish",
+    "Ilovasiz va ro'yxatdan o'tmasdan",
+    "Barcha rasmlar bitta ZIP faylda",
+    "Chop etishga tayyor A5 QR varaqasi",
+    "Bitta albomga 1500 tagacha rasm"
+   ],
+   "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "UZS",
+    "availability": "https://schema.org/InStock"
+   }
+  },
+  {
+   "@type": "FAQPage",
+   "@id": "https://lahza.maqsudjon-polatov.workers.dev/#faq",
+   "inLanguage": "uz-UZ",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "Mehmon ilova o'rnatishi kerakmi?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yo'q. Sahifa telefonning o'zida bor brauzerda ochiladi. Hech narsa o'rnatilmaydi va hech qanday ruxsat so'ralmaydi."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Albom qancha vaqt saqlanadi?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "60 kun. Shu vaqt ichida albom ochiq turadi va barcha rasmlarni yuklab olishingiz mumkin. Muddat tugagach rasmlar o'chiriladi — shuning uchun albomni birinchi kunlardayoq yuklab olib qo'ying."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Albomni begonalar ko'ra oladimi?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Albom havolasi tasodifiy belgilardan iborat va qidiruv tizimlariga berilmaydi. Uni faqat havolani bilgan odam — ya'ni QR kodni skanerlagan mehmoningiz ko'ra oladi."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Rasm sifati pasayadimi?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Rasmlar galereyada tez ochilishi uchun o'lchami moslashtiriladi. Telefonda ko'rish, ulashish va odatiy chop etish uchun sifat yetarli. Bu fotografning professional suratlari o'rnini bosmaydi — bu mehmonlar telefonidagi lahzalar uchun."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Nechta rasm yuklash mumkin?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Bitta albomga 1500 tagacha. Bitta mehmon bir vaqtning o'zida 40 tagacha rasm tanlashi mumkin, keyin yana qo'sha oladi."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Faqat to'y uchunmi?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yo'q. Nikoh to'yi, bitiruv kechasi, tug'ilgan kun, konferensiya, korporativ tadbir — mehmon ko'p bo'lgan har qanday marosimga to'g'ri keladi."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Albomimni keyin qanday topaman?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Albom yaratganingizda boshqaruv havolasi beriladi va u shu brauzerda saqlanadi. O'sha havolani o'zingizga (masalan, Telegram'da «Saqlangan xabarlar»ga) yuborib qo'ysangiz, istalgan qurilmadan kira olasiz."
+     }
+    }
+   ]
+  }
+ ]
+}
+</script>
 </head>
 <body>
 
@@ -222,17 +366,17 @@
 </nav>
 
 <header class="hero wrap">
-  <span class="eyebrow">To'y · nikoh · tadbir</span>
-  <h1>Mehmonlaringiz olgan suratlar bitta joyda</h1>
-  <div class="rail"></div>
-  <p class="lede">
+  <span class="eyebrow reveal">To'y · nikoh · tadbir</span>
+  <h1 class="reveal" style="--d:70ms">Mehmonlaringiz olgan suratlar bitta joyda</h1>
+  <div class="rail reveal" style="--d:140ms"></div>
+  <p class="lede reveal" style="--d:190ms">
     Stolga bitta QR kod qo'yasiz. Mehmon skanerlaydi va o'z rasmlarini
     albomingizga qo'shadi — ilova o'rnatmasdan, ro'yxatdan o'tmasdan.
   </p>
-  <a class="btn btn-primary btn-lg" href="/yaratish/">Albom yaratish</a>
-  <p class="small muted" style="margin-top:14px">Bepul · bir daqiqada tayyor</p>
+  <a class="btn btn-primary btn-lg reveal" style="--d:250ms" href="/yaratish/">Albom yaratish</a>
+  <p class="small muted reveal" style="--d:300ms;margin-top:14px">Bepul · bir daqiqada tayyor</p>
 
-  <div class="showcase">
+  <div class="showcase reveal" style="--d:360ms">
     <div class="qr-card">
       <div class="k">Umumiy albom</div>
       <div class="n">Aziza va Bekzod</div>
@@ -273,7 +417,7 @@
 
 <section>
   <div class="wrap">
-    <div class="compare">
+    <div class="compare reveal">
       <div class="now">
         <span class="eyebrow">Hozir qanday</span>
         <p>Suratlar o'nlab Telegram guruhida, WhatsApp'da va Instagram
@@ -290,7 +434,7 @@
   </div>
 </section>
 
-<figure class="band">
+<figure class="band reveal">
   <img src="/assets/img/band.webp" alt="Mehmon telefonida kelin-kuyovni suratga olmoqda"
        loading="lazy" width="1400" height="560">
   <figcaption>
@@ -301,10 +445,10 @@
 <section>
   <div class="wrap">
     <div class="head">
-      <h2>Qanday ishlaydi</h2>
+      <h2 class="reveal">Qanday ishlaydi</h2>
       <p>Uch qadam. Texnik bilim talab qilinmaydi.</p>
     </div>
-    <div class="steps">
+    <div class="steps reveal">
       <div class="step">
         <figure><img src="/assets/img/s1.webp" alt="To'yxona, stollar bezatilgan" loading="lazy" width="720" height="450"></figure>
         <span class="num">01</span>
@@ -333,11 +477,11 @@
 <section>
   <div class="wrap">
     <div class="head">
-      <h2>Sekin internetda ham ishlaydi</h2>
+      <h2 class="reveal">Sekin internetda ham ishlaydi</h2>
       <p>To'yxonada Wi-Fi yo'q, mehmon esa uzoq kutmaydi. Shuning uchun
       asosiy ish telefonning o'zida bajariladi.</p>
     </div>
-    <dl class="specs">
+    <dl class="specs reveal">
       <div class="spec">
         <dt>Yuklashdan oldin</dt>
         <dd><span class="big">Siqish</span>
@@ -361,7 +505,7 @@
 </section>
 
 <section>
-  <div class="wrap narrow price">
+  <div class="wrap narrow price reveal">
     <span class="eyebrow">Narx</span>
     <h2 class="sr-only">Narx</h2>
     <div class="amount" style="margin-top:18px">Bepul</div>
@@ -382,9 +526,49 @@
   </div>
 </section>
 
+<section>
+  <div class="wrap narrow">
+    <div class="head reveal">
+      <h2>To'y suratlarini qanday yo'qotmaslik kerak</h2>
+      <p>Bir necha oddiy qoida — Lahza ishlatasizmi yoki yo'qmi, baribir asqotadi.</p>
+    </div>
+
+    <div class="tips reveal">
+      <article>
+        <h3>Suratlarni bitta joyga yig'ing</h3>
+        <p>To'y rasmlari odatda o'nlab Telegram guruhi va Instagram
+        story'larida qoladi. Story 24 soatdan keyin o'chadi, guruhlar esa
+        vaqt o'tib to'lib ketadi va eski xabarlar yo'qoladi. Nikoh to'yi
+        suratlarini birinchi kunlardayoq bitta albomga to'plang.</p>
+      </article>
+
+      <article>
+        <h3>Fotografdan xom fayllarni so'rang</h3>
+        <p>Professional to'y fotosuratlari odatda tahrirlangan holda
+        beriladi. Shartnomada xom fayllar ham ko'rsatilganini tekshiring —
+        keyinchalik boshqa kadr kerak bo'lishi mumkin.</p>
+      </article>
+
+      <article>
+        <h3>Mehmonlarning telefonini unutmang</h3>
+        <p>Fotograf bitta, mehmon esa yuzlab. Eng samimiy lahzalar —
+        kulgi, raqs, stol atrofidagi suhbat — ko'pincha aynan mehmonlar
+        telefonida qoladi va kelin-kuyovga hech qachon yetib bormaydi.</p>
+      </article>
+
+      <article>
+        <h3>Zaxira nusxa oling</h3>
+        <p>Bitta telefonda saqlangan to'y albomi — bitta nosozlikdan
+        uzoqda. Suratlarni yuklab olgach, ularni kompyuter yoki bulut
+        xotirasiga ham ko'chirib qo'ying.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
 <section class="faq">
   <div class="wrap narrow">
-    <div class="head"><h2>Savollar</h2></div>
+    <div class="head reveal"><h2>Savollar</h2></div>
 
     <details>
       <summary>Mehmon ilova o'rnatishi kerakmi?</summary>
@@ -457,5 +641,6 @@
 
 <script data-goatcounter="https://lahza.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
+<script type="module" src="/assets/anim.js"></script>
 </body>
 </html>
