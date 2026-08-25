@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maxfiylik siyosati · Chaqnoq</title>
+<meta name="description" content="Chaqnoq qanday ma'lumot yig'adi, albomni kim ko'ra oladi, suratlar qancha saqlanadi va qanday o'chiriladi.">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/base.css">
+<style>
+  body { padding: 36px 0 64px; }
+  .brand { font-weight: 600; font-size: 1.0625rem; letter-spacing: -.03em; color: var(--subtle); display: inline-block; margin-bottom: 26px; }
+  .brand:hover { color: var(--fg); }
+  .upd { font-family: var(--mono); font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase; color: var(--subtle); }
+  h2 { font-size: 1.125rem; margin: 38px 0 12px; letter-spacing: -.02em; }
+  h2:first-of-type { margin-top: 30px; }
+  p, li { color: var(--muted); }
+  ul { margin: 12px 0 0; padding-left: 20px; }
+  li { margin-bottom: 8px; }
+  li::marker { color: var(--subtle); }
+  .key { border: 1px solid var(--border); border-radius: var(--r-l); padding: 20px 22px; margin: 26px 0 6px; }
+  .key p { margin: 0 0 10px; }
+  .key p:last-child { margin-bottom: 0; }
+  .key strong { color: var(--fg); }
+  .note { border-left: 2px solid var(--fg); padding-left: 16px; margin: 20px 0; }
+  .note p { margin: 0; }
+</style>
+</head>
+<body>
+<div class="wrap narrow">
+  <a class="brand" href="/">Chaqnoq</a>
+  <h1 style="margin-bottom:10px">Maxfiylik siyosati</h1>
+  <p class="upd">Oxirgi yangilanish: 25-avgust 2026</p>
+
+  <div class="key">
+    <p><strong>Eng muhim to'rt narsa:</strong></p>
+    <p>1. Albomingizni <strong>havolaga ega bo'lgan har kim</strong> ko'ra oladi. Parol yo'q.</p>
+    <p>2. Suratlar <strong>60 kundan keyin o'chadi</strong> — qaytarib bo'lmaydi.</p>
+    <p>3. Ro'yxatdan o'tmaysiz: ism, e-pochta, telefon, parol so'ralmaydi.</p>
+    <p>4. Suratlaringiz sotilmaydi, reklamaga berilmaydi, boshqa hech kimga uzatilmaydi.</p>
+  </div>
+
+  <h2>Qanday ma'lumot yig'iladi</h2>
+  <p>Faqat xizmat ishlashi uchun zarur bo'lgani:</p>
+  <ul>
+    <li><strong>Suratlar</strong> — mehmonlar albomga qo'shgan fayllar.</li>
+    <li><strong>Albom nomi va sanasi</strong> — albom yaratganda o'zingiz yozasiz.</li>
+    <li><strong>Boshqaruv kaliti</strong> — tasodifiy belgilar qatori, albom egasini tanish uchun.</li>
+  </ul>
+  <p>Akkaunt tizimi yo'q, shuning uchun ism, e-pochta, telefon raqami va parol
+  umuman so'ralmaydi va saqlanmaydi.</p>
+
+  <h2>Albomni kim ko'ra oladi</h2>
+  <p>Buni aniq bilib qo'ying, chunki ko'pchilik buni noto'g'ri tushunadi:</p>
+  <ul>
+    <li>Albom havolasi yoki QR kodi bo'lgan <strong>har qanday odam</strong> suratlarni
+    ko'ra oladi va o'zi ham rasm qo'sha oladi. Bu ataylab shunday — mehmon
+    ro'yxatdan o'tmasdan rasm qo'shishi kerak.</li>
+    <li>Havola tasodifan topilmaydi: albom identifikatori 9 ta tasodifiy belgidan iborat.</li>
+    <li>Albom sahifalari qidiruv tizimlariga yopilgan (<a class="link" href="/robots.txt">robots.txt</a>),
+    shuning uchun Google'dan topilmaydi.</li>
+    <li>Barcha suratni <strong>ZIP qilib yuklab olish</strong> uchun boshqaruv kaliti
+    kerak — u faqat albom yaratgan odamda bo'ladi.</li>
+  </ul>
+  <div class="note">
+    <p>Ya'ni havolani kimga berganingizga e'tibor bering. Ochiq guruhga
+    tashlasangiz, o'sha guruhdagi hamma ko'radi.</p>
+  </div>
+
+  <h2>Suratlar qayerda va qancha saqlanadi</h2>
+  <ul>
+    <li>Suratlar <strong>Cloudflare R2</strong> saqlash xizmatida turadi.</li>
+    <li>Albom yaratilgan kundan <strong>60 kun</strong> ochiq turadi.</li>
+    <li>Muddat tugagach suratlar avtomatik o'chiriladi. <strong>Zaxira nusxa
+    saqlanmaydi</strong> — o'chgandan keyin tiklab bo'lmaydi.</li>
+  </ul>
+  <p>Shu sababli albomni yopilishidan oldin yuklab olib qo'ying.</p>
+
+  <h2>Suratlar yuborilishidan oldin nima bo'ladi</h2>
+  <p>Rasm sizning telefoningizning o'zida kichraytiriladi — eng uzun tomoni
+  1920 nuqtagacha. Serverga faqat shu kichraytirilgan nusxa boradi, asl
+  o'lchamdagi fayl <strong>yuborilmaydi</strong>.</p>
+  <p>Bu bir foydali yon ta'sirga ega: kichraytirish jarayonida rasmdagi
+  texnik yozuvlar (jumladan <strong>GPS koordinatalari</strong>) tushib qoladi.</p>
+  <div class="note">
+    <p>Istisno: brauzer faylni o'qiy olmasa (masalan Android'dagi Chrome ba'zi
+    HEIC fayllarni o'qiy olmaydi), rasm yo'qolmasligi uchun asl fayl
+    yuboriladi. Bunday holatda faylning ichidagi texnik yozuvlar ham
+    saqlanib qoladi.</p>
+  </div>
+
+  <h2>Uchinchi tomon xizmatlari</h2>
+  <ul>
+    <li><strong>Cloudflare</strong> — saytni va suratlarni saqlaydi hamda
+    yetkazadi. Har qanday internet xizmati kabi, so'rovlarni qayta ishlash
+    uchun IP manzillarni ko'radi.</li>
+    <li><strong>GoatCounter</strong> — tashriflar sonini sanaydi.
+    <em>Cookie ishlatmaydi.</em> Yig'adigani: sahifa manzili, qaysi saytdan
+    kelgani, brauzer va tizim nomi, davlat, til va ekran kengligi. Takroriy
+    tashrifni ajratish uchun IP va brauzer nomi <em>faqat xotirada, 8 soatgacha</em>
+    ushlanadi va bazaga yozilmaydi.</li>
+    <li><strong>Google Fonts</strong> — sahifadagi shrift Google serveridan
+    yuklanadi, ya'ni brauzeringiz Google'ga so'rov yuboradi va Google IP
+    manzilingizni ko'radi.</li>
+  </ul>
+  <p>Suratlaringiz bu xizmatlarning hech biriga tahlil yoki reklama uchun
+  berilmaydi.</p>
+
+  <h2>Brauzeringizda nima saqlanadi</h2>
+  <p>Akkaunt yo'qligi uchun yaratgan albomlaringiz ro'yxati va boshqaruv
+  kaliti brauzeringizning <span class="mono">localStorage</span> xotirasida
+  (<span class="mono">chaqnoq.albums</span>) saqlanadi. Bu faqat sizning
+  qurilmangizda qoladi.</p>
+  <p>Brauzer ma'lumotlarini tozalasangiz yoki boshqa telefondan kirsangiz,
+  albom ro'yxati ko'rinmaydi. Shuning uchun boshqaruv havolasini o'zingizga
+  (masalan Telegram'dagi «Saqlangan xabarlar»ga) yuborib qo'yish tavsiya etiladi.</p>
+  <p>Chaqnoq kuzatuv cookie'laridan foydalanmaydi.</p>
+
+  <h2>Rasmni o'chirish</h2>
+  <p>Ochiq aytamiz: hozircha saytda «rasmni o'chirish» tugmasi <strong>yo'q</strong>.
+  Bu ustida ishlanmoqda.</p>
+  <p>Shu vaqtgacha biror surat o'chirilishi kerak bo'lsa — o'zingizniki bo'lsin
+  yoki sizga tegishli bo'lsin — albom havolasi bilan birga
+  <a class="link" href="https://maqsudjon.com" target="_blank" rel="noopener me">maqsudjon.com</a>
+  dagi manzillar orqali yozing. Qo'lda o'chiriladi.</p>
+  <p>Har qanday holatda, butun albom 60 kundan keyin o'z-o'zidan o'chadi.</p>
+
+  <h2>Bolalar suratlari</h2>
+  <p>To'y albomida bolalar ham tushadi. Boshqa mehmonlarning, ayniqsa
+  bolalarning suratini qo'shishdan oldin ularning oilasi rozimi — shuni
+  o'ylab ko'ring. Bu qonuniy talab emas, oddiy odob.</p>
+
+  <h2>O'zgarishlar</h2>
+  <p>Bu sahifa o'zgarsa, yuqoridagi sana yangilanadi. Xizmat ishlashi jiddiy
+  o'zgarsa, o'zgarish nima ekani shu yerda yoziladi.</p>
+
+  <h2>Aloqa</h2>
+  <p>Chaqnoq'ni Maqsudjon Polatov yuritadi. Savol, shikoyat yoki o'chirish
+  talabi bo'lsa —
+  <a class="link" href="https://maqsudjon.com" target="_blank" rel="noopener me">maqsudjon.com</a>
+  da aloqa manzillari bor.</p>
+
+  <p style="margin-top:34px"><a class="link" href="/shartlar/">Foydalanish shartlari</a> ·
+  <a class="link" href="/">Bosh sahifa</a></p>
+</div>
+<script data-goatcounter="https://chaqnoq.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

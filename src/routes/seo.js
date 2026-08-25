@@ -9,6 +9,8 @@
 const PUBLIC_PAGES = [
   { path: '/',          priority: '1.0' },
   { path: '/yaratish/', priority: '0.8' },
+  { path: '/maxfiylik/', priority: '0.3' },
+  { path: '/shartlar/',  priority: '0.3' },
   { path: '/manbalar/', priority: '0.2' },
 ];
 
@@ -18,6 +20,8 @@ export function robots(request) {
     'User-agent: *',
     'Allow: /$',
     'Allow: /yaratish/',
+    'Allow: /maxfiylik/',
+    'Allow: /shartlar/',
     'Allow: /manbalar/',
     '',
     '# Albom havolalari shaxsiy — ular qidiruvga tushmasligi kerak',
