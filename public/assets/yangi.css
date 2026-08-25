@@ -1,0 +1,170 @@
+/* ==========================================================================
+   Chaqnoq — yangi dizayn qatlami.
+
+   Ilhom: Nothing OS 5.0 — yumshoq mesh gradient, nuqtali to'r, qatlamli
+   kartalar. Ranglar to'yga moslandi: Nothing'ning yashil-lilasi o'rniga
+   pushti, shaftoli va lila — bayram va nozik his.
+
+   Ikki narsa ataylab olinmadi:
+   1. Nuqtali (dot-matrix) shrift — o'qish qiyin. Uning o'rniga IBM Plex
+      Mono keng oraliq bilan: xuddi shu texnik his, lekin o'qiladi.
+   2. `filter: blur()` katta yuzalarda — arzon telefonni sekinlashtiradi.
+      Gradient radial-gradient bilan yasaladi, u tekin.
+   ========================================================================== */
+
+:root {
+  --y-mint:   #cfe6d8;
+  --y-lila:   #e2d6ee;
+  --y-pushti: #f4d9dd;
+  --y-oq:     #f7f6f3;
+  --y-shaft:  #f6e0cf;
+  --y-havo:   #d7e2f2;
+
+  --y-ink:    #0d0d0d;
+  --y-dot:    rgba(13, 13, 13, .13);
+  --y-line:   rgba(13, 13, 13, .12);
+  --y-card:   rgba(255, 255, 255, .58);
+  --y-card-2: rgba(255, 255, 255, .78);
+
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+}
+
+/* Qorong'i ranglar FAQAT media-so'rov yoki [data-theme="dark"] ichida
+   belgilanadi. Ularni bu yerda ochiq yozish yorug' rejimni buzadi. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --y-mint: #1d3a2c; --y-lila: #2f2550; --y-pushti: #45222e;
+    --y-oq: #0a0a0a; --y-shaft: #47301c; --y-havo: #1c2b4d;
+    --y-ink: #f2f2f2; --y-dot: rgba(242,242,242,.13); --y-line: rgba(242,242,242,.14);
+    --y-card: rgba(255,255,255,.05); --y-card-2: rgba(255,255,255,.08);
+  }
+}
+:root[data-theme="dark"] {
+  --y-mint: #1d3a2c; --y-lila: #2f2550; --y-pushti: #45222e;
+  --y-oq: #0a0a0a; --y-shaft: #47301c; --y-havo: #1c2b4d;
+  --y-ink: #f2f2f2; --y-dot: rgba(242,242,242,.13); --y-line: rgba(242,242,242,.14);
+  --y-card: rgba(255,255,255,.05); --y-card-2: rgba(255,255,255,.08);
+}
+
+/* --- Mesh gradient ------------------------------------------------------- */
+/* To'rtta yumshoq dog' — Nothing'dagi kabi chegarasiz aralashadi. */
+
+.mesh {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(62% 55% at 12% 18%,  var(--y-mint)   0%, transparent 62%),
+    radial-gradient(58% 50% at 88% 12%,  var(--y-lila)   0%, transparent 62%),
+    radial-gradient(64% 58% at 78% 82%,  var(--y-shaft)  0%, transparent 64%),
+    radial-gradient(56% 52% at 18% 88%,  var(--y-havo)   0%, transparent 62%),
+    radial-gradient(46% 40% at 50% 50%,  var(--y-pushti) 0%, transparent 66%),
+    var(--y-oq);
+}
+
+/* Nuqtali to'r — Nothing'ning imzosi. Faqat bezak, o'qishga xalaqit bermaydi. */
+.mesh::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(var(--y-dot) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+/* --- Kartalar ------------------------------------------------------------ */
+
+.y-card {
+  background: var(--y-card);
+  border: 1px solid var(--y-line);
+  border-radius: 20px;
+  padding: 26px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.y-card.solid { background: var(--y-card-2); }
+
+/* Fon rasm ustida turgan matn uchun — shaffoflik yo'q, aniq o'qiladi. */
+.y-panel {
+  background: var(--y-ink);
+  color: var(--y-oq);
+  border-radius: 24px;
+  padding: clamp(30px, 6vw, 54px);
+}
+.y-panel h2, .y-panel h3 { color: var(--y-oq); }
+.y-panel p { color: rgba(247, 246, 243, .74); }
+
+/* --- Tipografiya --------------------------------------------------------- */
+
+.y-display {
+  font-family: var(--serif);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -.015em;
+  font-size: clamp(2.6rem, 9vw, 5.2rem);
+  color: var(--y-ink);
+}
+.y-display em { font-style: italic; }
+
+/* Kichik yorliqlar — Nothing'ning nuqtali shrifti o'rniga.
+   Bir xil texnik his, lekin har qanday yoshdagi odam o'qiy oladi. */
+.y-tag {
+  font-family: var(--mono);
+  font-size: .6875rem;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--y-ink);
+  opacity: .62;
+}
+
+.y-lede {
+  font-size: clamp(1.0625rem, 2.4vw, 1.25rem);
+  line-height: 1.55;
+  color: var(--y-ink);
+  opacity: .78;
+  max-width: 46ch;
+}
+
+/* --- Tugma --------------------------------------------------------------- */
+
+.y-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--y-ink); color: var(--y-oq);
+  border: 0; border-radius: 999px;
+  padding: 16px 30px;
+  font: 500 1rem/1 var(--sans);
+  letter-spacing: -.01em;
+  cursor: pointer;
+  transition: transform .18s ease, opacity .18s ease;
+}
+.y-btn:hover { transform: translateY(-2px); opacity: .9; }
+.y-btn:active { transform: translateY(0); }
+.y-btn.ghost {
+  background: transparent; color: var(--y-ink);
+  border: 1px solid var(--y-line);
+}
+
+/* --- Qatlamli suratlar (Nothing'dagi izometrik kartalar hissi) ----------- */
+
+.y-stack { position: relative; }
+.y-stack img {
+  border-radius: 16px;
+  border: 1px solid var(--y-line);
+  display: block; width: 100%; height: auto;
+}
+
+/* --- Bo'limlar ----------------------------------------------------------- */
+
+.y-sec { padding: clamp(56px, 11vw, 108px) 0; }
+.y-sec-tight { padding: clamp(36px, 7vw, 64px) 0; }
+
+.y-grid-3 {
+  display: grid; gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+}
+
+/* Harakatni cheklagan foydalanuvchi uchun */
+@media (prefers-reduced-motion: reduce) {
+  .y-btn { transition: none; }
+  .y-btn:hover { transform: none; }
+}

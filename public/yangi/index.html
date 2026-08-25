@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chaqnoq — yangi dizayn</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="To'y suratlaringiz mehmonlarning telefonida qolib ketmasin. Stolga bitta QR kod.">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/base.css">
+<link rel="stylesheet" href="/assets/yangi.css">
+<style>
+  body { background: var(--y-oq); color: var(--y-ink); }
+
+  /* --- Yuqori panel --- */
+  .y-nav {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .scrolled .y-nav { border-bottom-color: var(--y-line); background: color-mix(in srgb, var(--y-oq) 72%, transparent); }
+  .y-logo { font: 600 1.0625rem/1 var(--sans); letter-spacing: -.03em; color: var(--y-ink); }
+  .y-nav .y-btn { padding: 11px 20px; font-size: .9375rem; }
+
+  /* --- Hero --- */
+  .y-hero { padding-block: clamp(40px, 9vw, 88px) clamp(48px, 10vw, 96px); }
+  .y-hero .y-tag { display: block; margin-bottom: 20px; }
+  .y-hero .y-display { margin-bottom: 22px; max-width: 15ch; }
+  .y-hero .y-lede { margin-bottom: 30px; }
+  .y-cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .y-fine { font-size: .8125rem; color: var(--y-ink); opacity: .6; margin-top: 16px; }
+
+  /* --- Ko'rgazma: QR karta + telefon --- */
+  .y-show {
+    margin-top: clamp(44px, 9vw, 76px);
+    display: grid; gap: 20px;
+    grid-template-columns: 1fr;
+    align-items: center;
+  }
+  @media (min-width: 860px) {
+    .y-show { grid-template-columns: minmax(0,.85fr) auto minmax(0,1fr); gap: 28px; }
+  }
+
+  .y-qr {
+    text-align: center; padding: 26px 22px;
+    background: var(--y-card-2); border: 1px solid var(--y-line);
+    border-radius: 20px;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    max-width: 300px; margin: 0 auto;
+    transform: rotate(-2deg);
+  }
+  .y-qr .k { font: 500 .625rem/1 var(--mono); letter-spacing: .22em; text-transform: uppercase; opacity: .55; }
+  .y-qr .n { font-family: var(--serif); font-size: 1.5rem; margin: 10px 0 16px; }
+  .y-qr img { width: 130px; height: 130px; margin: 0 auto; display: block; }
+  .y-qr .c { font-size: .75rem; opacity: .6; margin-top: 14px; line-height: 1.4; }
+
+  .y-arrow {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    font: 500 .6875rem/1 var(--mono); letter-spacing: .18em; text-transform: uppercase;
+    opacity: .5;
+  }
+  @media (max-width: 859px) { .y-arrow svg { transform: rotate(90deg); } }
+
+  /* --- Telefon --- */
+  .y-phone {
+    max-width: 300px; margin: 0 auto; width: 100%;
+    background: var(--y-ink); border-radius: 34px; padding: 10px;
+    box-shadow: 0 30px 60px -30px rgba(13,13,13,.5);
+    transform: rotate(1.5deg);
+  }
+  .y-screen { background: var(--y-oq); border-radius: 26px; padding: 22px 16px 16px; }
+  .y-notch { width: 68px; height: 5px; border-radius: 99px; background: var(--y-line); margin: 0 auto 16px; }
+  .y-screen h4 { font-family: var(--serif); font-size: 1.375rem; text-align: center; margin-bottom: 3px; font-weight: 400; }
+  .y-when { text-align: center; font: 400 .625rem/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; opacity: .55; margin-bottom: 14px; }
+  .y-meta {
+    display: flex; justify-content: space-between;
+    font: 400 .6875rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase;
+    opacity: .6; padding-bottom: 12px; border-bottom: 1px solid var(--y-line); margin-bottom: 12px;
+  }
+  .y-meta b { color: var(--y-ink); opacity: 1; }
+  .y-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .y-mini img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 7px; display: block; }
+  .y-add {
+    margin-top: 12px; text-align: center; padding: 11px;
+    background: var(--y-ink); color: var(--y-oq);
+    border-radius: 999px; font: 500 .8125rem/1 var(--sans);
+  }
+
+  /* --- Qadamlar --- */
+  .y-step figure { margin: 0 0 16px; overflow: hidden; border-radius: 16px; border: 1px solid var(--y-line); }
+  .y-step img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
+  .y-step .num { font: 500 .6875rem/1 var(--mono); letter-spacing: .2em; opacity: .5; }
+  .y-step h3 { font-family: var(--serif); font-weight: 400; font-size: 1.5rem; margin: 10px 0 8px; }
+  .y-step p { opacity: .74; font-size: .9375rem; line-height: 1.6; }
+
+  /* --- Raqamlar --- */
+  .y-num { font-family: var(--serif); font-size: clamp(2.4rem, 7vw, 3.4rem); line-height: 1; }
+  .y-spec p { opacity: .72; font-size: .9375rem; line-height: 1.6; margin-top: 10px; }
+  .y-spec .y-tag { display: block; margin-bottom: 12px; }
+
+  /* --- Sarlavhalar --- */
+  .y-h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(2rem, 5.5vw, 3rem); line-height: 1.08; letter-spacing: -.015em; }
+  .y-sub { opacity: .72; margin-top: 12px; max-width: 46ch; line-height: 1.6; }
+  .y-center { text-align: center; }
+  .y-center .y-sub { margin-left: auto; margin-right: auto; }
+
+  /* --- Narx --- */
+  .y-price { text-align: center; }
+  .y-price .amount { font-family: var(--serif); font-size: clamp(3.4rem, 12vw, 6rem); line-height: 1; }
+  .y-list { list-style: none; padding: 0; margin: 26px auto 0; max-width: 30ch; text-align: left; }
+  .y-list li { display: flex; gap: 11px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--y-line); font-size: .9375rem; }
+  .y-list li:last-child { border-bottom: 0; }
+  .y-list svg { flex: none; margin-top: 3px; opacity: .55; }
+
+  /* --- Pastki qism --- */
+  .y-foot {
+    border-top: 1px solid var(--y-line); padding: 30px 0 40px;
+    display: flex; flex-wrap: wrap; gap: 14px 22px; justify-content: space-between;
+    font-size: .875rem;
+  }
+  .y-foot a { color: var(--y-ink); opacity: .62; text-decoration: none; border-bottom: 1px solid var(--y-line); }
+  .y-foot a:hover { opacity: 1; }
+
+  .y-note {
+    position: fixed; left: 50%; transform: translateX(-50%); bottom: 14px; z-index: 90;
+    background: var(--y-ink); color: var(--y-oq);
+    padding: 9px 18px; border-radius: 999px;
+    font: 500 .75rem/1 var(--sans); white-space: nowrap;
+    box-shadow: 0 10px 30px -12px rgba(0,0,0,.5);
+  }
+  .y-note a { color: var(--y-oq); text-decoration: underline; }
+</style>
+</head>
+<body class="mesh">
+
+<div class="wrap">
+  <nav class="y-nav">
+    <a class="y-logo" href="/yangi/">Chaqnoq</a>
+    <a class="y-btn" href="/yaratish/">Albom yaratish</a>
+  </nav>
+</div>
+
+<main>
+
+<header class="wrap y-hero">
+  <span class="y-tag">Diqqat — to'y egalariga</span>
+  <h1 class="y-display">Suratlaringiz <em>yo'qoladi</em></h1>
+  <p class="y-lede">
+    Achinarli, lekin shunday. Mehmonlar yuzlab rasm oladi — hammasi
+    guruhlarda, story'larda qolib ketadi. Biz ularni bitta albomga
+    yig'amiz. Stolga bitta QR kod — bo'ldi.
+  </p>
+  <div class="y-cta-row">
+    <a class="y-btn" href="/yaratish/">Menga albom kerak</a>
+    <a class="y-btn ghost" href="#qadamlar">Qanday ishlaydi</a>
+  </div>
+  <p class="y-fine">Bepul, ro'yxatdan o'tmaysiz, bir daqiqada tayyor.</p>
+
+  <div class="y-show">
+    <div class="y-qr">
+      <div class="k">Umumiy albom</div>
+      <div class="n">Aziza va Bekzod</div>
+      <img src="/assets/img/qr-demo.svg" alt="Albom QR kodi" width="130" height="130">
+      <div class="c">Kamerani tuting va<br>rasmlaringizni qo'shing</div>
+    </div>
+
+    <div class="y-arrow" aria-hidden="true">
+      <span>Skanerlaydi</span>
+      <svg width="34" height="10" viewBox="0 0 34 10" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M0 5h30M26 1l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <div class="y-phone">
+      <div class="y-screen">
+        <div class="y-notch"></div>
+        <h4>Aziza va Bekzod</h4>
+        <div class="y-when">12 sentabr 2026</div>
+        <div class="y-meta"><span><b>418</b> ta rasm</span><span>60 kun</span></div>
+        <div class="y-mini">
+          <img src="/assets/img/g1.webp" alt="" loading="lazy" width="440" height="440">
+          <img src="/assets/img/g2.webp" alt="" loading="lazy" width="440" height="440">
+          <img src="/assets/img/g3.webp" alt="" loading="lazy" width="440" height="440">
+          <img src="/assets/img/g4.webp" alt="" loading="lazy" width="440" height="440">
+          <img src="/assets/img/g5.webp" alt="" loading="lazy" width="440" height="440">
+          <img src="/assets/img/g6.webp" alt="" loading="lazy" width="440" height="440">
+          <img src="/assets/img/g7.webp" alt="" loading="lazy" width="440" height="440">
+          <img src="/assets/img/g8.webp" alt="" loading="lazy" width="440" height="440">
+          <img src="/assets/img/g9.webp" alt="" loading="lazy" width="440" height="440">
+        </div>
+        <div class="y-add">+ Rasm qo'shish</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Qora panel — Nothing'dagi kabi keskin qarama-qarshilik -->
+<section class="y-sec-tight">
+  <div class="wrap">
+    <div class="y-panel">
+      <span class="y-tag" style="color:var(--y-oq);opacity:.5">Sizga tanish holat</span>
+      <h2 class="y-h2" style="margin-top:16px;max-width:20ch">
+        To'y tugadi. Endi surat terish boshlanadi.
+      </h2>
+      <p style="margin-top:16px;max-width:52ch;line-height:1.65">
+        Guruhlarni titasiz, «haligi rasmni tashlang» deb yozasiz, javob
+        kutasiz. Kimdir tashlaydi. Kimdir unutadi. Story allaqachon o'chgan.
+        Uch oydan keyin ham yarmini topolmaysiz.
+      </p>
+      <p style="margin-top:20px;max-width:52ch;line-height:1.65;color:var(--y-oq)">
+        <strong>Chaqnoq bilan hech kimdan hech narsa so'ramaysiz.</strong>
+        Mehmon o'zi qo'shadi, ertasi kuni bitta tugma bosasiz — to'yingiz
+        butunlay qo'lingizda.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="y-sec" id="qadamlar">
+  <div class="wrap">
+    <div class="y-center" style="margin-bottom:clamp(34px,6vw,54px)">
+      <h2 class="y-h2">Uch qadam. Bo'ldi.</h2>
+      <p class="y-sub">Kompyuter kerakmi? Yo'q. Dasturchi kerakmi? Yo'q. Telefon yetadi.</p>
+    </div>
+
+    <div class="y-grid-3">
+      <article class="y-step">
+        <figure><img src="/assets/img/s1.webp" alt="To'y oshi — mehmonlarga plov tortilmoqda" loading="lazy" width="760" height="475"></figure>
+        <span class="num">01</span>
+        <h3>Albom yarating</h3>
+        <p>Ism yozasiz. Sana yozasiz. QR varaqasi o'zi tayyor bo'ladi — chop
+        etasiz, stolga qo'yasiz.</p>
+      </article>
+      <article class="y-step">
+        <figure><img src="/assets/img/s2.webp" alt="Kelin salom marosimi — mehmonlar telefonlarida suratga olmoqda" loading="lazy" width="760" height="475"></figure>
+        <span class="num">02</span>
+        <h3>Mehmonlar qo'shadi</h3>
+        <p>Mehmon kamerani QR'ga tutadi, rasmini tanlaydi. Ilova o'rnatmaydi,
+        parol o'ylamaydi, ro'yxatdan o'tmaydi.</p>
+      </article>
+      <article class="y-step">
+        <figure><img src="/assets/img/s3.webp" alt="Kelin va kuyov milliy to'y libosida" loading="lazy" width="760" height="475"></figure>
+        <span class="num">03</span>
+        <h3>Yuklab olasiz</h3>
+        <p>Bitta tugma bosasiz — hamma surat bitta faylda sizda.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="y-sec-tight">
+  <div class="wrap">
+    <div class="y-card" style="padding:clamp(26px,5vw,44px)">
+      <div class="y-center" style="margin-bottom:34px">
+        <h2 class="y-h2">To'yxonada internet sekinmi?</h2>
+        <p class="y-sub">Og'ir ishni telefonning o'zi bajaradi, tarmoqqa eng kamini yuboradi.</p>
+      </div>
+      <div class="y-grid-3">
+        <div class="y-spec">
+          <span class="y-tag">Yuklashdan oldin</span>
+          <div class="y-num">Siqish</div>
+          <p>Rasm yuborishdan oldin telefonning o'zida kichraytiriladi. Sekin
+          tarmoqda farqni darhol sezasiz.</p>
+        </div>
+        <div class="y-spec">
+          <span class="y-tag">Bir vaqtda</span>
+          <div class="y-num">3 ta</div>
+          <p>Rasmlar navbat bilan emas, uchtadan yuklanadi — kutish vaqti bir
+          necha barobar qisqaradi.</p>
+        </div>
+        <div class="y-spec">
+          <span class="y-tag">Albom ochiq turadi</span>
+          <div class="y-num">60 kun</div>
+          <p>Shu muddat ichida istagancha yuklab olasiz. Keyin suratlar
+          o'chiriladi — buni oldindan ochiq aytamiz.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="y-sec">
+  <div class="wrap y-price">
+    <span class="y-tag">Endi eng qiziq savol</span>
+    <div class="amount" style="margin-top:14px">Bepul</div>
+    <p class="y-sub" style="margin-top:16px;max-width:40ch">
+      Nega bepul? Rasmlar telefoningizning o'zida siqiladi, albom esa 60
+      kundan keyin o'chadi — saqlash bizga deyarli hech narsaga tushmaydi.
+      Obuna ham, sinov muddati ham yo'q.
+    </p>
+    <ul class="y-list">
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Bitta albomga 1500 tagacha rasm</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Cheksiz mehmon — har biri ilovasiz qo'shadi</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Chop etishga tayyor A5 QR varaqasi</span></li>
+      <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Barcha rasmlar bitta ZIP faylda</span></li>
+    </ul>
+    <div style="margin-top:34px"><a class="y-btn" href="/yaratish/">Menga albom kerak</a></div>
+  </div>
+</section>
+
+<section class="y-sec-tight">
+  <div class="wrap">
+    <div class="y-panel y-center">
+      <h2 class="y-h2" style="max-width:18ch;margin:0 auto">Keyingi to'y qachon?</h2>
+      <p style="margin:16px auto 28px;max-width:44ch;line-height:1.65">
+        QR varaqasini bugun chop etib qo'ying — to'y kuni bu haqda umuman
+        o'ylamaysiz. Va keyin ham afsuslanmaysiz.
+      </p>
+      <a class="y-btn" href="/yaratish/" style="background:var(--y-oq);color:var(--y-ink)">Albom yaratish</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="wrap">
+  <footer class="y-foot">
+    <span>Chaqnoq'ni <a href="https://maqsudjon.com" target="_blank" rel="noopener me">Maqsudjon Polatov</a> yaratgan</span>
+    <span style="display:flex;gap:18px;flex-wrap:wrap">
+      <a href="/boshqarish/">Albomlarim</a>
+      <a href="/maxfiylik/">Maxfiylik</a>
+      <a href="/shartlar/">Shartlar</a>
+      <a href="/manbalar/">Rasm manbalari</a>
+    </span>
+  </footer>
+</div>
+
+<div class="y-note">Yangi dizayn eskizi · <a href="/">hozirgisi</a></div>
+
+<script>
+  addEventListener('scroll', () => {
+    document.documentElement.classList.toggle('scrolled', scrollY > 8);
+  }, { passive: true });
+</script>
+</body>
+</html>
