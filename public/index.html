@@ -31,7 +31,7 @@
   section { padding: clamp(56px, 9vw, 104px) 0; }
   section + section { border-top: 1px solid var(--border); }
 
-  .hero { padding: clamp(60px, 12vw, 130px) 0 clamp(48px, 8vw, 88px); text-align: center; }
+  .hero { padding: clamp(52px, 10vw, 108px) 0 clamp(18px, 3vw, 40px); text-align: center; }
   .hero .eyebrow { display: block; margin-bottom: 22px; }
   .hero h1 { max-width: 17ch; margin: 0 auto 22px; }
   .hero .lede { font-size: clamp(1.0625rem, 2.2vw, 1.1875rem); max-width: 48ch; margin: 0 auto 32px; }
@@ -80,6 +80,131 @@
   .faq details[open] summary::after { content: "−"; }
   .faq details p { margin: 12px 0 0; max-width: 62ch; font-size: .9375rem; }
 
+
+  /* ── Mahsulot ko'rgazmasi ────────────────────────────────────────────
+     Odam matnni o'qib emas, mahsulotni ko'rib tushunadi. Shuning uchun
+     bosh sahifada eng katta element — telefon ekranidagi haqiqiy albom
+     va uning yonida stolga qo'yiladigan QR kartochka. */
+  .showcase {
+    position: relative;
+    display: flex; align-items: flex-end; justify-content: center;
+    gap: clamp(16px, 4vw, 56px);
+    margin-top: clamp(44px, 7vw, 76px);
+  }
+
+  /* Orqa fondagi yumshoq yorug'lik — vizualni sahifadan ajratib turadi */
+  .showcase::before {
+    content: ""; position: absolute; inset: auto 0 8%; height: 62%;
+    background: radial-gradient(60% 100% at 50% 100%, color-mix(in oklab, var(--fg) 7%, transparent), transparent 70%);
+    z-index: -1;
+  }
+
+  .phone {
+    width: clamp(232px, 30vw, 288px);
+    flex: none;
+    border-radius: 38px;
+    padding: 9px;
+    background: var(--fg);
+    box-shadow: 0 30px 60px -30px rgb(10 10 10 / .5), 0 0 0 1px rgb(10 10 10 / .06);
+  }
+  .phone-screen {
+    background: var(--bg);
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    padding: 26px 12px 0;
+  }
+  .phone-notch {
+    position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
+    width: 62px; height: 17px; border-radius: 999px; background: var(--fg);
+  }
+  .phone h4 {
+    margin: 8px 0 3px; text-align: center;
+    font-size: 1rem; font-weight: 600; letter-spacing: -.03em;
+  }
+  .phone .when {
+    text-align: center; font-family: var(--mono);
+    font-size: .5rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--subtle); margin-bottom: 11px;
+  }
+  .phone .meta {
+    display: flex; justify-content: space-between;
+    font-family: var(--mono); font-size: .5rem; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--subtle);
+    padding-bottom: 7px; border-bottom: 1px solid var(--border); margin-bottom: 7px;
+  }
+  .mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+  .mini-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 3px; }
+  .phone .mini-cta {
+    margin: 11px -12px 0; padding: 11px;
+    background: var(--fg); color: var(--bg);
+    text-align: center; font-size: .8125rem; font-weight: 500;
+  }
+
+  /* QR kartochka — stolga qo'yiladigan varaqaning kichik ko'rinishi */
+  .qr-card {
+    width: clamp(140px, 19vw, 186px);
+    flex: none;
+    background: #fff;
+    border-radius: 6px;
+    padding: 18px 14px 14px;
+    text-align: center;
+    transform: rotate(-3.5deg);
+    box-shadow: 0 22px 44px -22px rgb(10 10 10 / .45), 0 0 0 1px rgb(10 10 10 / .1);
+    margin-bottom: 22px;
+  }
+  .qr-card, .qr-card * { color: #0a0a0a; }
+  .qr-card .k {
+    font-family: var(--mono); font-size: .45rem; letter-spacing: .2em;
+    text-transform: uppercase; color: #6b6b6b; margin-bottom: 8px;
+  }
+  .qr-card .n { font-size: .8125rem; font-weight: 600; letter-spacing: -.02em; margin-bottom: 10px; }
+  .qr-card img { width: 100%; border-radius: 2px; }
+  .qr-card .c { margin-top: 9px; font-size: .5625rem; line-height: 1.35; color: #6b6b6b; }
+
+  /* Telefon va kartochka orasidagi ko'rsatkich */
+  .flow {
+    align-self: center; flex: none;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    color: var(--subtle); margin-bottom: 60px;
+  }
+  .flow span {
+    font-family: var(--mono); font-size: .5625rem;
+    letter-spacing: .12em; text-transform: uppercase; white-space: nowrap;
+  }
+  /* Tor ekranda kartochka va telefon yonma-yon sig'ishi kerak. O'lcham
+     vw bilan beriladi, aks holda kartochka burilgani uchun chap chetdan
+     chiqib ketadi. */
+  @media (max-width: 620px) {
+    .flow { display: none; }
+    .showcase { gap: 8px; align-items: center; }
+    .qr-card {
+      margin-bottom: 0;
+      width: clamp(112px, 31vw, 160px);
+      padding: 13px 10px 10px;
+      transform: rotate(-3deg);
+    }
+    .qr-card .n { font-size: .6875rem; margin-bottom: 7px; }
+    .qr-card .c { font-size: .5rem; }
+    .phone { width: clamp(186px, 50vw, 250px); border-radius: 30px; padding: 7px; }
+    .phone-screen { border-radius: 24px; }
+  }
+
+  /* Bosqichlardagi kichik suratlar */
+  .step figure { margin: 0 0 16px; border-radius: var(--r-s); overflow: hidden; background: var(--surface-2); }
+  .step figure img { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
+
+  .band { margin: 0; position: relative; border-top: 1px solid var(--border); }
+  .band img { width: 100%; height: clamp(220px, 34vw, 420px); object-fit: cover; display: block; }
+  .band figcaption {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: clamp(18px, 4vw, 34px) var(--pad);
+    background: linear-gradient(transparent, rgb(0 0 0 / .72));
+    color: #fff; font-size: clamp(.9375rem, 2vw, 1.125rem);
+    max-width: 44ch;
+  }
+  .band + section { border-top: 0; }
+
   footer.site { border-top: 1px solid var(--border); padding: 26px 0; }
   footer.site .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
   footer.site, footer.site a { color: var(--subtle); font-size: .8125rem; }
@@ -104,6 +229,44 @@
   </p>
   <a class="btn btn-primary btn-lg" href="/yaratish/">Albom yaratish</a>
   <p class="small muted" style="margin-top:14px">Bepul · bir daqiqada tayyor</p>
+
+  <div class="showcase">
+    <div class="qr-card">
+      <div class="k">Umumiy albom</div>
+      <div class="n">Aziza va Bekzod</div>
+      <img src="/assets/img/qr-demo.svg" alt="Albom QR kodi" width="120" height="120">
+      <div class="c">Kamerani tuting va<br>rasmlaringizni qo'shing</div>
+    </div>
+
+    <div class="flow" aria-hidden="true">
+      <span>Skanerlaydi</span>
+      <svg width="46" height="10" viewBox="0 0 46 10" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M0 5h42M38 1l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Albomga tushadi</span>
+    </div>
+
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <h4>Aziza va Bekzod</h4>
+        <div class="when">12 sentabr 2026</div>
+        <div class="meta"><span>418 ta rasm</span><span>60 kun</span></div>
+        <div class="mini-grid">
+          <img src="/assets/img/g1.webp" alt="" loading="lazy" width="420" height="420">
+          <img src="/assets/img/g2.webp" alt="" loading="lazy" width="420" height="420">
+          <img src="/assets/img/g3.webp" alt="" loading="lazy" width="420" height="420">
+          <img src="/assets/img/g4.webp" alt="" loading="lazy" width="420" height="420">
+          <img src="/assets/img/g5.webp" alt="" loading="lazy" width="420" height="420">
+          <img src="/assets/img/g6.webp" alt="" loading="lazy" width="420" height="420">
+          <img src="/assets/img/g7.webp" alt="" loading="lazy" width="420" height="420">
+          <img src="/assets/img/g8.webp" alt="" loading="lazy" width="420" height="420">
+          <img src="/assets/img/g9.webp" alt="" loading="lazy" width="420" height="420">
+        </div>
+        <div class="mini-cta">+ Rasm qo'shish</div>
+      </div>
+    </div>
+  </div>
 </header>
 
 <section>
@@ -125,6 +288,14 @@
   </div>
 </section>
 
+<figure class="band">
+  <img src="/assets/img/band.webp" alt="Mehmon telefonida kelin-kuyovni suratga olmoqda"
+       loading="lazy" width="1400" height="560">
+  <figcaption>
+    Har bir mehmonning telefonida siz hech qachon ko'rmagan suratlar bor.
+  </figcaption>
+</figure>
+
 <section>
   <div class="wrap">
     <div class="head">
@@ -133,18 +304,21 @@
     </div>
     <div class="steps">
       <div class="step">
+        <figure><img src="/assets/img/s1.webp" alt="To'yxona, stollar bezatilgan" loading="lazy" width="720" height="450"></figure>
         <span class="num">01</span>
         <h3>Albom yarating</h3>
         <p>Ism va sanani kiritasiz. Tayyor QR varaqasini chop etasiz —
         A5 o'lchamda, stolga qo'yish uchun.</p>
       </div>
       <div class="step">
+        <figure><img src="/assets/img/s2.webp" alt="Mehmonlar stolda birga surat olmoqda" loading="lazy" width="720" height="450"></figure>
         <span class="num">02</span>
         <h3>Mehmonlar rasm qo'shadi</h3>
         <p>Kamerani QR'ga tutadi, sahifa ochiladi, rasm tanlaydi. Bo'ldi.
         Parol yo'q, ro'yxat yo'q, o'rnatiladigan ilova yo'q.</p>
       </div>
       <div class="step">
+        <figure><img src="/assets/img/s3.webp" alt="Mehmonlar konfetti sochmoqda" loading="lazy" width="720" height="450"></figure>
         <span class="num">03</span>
         <h3>Hammasini yuklab olasiz</h3>
         <p>Bitta tugma — barcha rasmlar bitta ZIP faylda, telefoningizga
