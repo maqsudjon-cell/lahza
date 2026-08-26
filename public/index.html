@@ -26,10 +26,9 @@
 <meta name="twitter:title" content="Mehmonlar suratini bitta albomga yig'amiz">
 <meta name="twitter:description" content="Stolga bitta QR kod. Mehmon skanerlaydi, rasmini qo'shadi. Ertasiga hammasi bitta faylda sizda. Bepul.">
 <meta name="twitter:image" content="https://chaqnoq.uz/assets/img/og.jpg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="/assets/img/qr-demo.svg">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/inter-var-latin.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/plex-mono-400-latin.woff2">
 <link rel="stylesheet" href="/assets/base.css">
 <script>
   /* `.anim` birinchi chizishdan OLDIN qo'yiladi — aks holda kontent avval
@@ -153,24 +152,32 @@
   .beats { position: relative; list-style: none; margin: 30px 0 0; padding: 0; }
   .beats::before {
     content: ""; position: absolute; left: 0; top: 0; bottom: 0;
-    width: 1px; background: var(--border);
+    width: 2px; background: var(--border);
   }
+  /* Rangi tepadagi chiziqlar bilan bir xil — sahifadagi yagona urg'u
+     shu gradient. `transform: scaleY` ATAYLAB ishlatilmadi: u gradientni
+     ham siqib qo'yadi va ranglar joyidan siljiydi. `clip-path` esa
+     chiziqni faqat ochib boradi, ranglar qimirlamaydi. */
   .beats-rail {
-    position: absolute; left: 0; top: 0; width: 1px; height: 100%;
-    background: var(--fg);
-    transform: scaleY(0); transform-origin: 0 0;
-    will-change: transform;
+    position: absolute; left: 0; top: 0; width: 2px; height: 100%;
+    background: var(--rail-v);
+    background-size: 100% 240%;
+    clip-path: inset(0 0 100% 0);
+    border-radius: 999px;
+    will-change: clip-path;
   }
+  html.anim .beats-rail { animation: railOqimV 6s linear infinite; }
+  @keyframes railOqimV { to { background-position: 0 -240%; } }
   .beats li {
     position: relative;
-    padding: 13px 0 13px 28px;
+    padding: 13px 0 13px 30px;
     font-size: clamp(1.0625rem, 2.4vw, 1.1875rem);
     line-height: 1.45; letter-spacing: -.012em;
     color: var(--muted);
   }
   .beats li::before {
-    content: ""; position: absolute; left: 0; top: 1.35em;
-    width: 15px; height: 1px; background: var(--border-strong);
+    content: ""; position: absolute; left: 2px; top: 1.35em;
+    width: 14px; height: 1px; background: var(--border-strong);
   }
   .beats li.last { color: var(--fg); font-weight: 500; }
 

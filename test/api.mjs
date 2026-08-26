@@ -102,6 +102,42 @@ async function testHeaders() {
   ok('sitemap shaxsiy sahifalarni bermaydi', !smText.includes('/e/') && !smText.includes('/boshqarish/'));
 }
 
+/* --- 1b. Tezlik ---------------------------------------------------------- */
+
+async function testTezlik() {
+  section('Tezlik');
+
+  const kesh = async (path) => (await req(path, { cache: 'no-store' }))
+    .headers.get('cache-control') || '';
+
+  ok('shrift bir yilga keshlanadi',
+    (await kesh('/assets/fonts/inter-var-latin.woff2')).includes('max-age=31536000'),
+    await kesh('/assets/fonts/inter-var-latin.woff2'));
+  ok('rasm uzoq keshlanadi',
+    (await kesh('/assets/img/g1.webp')).includes('max-age=2592000'),
+    await kesh('/assets/img/g1.webp'));
+  ok('uslub zaxira bilan keshlanadi',
+    (await kesh('/assets/base.css')).includes('stale-while-revalidate'),
+    await kesh('/assets/base.css'));
+  ok('sahifaning o\'zi keshlanmaydi',
+    (await kesh('/')).includes('max-age=0'), await kesh('/'));
+
+  // Shrift begona domendan kelmasligi kerak — u har ochilishda ikkita
+  // qo'shimcha ulanish degani edi.
+  const html = await (await req('/', { cache: 'no-store' })).text();
+  ok('Google Fonts havolasi yo\'q', !html.includes('fonts.googleapis.com'));
+  ok('gstatic havolasi yo\'q', !html.includes('fonts.gstatic.com'));
+  ok('shrift oldindan yuklanadi', html.includes('rel="preload" as="font"'));
+
+  const css = await (await req('/assets/base.css', { cache: 'no-store' })).text();
+  ok('@font-face o\'z domenimizga ishora qiladi',
+    css.includes("/assets/fonts/inter-var-latin.woff2"));
+
+  const font = await req('/assets/fonts/plex-mono-400-latin.woff2', { cache: 'no-store' });
+  eq('mono shrift beriladi', font.status, 200);
+  eq('turi to\'g\'ri', font.headers.get('content-type'), 'font/woff2');
+}
+
 /* --- 2. Albom yaratish --------------------------------------------------- */
 
 const post = (path, body) => req(path, {
@@ -393,6 +429,7 @@ try {
 }
 
 await testHeaders();
+await testTezlik();
 
 if (WRITE) {
   const album = await testCreate();

@@ -273,8 +273,9 @@ function setupBeats() {
     // chiziqqa yetganda to'lish boshlanadi, pastki cheti yetganda
     // tugaydi. Ya'ni chiziq ko'zdan bir oz oldinda yuradi.
     const chiziq = innerHeight * 0.62;
-    const ulush = (chiziq - r.top) / Math.max(1, r.height);
-    rail.style.transform = `scaleY(${Math.max(0, Math.min(1, ulush))})`;
+    const ulush = Math.max(0, Math.min(1, (chiziq - r.top) / Math.max(1, r.height)));
+    // `clip-path` — `scaleY` emas: ikkinchisi gradientni siqib qo'yadi.
+    rail.style.clipPath = `inset(0 0 ${((1 - ulush) * 100).toFixed(2)}% 0)`;
   };
 
   addEventListener('scroll', () => {

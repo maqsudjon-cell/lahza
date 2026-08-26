@@ -22,6 +22,8 @@
 
   /* Yagona rangli urg'u — faqat kerak joyda ishlatiladi */
   --rail: linear-gradient(90deg, #2dd4bf, #38bdf8 32%, #818cf8 64%, #e879f9 100%);
+  /* Tik chiziqlar uchun o'sha rang, faqat pastga qarab. */
+  --rail-v: linear-gradient(180deg, #2dd4bf, #38bdf8 32%, #818cf8 64%, #e879f9 100%);
 
   --sans: Inter, "Inter fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -69,6 +71,42 @@
   --border-strong: color-mix(in oklab, #f5f5f5 22%, transparent);
   --card:       0 0 0 1px rgb(255 255 255 / .1);
   --card-hover: 0 0 0 1px rgb(255 255 255 / .18);
+}
+
+/* --- Shriftlar -----------------------------------------------------------
+   O'z domenimizdan beriladi, Google'dan emas. Avval brauzer matnni
+   ko'rsatishdan oldin ikkita begona domenga ulanishi kerak edi:
+   fonts.googleapis.com dan uslub fayli, keyin fonts.gstatic.com dan
+   shriftning o'zi — sekin mobil tarmoqda bu yarim soniyagacha kutish.
+   Endi ikkalasi ham shu serverdan, allaqachon ochiq ulanish orqali.
+
+   Faqat `latin` qismi olingan: saytdagi 82 ta turli belgining hammasi
+   shu oraliqda (tekshirilgan). Uzbekcha `oʻ` ham shu yerda — U+02BB.
+   -------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('/assets/fonts/inter-var-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/assets/fonts/plex-mono-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/assets/fonts/plex-mono-500-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 /* Inter yuklanguncha tizim shrifti ishlatiladi. `size-adjust` o'lchamlarni

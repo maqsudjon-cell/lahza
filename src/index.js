@@ -7,7 +7,7 @@
    ========================================================================== */
 
 import { err, validId } from '../lib/store.js';
-import { harden, isHtml } from '../lib/headers.js';
+import { harden, isHtml, withCache } from '../lib/headers.js';
 import { createEvent, getEvent } from './routes/event.js';
 import { listPhotos } from './routes/photos.js';
 import { uploadPhoto } from './routes/upload.js';
@@ -96,9 +96,8 @@ async function route(request, env, url) {
     }
 
     // Statik faylga ham, API'ga ham tushmadi.
-    return env.ASSETS
-      ? env.ASSETS.fetch(request)
-      : new Response('Topilmadi', { status: 404 });
+    if (!env.ASSETS) return new Response('Topilmadi', { status: 404 });
+    return withCache(await env.ASSETS.fetch(request), url.pathname);
   } catch (e) {
     console.error('So\'rovda xatolik:', url.pathname, e);
     return err('Serverda xatolik', 500);
