@@ -204,6 +204,7 @@ function setupLiveAlbum() {
   let i = 0;
   let timer = null;
   let total = 0;
+  let boshlangich = 0;
 
   const tick = () => {
     const tile = tiles[i % tiles.length];
@@ -214,7 +215,9 @@ function setupLiveAlbum() {
     void tile.offsetWidth;
     tile.classList.add('just-in');
 
-    total += 1;
+    // Cheksiz o'smasin: sahifa uzoq ochiq qolsa raqam haqiqatga
+    // o'xshamay qoladi. Bir necha o'nlab rasm — yetarli taassurot.
+    if (total < boshlangich + 60) total += 1;
     count.textContent = total;
   };
 
@@ -233,6 +236,7 @@ function setupLiveAlbum() {
         setTimeout(() => {
           if (!grid.isConnected) return;
           total = Number(count.textContent.replace(/\D/g, '')) || Number(count.dataset.to) || 0;
+          boshlangich = boshlangich || total;
           boshlandi = true;
           timer = setInterval(tick, 2600);
         }, kechikish);

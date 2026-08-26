@@ -331,13 +331,15 @@
   html.anim .mini-grid.filled img { opacity: 1; transform: none; }
 
   /* Vaqti-vaqti bilan bitta surat "endi keldi" degandek chaqnaydi.
-     Halqa telefon ekranidan chiqib ketmasligi uchun `inset` bilan
-     ichkarida chiziladi. */
-  .mini-grid img.just-in { animation: keldi .85s cubic-bezier(.2,.9,.25,1); }
+     `opacity` ATAYLAB o'zgartirilmaydi: fon tabida yoki sekin qurilmada
+     animatsiya birinchi kadrda muzlab qolishi mumkin, va o'sha kadr
+     shaffof bo'lsa surat ko'rinmay qoladi. Shu sababli faqat o'lcham va
+     yorqinlik o'ynatiladi — qaysi kadrda to'xtasa ham surat ko'rinadi. */
+  .mini-grid img.just-in { animation: keldi .9s cubic-bezier(.2,.9,.25,1); }
   @keyframes keldi {
-    0%   { transform: scale(.72); opacity: .25; }
-    55%  { transform: scale(1.04); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
+    0%   { transform: scale(.86); filter: brightness(1.55) saturate(.8); }
+    60%  { transform: scale(1.03); filter: brightness(1); }
+    100% { transform: scale(1);    filter: brightness(1); }
   }
 
   /* Kartochkadan telefonga qarab yurgan nozik ishora */
