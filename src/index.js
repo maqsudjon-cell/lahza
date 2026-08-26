@@ -13,7 +13,7 @@ import { uploadPhoto } from './routes/upload.js';
 import { zipAlbum } from './routes/zip.js';
 import { qrSvg } from './routes/qr.js';
 import { serveFile } from './routes/file.js';
-import { robots, sitemap } from './routes/seo.js';
+import { robots, sitemap, indexNowKey } from './routes/seo.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -37,6 +37,8 @@ export default {
     try {
       if (url.pathname === '/robots.txt')  return robots(request);
       if (url.pathname === '/sitemap.xml') return sitemap(request);
+      // IndexNow kaliti — Bing va Yandex shu faylni tekshiradi
+      if (url.pathname === '/aadbf93700f7c63be3658b7dcb7dd34a.txt') return indexNowKey();
 
       // /f/{eventId}/{p|t}/{photoId}
       if (seg[0] === 'f' && seg.length === 4) {

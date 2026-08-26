@@ -19,6 +19,22 @@ const PUBLIC_PAGES = [
   { path: '/manbalar/',  priority: '0.2', lastmod: '2026-08-25' },
 ];
 
+/**
+ * IndexNow kaliti.
+ *
+ * IndexNow — Bing va **Yandex** ga "sahifa o'zgardi" deb darhol xabar
+ * beradigan ochiq protokol. Akkaunt kerak emas, faqat shu kalit fayl
+ * saytda turishi kifoya. O'zbekistonda Yandex ulushi katta bo'lgani
+ * uchun bu Google'dan kam ahamiyatli emas.
+ */
+export const INDEXNOW_KEY = 'aadbf93700f7c63be3658b7dcb7dd34a';
+
+export function indexNowKey() {
+  return new Response(INDEXNOW_KEY, {
+    headers: { 'content-type': 'text/plain; charset=utf-8' },
+  });
+}
+
 export function robots(request) {
   const { origin } = new URL(request.url);
   const body = [

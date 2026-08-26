@@ -142,6 +142,16 @@ img { max-width: 100%; height: auto; display: block; }
 
 .rule { height: 1px; background: var(--border); border: 0; margin: 0; }
 
+/* Ichki sahifalarning yuqorisidagi nom. Avval beshta faylda alohida
+   yozilgan edi va o'lchamlari bir-biridan farq qilardi. */
+.brand {
+  display: inline-block;
+  font-weight: 600; font-size: 1.0625rem; letter-spacing: -.03em;
+  color: var(--subtle);
+  margin-bottom: 26px;
+}
+.brand:hover { color: var(--fg); }
+
 /* Klaviatura bilan yuradiganlar uchun: Tab bosilganda birinchi bo'lib
    chiqadi va menyudan sakrab o'tishga imkon beradi. */
 .skip {
@@ -332,7 +342,7 @@ html.anim .reveal.shown.done { will-change: auto; transition-delay: 0ms; }
   padding: 0;
   overflow: hidden;
   border-radius: var(--r-s);
-  cursor: pointer;
+  cursor: zoom-in;
   -webkit-tap-highlight-color: transparent;
 }
 .tile img {
@@ -346,19 +356,26 @@ html.anim .reveal.shown.done { will-change: auto; transition-delay: 0ms; }
 
 /* --- Lightbox ------------------------------------------------------------ */
 
+/* Fon to'liq qora: yarim shaffof bo'lganda orqadagi sarlavha va
+   "Rasm qo'shish" tugmasi arvohdek ko'rinib turadi va bosiladigandek
+   tuyuladi. Surat ko'rish oynasi — surat uchun, boshqa hech narsa uchun emas. */
 .lb {
   position: fixed; inset: 0;
-  background: rgb(0 0 0 / .95);
+  background: #000;
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 100;
+  touch-action: pan-y;
 }
 .lb.on { display: flex; }
 .lb img { max-width: 100vw; max-height: 100vh; object-fit: contain; }
-.lb-close, .lb-nav {
+
+/* Tugmalar oq emas, qora yarim shaffof: oq 10% yorqin suratda umuman
+   ko'rinmay qoladi, qora esa ikkala holatda ham ajralib turadi. */
+.lb-close, .lb-nav, .lb-save {
   position: absolute;
-  background: rgb(255 255 255 / .1);
+  background: rgb(0 0 0 / .42);
   color: #fff;
   border: 0;
   border-radius: var(--r-pill);
@@ -367,11 +384,25 @@ html.anim .reveal.shown.done { will-change: auto; transition-delay: 0ms; }
   cursor: pointer;
   display: grid; place-items: center;
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  -webkit-tap-highlight-color: transparent;
 }
-.lb-close:hover, .lb-nav:hover { background: rgb(255 255 255 / .2); }
+.lb-close:hover, .lb-nav:hover, .lb-save:hover { background: rgb(0 0 0 / .66); }
 .lb-close { top: calc(14px + env(safe-area-inset-top)); right: 14px; }
+.lb-save  { top: calc(14px + env(safe-area-inset-top)); right: 66px; }
 .lb-nav.prev { left: 12px; top: 50%; transform: translateY(-50%); }
 .lb-nav.next { right: 12px; top: 50%; transform: translateY(-50%); }
+
+/* Nechanchi suratdaligini ko'rsatadi — usiz albomda yo'nalish yo'qoladi. */
+.lb-count {
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  font-family: var(--mono); font-size: .75rem; letter-spacing: .12em;
+  color: rgb(255 255 255 / .8);
+  text-shadow: 0 1px 4px rgb(0 0 0 / .7);
+  pointer-events: none;
+}
 
 /* --- Yordamchilar -------------------------------------------------------- */
 

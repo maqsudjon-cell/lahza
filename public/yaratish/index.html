@@ -27,11 +27,6 @@
   .box { width: min(520px, calc(100vw - 2 * var(--pad))); }
   .head { text-align: center; margin-bottom: 28px; }
   .head h1 { margin-bottom: 10px; }
-  .brand {
-    font-weight: 600; font-size: 1.0625rem; letter-spacing: -.03em;
-    display: inline-block; margin-bottom: 26px; color: var(--subtle);
-  }
-  .brand:hover { color: var(--fg); }
 </style>
 </head>
 <body>
@@ -68,12 +63,12 @@
   </form>
 
   <p class="small muted center" style="margin-top:22px">
-    Avval albom yaratganmisiz? <a href="/boshqarish/">Albomlarim</a>
+    Avval albom yaratganmisiz? <a class="link" href="/boshqarish/">Albomlarim</a>
   </p>
 
   <p class="small muted center" style="margin-top:14px">
-    Albom yaratish bilan <a href="/shartlar/">foydalanish shartlari</a>ga
-    rozilik bildirasiz. <a href="/maxfiylik/">Maxfiylik siyosati</a>.
+    Albom yaratish bilan <a class="link" href="/shartlar/">foydalanish shartlari</a>ga
+    rozilik bildirasiz. <a class="link" href="/maxfiylik/">Maxfiylik siyosati</a>.
   </p>
 </div>
 
@@ -81,9 +76,6 @@
 const form   = document.getElementById('form');
 const submit = document.getElementById('submit');
 const msg    = document.getElementById('msg');
-
-// Standart sana — bugun. To'ylar odatda yaqin kunlarga qo'yiladi.
-document.getElementById('date').value = new Date().toISOString().slice(0, 10);
 
 function showError(text) {
   msg.textContent = text;
