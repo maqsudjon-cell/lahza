@@ -230,7 +230,8 @@ function render(meta, count) {
         <div>
           <h2>To'ydan keyin yuklab oling</h2>
           <p class="small muted">Hammasi bitta ZIP faylda. Rasmlar 1920px gacha
-          kichraytirilgan — ko'rish va odatiy chop etishga yetadi.</p>
+          kichraytirilgan — ko'rish va odatiy chop etishga yetadi. Keraksiz
+          suratni albomni ochib o'chirib tashlashingiz mumkin.</p>
         </div>
       </div>
 
@@ -240,10 +241,16 @@ function render(meta, count) {
       </div>
 
       ${count
-        ? `<a class="btn btn-primary btn-block" style="margin-top:18px"
-             href="/api/zip/${encodeURIComponent(meta.id)}?k=${encodeURIComponent(key)}">
-             ZIP faylni yuklab olish
-           </a>`
+        ? `<div class="actions" style="margin-top:18px">
+             <a class="btn btn-primary"
+                href="/api/zip/${encodeURIComponent(meta.id)}?k=${encodeURIComponent(key)}">
+               ZIP faylni yuklab olish
+             </a>
+             <a class="btn btn-ghost" target="_blank" rel="noopener"
+                href="/e/?i=${encodeURIComponent(meta.id)}&k=${encodeURIComponent(key)}">
+               Ko'rish va rasm o'chirish
+             </a>
+           </div>`
         : `<div class="note" style="margin-top:18px">Hali rasm yo'q. Mehmonlar qo'shgani
            sayin shu yerda ko'rinadi — sahifani yangilab turing.</div>`}
 

@@ -77,7 +77,38 @@
   .hero .eyebrow { display: block; margin-bottom: 22px; }
   .hero h1 { max-width: 15ch; margin: 0 auto 22px; letter-spacing: -.04em; }
   .hero .lede { font-size: clamp(1.0625rem, 2.2vw, 1.1875rem); max-width: 48ch; margin: 0 auto 32px; }
-  .hero .rail { width: 72px; margin: 0 auto 26px; }
+  /* Sahifadagi yagona rangli element — shuning uchun jonli. Avval
+     harakatsiz chiziq edi va ko'z unga tushmasdi.
+     Boshlang'ich holat ATAYLAB CSS'da emas, faqat keyframe ichida:
+     shunda JS ishlamasa ham chiziq oddiy holicha ko'rinadi. */
+  .hero .rail {
+    width: 88px; height: 3px; margin: 0 auto 26px;
+    background-size: 260% 100%;
+    position: relative; overflow: hidden;
+  }
+  html.anim .hero .rail.shown {
+    animation: railChiz .75s cubic-bezier(.22,.68,.24,1) both,
+               railOqim 5.5s linear .8s infinite;
+  }
+  @keyframes railChiz {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+  }
+  @keyframes railOqim { to { background-position: -260% 0; } }
+
+  /* Chiziq ustidan yorug'lik yugurib o'tadi — bu ko'zni tortadigan
+     yagona harakat, shuning uchun kamdan-kam va qisqa. */
+  html.anim .hero .rail.shown::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.92) 50%, transparent);
+    transform: translateX(-110%);
+    animation: railYorug 5.5s cubic-bezier(.45,0,.5,1) 1.4s infinite;
+  }
+  @keyframes railYorug {
+    0%, 62%   { transform: translateX(-110%); }
+    88%, 100% { transform: translateX(110%); }
+  }
 
   /* Stol brauzerida matn va mahsulot yonma-yon turadi.
      Avval hammasi ustma-ust edi va 1440x790 ekranda telefonning atigi
@@ -111,15 +142,44 @@
   .head p { margin: 0; }
 
   /* Ikki ustunli taqqoslash — chegara bilan ajratiladi, fon bilan emas */
-  .compare { display: grid; border: 1px solid var(--border); border-radius: var(--r-l); overflow: hidden; }
-  @media (min-width: 780px) { .compare { grid-template-columns: 1fr 1fr; } }
-  .compare > div { padding: clamp(22px, 3.5vw, 34px); }
-  .compare > div + div { border-top: 1px solid var(--border); }
-  @media (min-width: 780px) { .compare > div + div { border-top: 0; border-left: 1px solid var(--border); } }
-  .compare .eyebrow { display: block; margin-bottom: 14px; }
-  .compare p { margin: 0; }
-  .compare .now p { color: var(--subtle); }
-  .compare .after p { color: var(--fg); }
+  /* ── Tanish holat ─────────────────────────────────────────────────
+     Bu sahifadagi eng kuchli ilgak, lekin avval ikkita uzun xatboshi
+     edi — hech kim o'qimasdi. Endi qisqa qatorlar: har biri bitta
+     tanish og'riq, ko'z pastga tushib boradi. Chapdagi chiziq esa
+     aylantirish bilan birga to'ladi va o'qishga undaydi. */
+  .pain .head { max-width: 26ch; margin-bottom: 8px; }
+  .pain .head .eyebrow { display: block; margin-bottom: 12px; }
+
+  .beats { position: relative; list-style: none; margin: 30px 0 0; padding: 0; }
+  .beats::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 1px; background: var(--border);
+  }
+  .beats-rail {
+    position: absolute; left: 0; top: 0; width: 1px; height: 100%;
+    background: var(--fg);
+    transform: scaleY(0); transform-origin: 0 0;
+    will-change: transform;
+  }
+  .beats li {
+    position: relative;
+    padding: 13px 0 13px 28px;
+    font-size: clamp(1.0625rem, 2.4vw, 1.1875rem);
+    line-height: 1.45; letter-spacing: -.012em;
+    color: var(--muted);
+  }
+  .beats li::before {
+    content: ""; position: absolute; left: 0; top: 1.35em;
+    width: 15px; height: 1px; background: var(--border-strong);
+  }
+  .beats li.last { color: var(--fg); font-weight: 500; }
+
+  .resolve {
+    margin-top: 34px; padding: clamp(20px, 3.2vw, 28px);
+    border: 1px solid var(--border-strong); border-radius: var(--r-l);
+  }
+  .resolve .eyebrow { display: block; margin-bottom: 12px; }
+  .resolve p { margin: 0; color: var(--fg); font-size: clamp(1rem, 2.2vw, 1.0625rem); }
 
   .steps { display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-l); overflow: hidden; }
   @media (min-width: 780px) { .steps { grid-template-columns: repeat(3, 1fr); } }
@@ -589,7 +649,7 @@
     <div class="sc-item">
     <div class="qr-card">
       <div class="k">Umumiy albom</div>
-      <div class="n">Aziza va Bekzod</div>
+      <div class="n">Alomatxon va Jo'shqinbek</div>
       <img src="/assets/img/qr-demo.svg" alt="Albom QR kodi" width="120" height="120">
       <div class="c">Kamerani tuting va<br>rasmlaringizni qo'shing</div>
     </div>
@@ -608,7 +668,7 @@
     <div class="phone">
       <div class="phone-screen">
         <div class="phone-notch"></div>
-        <h4>Aziza va Bekzod</h4>
+        <h4>Alomatxon va Jo'shqinbek</h4>
         <div class="when">12 sentabr 2026</div>
         <div class="meta"><span><b class="count" data-to="418">418</b> ta rasm</span><span>60 kun</span></div>
         <div class="mini-grid">
@@ -630,22 +690,29 @@
   </div>
 </header>
 
-<section>
-  <div class="wrap">
-    <div class="compare reveal">
-      <div class="now">
-        <span class="eyebrow">Sizga tanish holat</span>
-        <p>To'y tugadi. Endi boshlanadi: guruhlarni titasiz, "haligi rasmni
-        tashlang" deb yozasiz, javob kutasiz. Kimdir tashlaydi. Kimdir
-        unutadi. Story allaqachon o'chgan. Uch oydan keyin ham hali
-        surat terib yurasiz — va yarmini umuman topolmaysiz.</p>
-      </div>
-      <div class="after">
-        <span class="eyebrow">Chaqnoq bilan</span>
-        <p>Hech kimdan hech narsa so'ramaysiz. Mehmon o'zi qo'shadi, hammasi
-        bitta albomga tushadi. Ertasi kuni bitta tugma bosasiz — va
-        to'yingiz butunlay qo'lingizda.</p>
-      </div>
+<section class="pain">
+  <div class="wrap narrow">
+    <div class="head reveal">
+      <span class="eyebrow">Tanish holatmi?</span>
+      <h2>To'y tugadi. Eng zerikarli qismi endi boshlanadi.</h2>
+    </div>
+
+    <ol class="beats" id="beats">
+      <span class="beats-rail" id="beatsRail" aria-hidden="true"></span>
+      <li class="reveal">Guruhlarni titasiz.</li>
+      <li class="reveal">«Haligi rasmni tashlang» deb yozasiz.</li>
+      <li class="reveal">Javob kutasiz.</li>
+      <li class="reveal">Kimdir tashlaydi. Kimdir unutadi.</li>
+      <li class="reveal">Story allaqachon o'chgan.</li>
+      <li class="reveal last">Uch oydan keyin ham surat terib yurasiz — va
+      yarmini umuman topolmaysiz.</li>
+    </ol>
+
+    <div class="resolve reveal">
+      <span class="eyebrow">Chaqnoq bilan</span>
+      <p>Hech kimdan hech narsa so'ramaysiz. Mehmon o'zi qo'shadi, hammasi
+      bitta albomga tushadi. Ertasi kuni bitta tugma bosasiz —
+      <strong>to'yingiz butunlay qo'lingizda.</strong></p>
     </div>
   </div>
 </section>

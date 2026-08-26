@@ -138,6 +138,12 @@
 
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Rasm">
   <button class="lb-close" id="lbClose" aria-label="Yopish">&times;</button>
+  <button class="lb-del hidden" id="lbDel" type="button" aria-label="Rasmni o'chirish">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 6.5h16M9.5 6.5V4.8a1.3 1.3 0 0 1 1.3-1.3h2.4a1.3 1.3 0 0 1 1.3 1.3v1.7M6.5 6.5l.9 12.2a1.6 1.6 0 0 0 1.6 1.5h6a1.6 1.6 0 0 0 1.6-1.5l.9-12.2"/>
+    </svg>
+  </button>
   <a class="lb-save" id="lbSave" download aria-label="Rasmni saqlash">
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -155,7 +161,44 @@ import { processImageSafe, pool, withCpuLock, CONCURRENCY } from '/assets/compre
 
 const params  = new URLSearchParams(location.search);
 const eventId = (params.get('i') || '').trim();
+// Albom egasi boshqaruv sahifasidan kalit bilan kirsa, u istalgan rasmni
+// o'chira oladi. Oddiy mehmonda bu kalit yo'q.
+const ownerKey = (params.get('k') || '').trim();
 const app     = document.getElementById('app');
+
+/**
+ * Mehmon o'zi qo'shgan rasmlarning o'chirish kalitlari shu brauzerda
+ * saqlanadi — "adashib boshqa rasm yubordim" holati yordam so'rashsiz
+ * hal bo'lsin. Yashirin rejimda localStorage yopiq bo'lishi mumkin,
+ * shuning uchun hamma joyda try/catch.
+ */
+const DEL_STORE = `chaqnoq.del.${eventId}`;
+
+function delKeys() {
+  try { return JSON.parse(localStorage.getItem(DEL_STORE) || '{}'); }
+  catch { return {}; }
+}
+function rememberDelKey(photoId, key) {
+  if (!key) return;
+  try {
+    const all = delKeys();
+    all[photoId] = key;
+    localStorage.setItem(DEL_STORE, JSON.stringify(all));
+  } catch { /* saqlanmasa ham rasm yuklandi — muhimi shu */ }
+}
+function forgetDelKey(photoId) {
+  try {
+    const all = delKeys();
+    delete all[photoId];
+    localStorage.setItem(DEL_STORE, JSON.stringify(all));
+  } catch { /* e'tiborsiz */ }
+}
+/** Shu rasmni o'chirish mumkinmi va qaysi kalit bilan? */
+function deleteAuth(photoId) {
+  if (ownerKey) return `k=${encodeURIComponent(ownerKey)}`;
+  const key = delKeys()[photoId];
+  return key ? `d=${encodeURIComponent(key)}` : null;
+}
 
 const MAX_FILES_AT_ONCE = 40;
 
@@ -304,6 +347,7 @@ const lb = document.getElementById('lb');
 const lbImg = document.getElementById('lbImg');
 const lbSave = document.getElementById('lbSave');
 const lbCount = document.getElementById('lbCount');
+const lbDel = document.getElementById('lbDel');
 let lbList = [];
 let lbIndex = -1;
 
@@ -323,11 +367,73 @@ function showLightbox() {
   lbSave.download = `chaqnoq-${photoId}.jpg`;
   // Albomda qayerdaligini ko'rsatadi; usiz uzun albomda yo'nalish yo'qoladi.
   lbCount.textContent = `${lbIndex + 1} / ${lbList.length}`;
+
+  // O'chirish tugmasi faqat huquqi borida ko'rinadi va har safar
+  // tasdiqlanmagan holatga qaytadi.
+  resetDelButton();
+  lbDel.classList.toggle('hidden', !deleteAuth(photoId));
 }
+
+function resetDelButton() {
+  lbDel.classList.remove('confirm');
+  lbDel.innerHTML = `
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 6.5h16M9.5 6.5V4.8a1.3 1.3 0 0 1 1.3-1.3h2.4a1.3 1.3 0 0 1 1.3 1.3v1.7M6.5 6.5l.9 12.2a1.6 1.6 0 0 0 1.6 1.5h6a1.6 1.6 0 0 0 1.6-1.5l.9-12.2"/>
+    </svg>`;
+  lbDel.setAttribute('aria-label', 'Rasmni o\'chirish');
+}
+
+/**
+ * Ikki bosqichli o'chirish: birinchi bosishda tugma "O'chirilsinmi?"
+ * ga aylanadi. Oyna emas, chunki bu yerda oyna suratni yopib qo'yadi va
+ * telefonda qo'pol ko'rinadi. Rasm qaytmaydi — shoshilinch bosilmasin.
+ */
+let delSoraldi = false;
+lbDel.addEventListener('click', async () => {
+  const photoId = lbList[lbIndex];
+  const auth = deleteAuth(photoId);
+  if (!auth) return;
+
+  if (!delSoraldi) {
+    delSoraldi = true;
+    lbDel.classList.add('confirm');
+    lbDel.textContent = "O'chirilsinmi?";
+    setTimeout(() => { if (delSoraldi) { delSoraldi = false; resetDelButton(); } }, 4000);
+    return;
+  }
+
+  delSoraldi = false;
+  lbDel.classList.add('confirm');
+  lbDel.textContent = "O'chirilmoqda…";
+  try {
+    const res = await fetch(
+      `/api/photo/${encodeURIComponent(eventId)}/${encodeURIComponent(photoId)}?${auth}`,
+      { method: 'DELETE' });
+    if (!res.ok) throw new Error(await res.text());
+
+    forgetDelKey(photoId);
+    document.querySelector(`#gallery .tile[data-id="${photoId}"]`)?.remove();
+    updateCount();
+
+    // Ro'yxatdan chiqarib, keyingi rasmga o'tamiz. Albom bo'shab qolsa —
+    // yopamiz, aks holda bo'sh oyna qoladi.
+    lbList.splice(lbIndex, 1);
+    if (!lbList.length) return closeLightbox();
+    if (lbIndex >= lbList.length) lbIndex = 0;
+    showLightbox();
+  } catch (e) {
+    console.error(e);
+    lbDel.textContent = "O'chmadi, qayta urining";
+    setTimeout(resetDelButton, 2600);
+  }
+});
 function closeLightbox() {
   lb.classList.remove('on');
   lbImg.removeAttribute('src');
   document.body.style.overflow = '';
+  delSoraldi = false;
+  resetDelButton();
 }
 function step(delta) {
   if (!lbList.length) return;
@@ -408,7 +514,8 @@ async function uploadOne(file) {
     method: 'POST', body: fd,
   });
   if (!res.ok) throw new Error(await res.text());
-  const { id } = await res.json();
+  const { id, delKey } = await res.json();
+  rememberDelKey(id, delKey);
   return id;
 }
 

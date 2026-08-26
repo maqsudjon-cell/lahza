@@ -1,6 +1,7 @@
 import {
   json, err, readEvent, countPhotos, newPhotoId,
   fullKey, thumbKey, MAX_PHOTOS, MAX_BYTES, MAX_THUMB_BYTES,
+  photoDeleteKey,
 } from '../../lib/store.js';
 
 /**
@@ -97,5 +98,7 @@ export async function uploadPhoto(request, env, id) {
   }
   await env.PHOTOS.put(fullKey(meta.id, photoId), full, { httpMetadata });
 
-  return json({ id: photoId }, 201);
+  // Mehmon o'zi qo'shgan rasmni keyin o'chira olishi uchun. Faqat shu
+  // javobda beriladi va mehmonning brauzerida saqlanadi.
+  return json({ id: photoId, delKey: await photoDeleteKey(meta.manageKey, photoId) }, 201);
 }

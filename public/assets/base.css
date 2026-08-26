@@ -376,7 +376,7 @@ html.anim .reveal.shown.done { will-change: auto; transition-delay: 0ms; }
 
 /* Tugmalar oq emas, qora yarim shaffof: oq 10% yorqin suratda umuman
    ko'rinmay qoladi, qora esa ikkala holatda ham ajralib turadi. */
-.lb-close, .lb-nav, .lb-save {
+.lb-close, .lb-nav, .lb-save, .lb-del {
   position: absolute;
   background: rgb(0 0 0 / .42);
   color: #fff;
@@ -393,6 +393,17 @@ html.anim .reveal.shown.done { will-change: auto; transition-delay: 0ms; }
 .lb-close:hover, .lb-nav:hover, .lb-save:hover { background: rgb(0 0 0 / .66); }
 .lb-close { top: calc(14px + env(safe-area-inset-top)); right: 14px; }
 .lb-save  { top: calc(14px + env(safe-area-inset-top)); right: 66px; }
+
+/* O'chirish qaytarib bo'lmaydi, shuning uchun u boshqalardan farq qiladi
+   va tasdiqlashsiz ishlamaydi. */
+.lb-del   { top: calc(14px + env(safe-area-inset-top)); left: 14px; }
+.lb-del:hover { background: rgb(220 38 38 / .85); }
+.lb-del.confirm {
+  width: auto; padding: 0 16px; gap: 8px;
+  background: #dc2626; font-size: .8125rem; font-weight: 500;
+  font-family: var(--sans); letter-spacing: -.01em;
+}
+.lb-del.confirm:hover { background: #b91c1c; }
 .lb-nav.prev { left: 12px; top: 50%; transform: translateY(-50%); }
 .lb-nav.next { right: 12px; top: 50%; transform: translateY(-50%); }
 

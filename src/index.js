@@ -13,6 +13,7 @@ import { listPhotos } from './routes/photos.js';
 import { uploadPhoto } from './routes/upload.js';
 import { zipAlbum } from './routes/zip.js';
 import { qrSvg } from './routes/qr.js';
+import { deletePhoto } from './routes/photo.js';
 import { serveFile } from './routes/file.js';
 import { robots, sitemap, indexNowKey } from './routes/seo.js';
 
@@ -79,6 +80,10 @@ async function route(request, env, url) {
       }
       if (resource === 'qr' && seg.length === 3 && method === 'GET') {
         return await qrSvg(request, env, id);
+      }
+      // /api/photo/{eventId}/{photoId}
+      if (resource === 'photo' && seg.length === 4 && method === 'DELETE') {
+        return await deletePhoto(request, env, seg[2], seg[3]);
       }
       return err('Bunday manzil yo\'q', 404);
     }

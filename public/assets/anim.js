@@ -35,6 +35,7 @@ function start() {
     setupScrollState();
     setupProgress();
     setupLiveAlbum();
+    setupBeats();
     setTimeout(revealEverything, 2500);
   } catch (e) {
     // Animatsiya kontentdan muhimroq emas — xato bo'lsa, oddiy sahifa qoladi.
@@ -248,4 +249,39 @@ function setupLiveAlbum() {
   }, { threshold: 0.2 });
 
   io.observe(grid);
+}
+
+/* --- "Tanish holat" chizig'i --------------------------------------------- */
+
+/**
+ * Ro'yxatning chap chizig'i aylantirish bilan birga to'ladi.
+ *
+ * Maqsadi bezak emas: bu sahifadagi eng kuchli ilgak va uni odam
+ * O'QISHI kerak. To'lib boruvchi chiziq ko'zni pastga, keyingi qatorga
+ * tortadi — xuddi barmoq bilan kuzatib borgandek.
+ */
+function setupBeats() {
+  const list = document.getElementById('beats');
+  const rail = document.getElementById('beatsRail');
+  if (!list || !rail) return;
+
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const r = list.getBoundingClientRect();
+    // "O'qish chizig'i" — ekranning 62% i. Ro'yxatning tepasi shu
+    // chiziqqa yetganda to'lish boshlanadi, pastki cheti yetganda
+    // tugaydi. Ya'ni chiziq ko'zdan bir oz oldinda yuradi.
+    const chiziq = innerHeight * 0.62;
+    const ulush = (chiziq - r.top) / Math.max(1, r.height);
+    rail.style.transform = `scaleY(${Math.max(0, Math.min(1, ulush))})`;
+  };
+
+  addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  }, { passive: true });
+  addEventListener('resize', update, { passive: true });
+  update();
 }

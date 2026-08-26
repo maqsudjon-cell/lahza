@@ -216,6 +216,41 @@ async function testUpload(album) {
   return { photoId: photo.id, count: list.photos.length };
 }
 
+/* --- 4b. Rasmni o'chirish ------------------------------------------------ */
+
+async function testDelete(album) {
+  section('Rasmni o\'chirish');
+
+  const send = (parts) => {
+    const fd = new FormData();
+    for (const [k, v] of Object.entries(parts)) fd.append(k, v);
+    return req(`/api/upload/${album.id}`, { method: 'POST', body: fd });
+  };
+
+  const up = await (await send({ full: file(JPEG_1PX, 'a.jpg', 'image/jpeg') })).json();
+  ok('yuklash o\'chirish kalitini qaytaradi', typeof up.delKey === 'string' && up.delKey.length === 16,
+    JSON.stringify(up.delKey));
+
+  const del = (id, q) => req(`/api/photo/${album.id}/${id}${q}`, { method: 'DELETE' });
+
+  eq('kalitsiz → 403', (await del(up.id, '')).status, 403);
+  eq('noto\'g\'ri o\'chirish kaliti → 403', (await del(up.id, '?d=0123456789abcdef')).status, 403);
+  eq('noto\'g\'ri boshqaruv kaliti → 403', (await del(up.id, '?k=notogri')).status, 403);
+
+  // Eng muhimi: BOSHQA rasmning kaliti bilan bu rasmni o'chirib bo'lmaydi.
+  const boshqa = await (await send({ full: file(PNG_1PX, 'b.png', 'image/png') })).json();
+  eq('boshqa rasmning kaliti bilan → 403', (await del(up.id, `?d=${boshqa.delKey}`)).status, 403);
+
+  eq('o\'z kaliti bilan → 200', (await del(up.id, `?d=${up.delKey}`)).status, 200);
+  eq('o\'chirilgan rasm endi yo\'q', (await req(`/f/${album.id}/p/${up.id}`)).status, 404);
+  eq('eskizi ham yo\'q', (await req(`/f/${album.id}/t/${up.id}`)).status, 404);
+
+  eq('albom egasi istalganini o\'chiradi', (await del(boshqa.id, `?k=${album.manageKey}`)).status, 200);
+  eq('yo\'q rasmni o\'chirish → 200 (takroriy bosishga bardosh)',
+    (await del(boshqa.id, `?k=${album.manageKey}`)).status, 200);
+  eq('noto\'g\'ri id shakli → 404', (await del('AAA-BBB', `?k=${album.manageKey}`)).status, 404);
+}
+
 /* --- 5. Rasm berish ------------------------------------------------------ */
 
 async function testServe(album, photoId) {
@@ -332,6 +367,7 @@ if (WRITE) {
   const album = await testCreate();
   await testRead(album);
   const { photoId, count } = await testUpload(album);
+  await testDelete(album);
   await testServe(album, photoId);
   await testQr(album);
   await testZip(album, count);
