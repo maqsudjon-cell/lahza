@@ -294,6 +294,15 @@ async function testZip(album, expectedCount) {
 async function testRateLimit() {
   section('Chastota chegarasi');
 
+  // Cloudflare chegarasi HAR BIR markazda alohida sanaladi va qat'iy
+  // kafolat bermaydi — jonli saytda bu sinov goh o'tadi, goh o'tmaydi.
+  // Bundan tashqari u har safar o'nlab haqiqiy albom yaratadi. Shuning
+  // uchun faqat lokal serverda ishlaydi.
+  if (process.env.BASE) {
+    console.log('  \x1b[2m— jonli saytda o\'tkazib yuborildi (markazlarga bog\'liq)\x1b[0m');
+    return;
+  }
+
   let limited = 0;
   for (let i = 0; i < 20; i++) {
     const r = await post('/api/event', { title: `Sinov ${i}`, date: '2026-09-12' });
