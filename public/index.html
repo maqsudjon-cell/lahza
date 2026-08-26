@@ -175,10 +175,29 @@
     line-height: 1.45; letter-spacing: -.012em;
     color: var(--muted);
   }
+  /* Yon chiziqchalar tik chiziq bilan BIRGA ishlaydi: chiziq qaysi
+     qatorga yetsa, o'sha qatorning chiziqchasi uzayadi va rang oladi.
+     Rang tasodifiy emas — har biri gradientdan aynan o'z balandligiga
+     to'g'ri keladigan joydan olingan, shunda ikkalasi bitta narsaday
+     ko'rinadi. */
   .beats li::before {
     content: ""; position: absolute; left: 2px; top: 1.35em;
-    width: 14px; height: 1px; background: var(--border-strong);
+    width: 14px; height: 1px;
+    background: var(--border-strong);
+    transition: width .45s cubic-bezier(.22,.68,.24,1),
+                height .45s cubic-bezier(.22,.68,.24,1),
+                background-color .45s ease;
   }
+  .beats li.otildi::before {
+    width: 22px; height: 2px;
+    background: var(--tick);
+  }
+  .beats li:nth-of-type(1) { --tick: #2dd4bf; }
+  .beats li:nth-of-type(2) { --tick: #34c6e3; }
+  .beats li:nth-of-type(3) { --tick: #4ab1f8; }
+  .beats li:nth-of-type(4) { --tick: #7892f8; }
+  .beats li:nth-of-type(5) { --tick: #af84f8; }
+  .beats li:nth-of-type(6) { --tick: #e879f9; }
   .beats li.last { color: var(--fg); font-weight: 500; }
 
   .resolve {

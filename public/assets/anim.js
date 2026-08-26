@@ -265,6 +265,8 @@ function setupBeats() {
   const rail = document.getElementById('beatsRail');
   if (!list || !rail) return;
 
+  const qatorlar = [...list.querySelectorAll('li')];
+
   let ticking = false;
   const update = () => {
     ticking = false;
@@ -276,6 +278,14 @@ function setupBeats() {
     const ulush = Math.max(0, Math.min(1, (chiziq - r.top) / Math.max(1, r.height)));
     // `clip-path` — `scaleY` emas: ikkinchisi gradientni siqib qo'yadi.
     rail.style.clipPath = `inset(0 0 ${((1 - ulush) * 100).toFixed(2)}% 0)`;
+
+    // Chiziqning uchi qaysi qatorga yetgan bo'lsa, o'sha qatorning yon
+    // chiziqchasi ham yonadi. Orqaga aylantirilsa qaytib o'chadi.
+    const uch = r.top + r.height * ulush;
+    for (const li of qatorlar) {
+      const b = li.getBoundingClientRect();
+      li.classList.toggle('otildi', uch >= b.top + 26);
+    }
   };
 
   addEventListener('scroll', () => {
