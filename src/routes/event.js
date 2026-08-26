@@ -18,6 +18,22 @@ export async function createEvent(request, env) {
   if (title.length < 2) return err('Tadbir nomini kiriting');
   if (!date)            return err('Sanani tanlang');
 
+  // Chegara ATAYLAB tekshiruvdan KEYIN: xato to'ldirilgan forma albom
+  // yaratmaydi, ya'ni suiiste'mol ham emas. Aks holda formani bir necha
+  // marta noto'g'ri yuborgan odam bir daqiqaga qulflanib qolardi.
+  // Bog'lanish bo'lmasa (eski deploy) xizmat cheklovsiz ishlayveradi.
+  if (env.ALBUM_LIMIT) {
+    const ip = request.headers.get('cf-connecting-ip') || 'nomalum';
+    const { success } = await env.ALBUM_LIMIT.limit({ key: `event:${ip}` });
+    if (!success) {
+      return json(
+        { error: 'Juda ko\'p albom yaratildi. Bir daqiqadan keyin urinib ko\'ring.' },
+        429,
+        { 'retry-after': '60' },
+      );
+    }
+  }
+
   const id        = newEventId();
   const manageKey = newManageKey();
   const now       = new Date();

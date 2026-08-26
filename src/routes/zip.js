@@ -1,4 +1,4 @@
-import { err, readEvent, listPhotos, fullKey, safeFilename } from '../../lib/store.js';
+import { err, readEvent, listPhotos, fullKey, safeFilename, extForType } from '../../lib/store.js';
 
 /* ==========================================================================
    GET /api/zip/:id?k=manageKey
@@ -10,6 +10,12 @@ import { err, readEvent, listPhotos, fullKey, safeFilename } from '../../lib/sto
 
    Siqish yo'q ("store" usuli) — JPEG allaqachon siqilgan, uni qayta siqish
    protsessor vaqtini yeydi, hajmni esa ~1% ham kamaytirmaydi.
+
+   Siqish yo'qligining ikkinchi foydasi: arxivning aniq hajmini oldindan
+   hisoblab, `content-length` qo'yish mumkin. Shunda brauzer haqiqiy
+   ko'rsatkich va qolgan vaqtni ko'rsatadi — 300 MB lik albomni sekin
+   internetda yuklab olayotgan odam uchun bu "qotib qoldimi yoki
+   yuklanyaptimi" degan savolga javob.
    ========================================================================== */
 
 const MAX_ENTRIES = 65535;            // ZIP64'siz chegara
@@ -64,7 +70,7 @@ export async function zipAlbum(request, env, id) {
   const key = new URL(request.url).searchParams.get('k') || '';
   if (key !== meta.manageKey) return err('Ruxsat yo\'q', 403);
 
-  const photos = await listPhotos(env.PHOTOS, meta.id);
+  const photos = await listPhotos(env.PHOTOS, meta.id, { withType: true });
   if (!photos.length) return err('Albom bo\'sh', 404);
   if (photos.length > MAX_ENTRIES) return err('Albom juda katta', 413);
 
@@ -73,22 +79,53 @@ export async function zipAlbum(request, env, id) {
   const encoder = new TextEncoder();
   const stamp = dosDateTime(new Date(meta.date + 'T12:00:00Z'));
 
-  const stream = new ReadableStream({
-    async start(controller) {
+  // Nom va hajm oldindan ma'lum (R2 ro'yxati ikkalasini ham beradi), siqish
+  // esa yo'q — demak arxivning baytdagi uzunligi aniq hisoblanadi.
+  const entries = ordered.map((p, i) => ({
+    ...p,
+    name: encoder.encode(`${String(i + 1).padStart(4, '0')}.${extForType(p.type)}`),
+  }));
+
+  let dataTotal = 0, zipSize = 22; // 22 = EOCD
+  for (const e of entries) {
+    dataTotal += e.size;
+    zipSize += 30 + e.name.length + e.size   // lokal sarlavha + fayl
+             + 46 + e.name.length;           // markaziy katalog yozuvi
+  }
+  if (dataTotal > MAX_TOTAL || zipSize > 0xffffffff) {
+    return err('Albom juda katta', 413);
+  }
+
+  // Oddiy ReadableStream bilan Workers javobni `chunked` qilib yuboradi va
+  // qo'yilgan `content-length` ni tashlab yuboradi. `FixedLengthStream`
+  // uzunlikni oldindan e'lon qiladi — brauzer ko'rsatkichi shundan chiqadi.
+  // Qo'shimcha foyda: va'da qilingandan kam yoki ko'p bayt yozilsa, ish
+  // vaqti oqimni xatoga chiqaradi, ya'ni jim buzilgan arxiv chiqmaydi.
+  const { readable, writable } = new FixedLengthStream(zipSize);
+  const writer = writable.getWriter();
+
+  (async () => {
       const central = [];
       let offset = 0;
       let total = 0;
 
       try {
-        for (let i = 0; i < ordered.length; i++) {
-          const object = await env.PHOTOS.get(fullKey(meta.id, ordered[i].id));
-          if (!object) continue; // muddati o'tib o'chirilgan bo'lishi mumkin
+        for (const entry of entries) {
+          const object = await env.PHOTOS.get(fullKey(meta.id, entry.id));
+
+          // `content-length` va'da qilingani uchun endi rasmni "o'tkazib
+          // yuborish" mumkin emas: arxiv va'da qilingan uzunlikdan qisqa
+          // chiqadi va brauzer buzuq fayl saqlaydi. Ochiq uzilish — jim
+          // buzilgan arxivdan yaxshiroq.
+          if (!object) throw new Error(`Rasm yo'q: ${entry.id}`);
 
           const bytes = new Uint8Array(await object.arrayBuffer());
+          if (bytes.length !== entry.size) {
+            throw new Error(`Rasm hajmi mos kelmadi: ${entry.id}`);
+          }
           total += bytes.length;
-          if (total > MAX_TOTAL) throw new Error('ZIP hajmi chegaradan oshdi');
 
-          const name = encoder.encode(`${String(i + 1).padStart(4, '0')}.jpg`);
+          const name = entry.name;
           const crc = crc32(bytes);
 
           const header = new Writer(30 + name.length)
@@ -104,8 +141,8 @@ export async function zipAlbum(request, env, id) {
             .raw(name)
             .done();
 
-          controller.enqueue(header);
-          controller.enqueue(bytes);
+          await writer.write(header);
+          await writer.write(bytes);
 
           central.push({ name, crc, size: bytes.length, offset });
           offset += header.length + bytes.length;
@@ -126,7 +163,7 @@ export async function zipAlbum(request, env, id) {
             .u32(e.offset)
             .raw(e.name)
             .done();
-          controller.enqueue(rec);
+          await writer.write(rec);
           offset += rec.length;
         }
 
@@ -138,18 +175,19 @@ export async function zipAlbum(request, env, id) {
           .u32(cdStart)
           .u16(0)
           .done();
-        controller.enqueue(eocd);
-        controller.close();
+        await writer.write(eocd);
+        await writer.close();
       } catch (e) {
-        controller.error(e);
+        console.error('ZIP yasashda xatolik:', meta.id, e);
+        await writer.abort(e);
       }
-    },
-  });
+  })();
 
   const filename = `${safeFilename(meta.title)}-${meta.date}.zip`;
-  return new Response(stream, {
+  return new Response(readable, {
     headers: {
       'content-type': 'application/zip',
+      'content-length': String(zipSize),
       'content-disposition': `attachment; filename="albom.zip"; filename*=UTF-8''${encodeURIComponent(filename)}`,
       'cache-control': 'no-store',
     },

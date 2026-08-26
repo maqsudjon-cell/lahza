@@ -25,3 +25,18 @@ bucket_name = "lahza-photos"
 # Yoqilgan: 2026-08-25, DNS to'liq tarqalgach.
 [vars]
 PRIMARY_HOST = "chaqnoq.uz"
+
+# Albom yaratishga chastota chegarasi.
+#
+# ATAYLAB faqat YARATISHGA qo'yilgan, rasm yuklashga EMAS: to'yxonada
+# yuzlab mehmon bitta Wi-Fi orqali chiqadi, ya'ni ular uchun IP bitta.
+# Yuklashga IP bo'yicha chegara qo'yilsa, birinchi mehmondan keyin
+# qolganlari to'silib qolardi. Yuklashni MAX_PHOTOS (1500) cheklaydi.
+#
+# `period` faqat 10 yoki 60 bo'lishi mumkin. Chegara IP bo'yicha va har bir
+# Cloudflare markazida alohida sanaladi — bu qat'iy kvota emas, keng
+# ko'lamli avtomatik so'rovlarga qarshi to'siq.
+[[ratelimits]]
+name = "ALBUM_LIMIT"
+namespace_id = "1001"
+simple = { limit = 10, period = 60 }

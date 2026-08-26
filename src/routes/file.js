@@ -1,3 +1,5 @@
+import { validId } from '../../lib/store.js';
+
 /**
  * GET /f/{eventId}/{p|t}/{photoId} — R2'dan rasm beradi.
  * Bu yo'l orqali chiqadigan trafik uchun Cloudflare pul olmaydi (R2 egress = 0).
@@ -20,6 +22,13 @@ function conditionalEtag(header) {
 
 export async function serveFile(request, env, { eventId, kind, photoId }) {
   if (kind !== 'p' && kind !== 't') return new Response('Topilmadi', { status: 404 });
+
+  // Identifikatorlar to'g'ridan-to'g'ri R2 kalitiga qo'shiladi. Tekshiruvsiz
+  // istalgan chalkash matn bilan omborga so'rov yuborish mumkin edi —
+  // zarar yetkazmasa ham, har biri bekorga hisoblanadigan amal.
+  if (!validId(eventId) || !validId(photoId)) {
+    return new Response('Topilmadi', { status: 404 });
+  }
 
   const etag = conditionalEtag(request.headers.get('if-none-match'));
   const object = await env.PHOTOS.get(

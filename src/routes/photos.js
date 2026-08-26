@@ -5,6 +5,8 @@ export async function listPhotos(request, env, id) {
   const meta = await readEvent(env.PHOTOS, id);
   if (!meta) return err('Albom topilmadi', 404);
 
-  const photos = await listFromStore(env.PHOTOS, meta.id);
+  // Mehmon sahifasiga faqat identifikator kerak — hajm va turni
+  // yubormaymiz, ular albom ichidagi ortiqcha ma'lumot.
+  const photos = (await listFromStore(env.PHOTOS, meta.id)).map(({ id }) => ({ id }));
   return json({ photos }, 200, { 'cache-control': 'no-store' });
 }
