@@ -6,7 +6,7 @@
    fayl `env.ASSETS.fetch()` orqali beriladi.
    ========================================================================== */
 
-import { err } from '../lib/store.js';
+import { err, validId } from '../lib/store.js';
 import { harden, isHtml } from '../lib/headers.js';
 import { createEvent, getEvent } from './routes/event.js';
 import { listPhotos } from './routes/photos.js';
@@ -51,6 +51,13 @@ async function route(request, env, url) {
     if (url.pathname === '/sitemap.xml') return sitemap(request);
     // IndexNow kaliti — Bing va Yandex shu faylni tekshiradi
     if (url.pathname === '/aadbf93700f7c63be3658b7dcb7dd34a.txt') return indexNowKey();
+
+    // /e/{eventId} — chop etilgan varaqada qo'lda teriladigan qisqa
+    // ko'rinish. Kamerasi QR'ni o'qiy olmagan mehmon uchun yagona yo'l,
+    // shuning uchun u iloji boricha qisqa bo'lishi kerak.
+    if (seg[0] === 'e' && seg.length === 2 && validId(seg[1])) {
+      return Response.redirect(`${url.origin}/e/?i=${seg[1]}`, 301);
+    }
 
     // /f/{eventId}/{p|t}/{photoId}
     if (seg[0] === 'f' && seg.length === 4) {

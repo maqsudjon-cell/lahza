@@ -95,6 +95,17 @@
     margin: 6.8cqw 0 2.4cqw; max-width: 66cqw;
   }
   .sheet .hint { font-size: 2.2cqw; line-height: 1.5; max-width: 62cqw; margin: 0; }
+
+  /* Kamerasi eski yoki QR o'qimaydigan telefon uchun yagona yo'l.
+     Identifikatorda chalkashadigan belgilar (0/O, 1/l/I) yo'q — alifbo
+     aynan shuning uchun o'sha belgilarsiz tanlangan. */
+  .sheet .manzil {
+    margin: 4.6cqw 0 0; font-size: 2cqw; line-height: 1.65; color: #6b6b6b;
+  }
+  .sheet .manzil b {
+    font-family: var(--mono); font-weight: 500;
+    font-size: 2.7cqw; letter-spacing: .03em; color: #1A1A18;
+  }
   .sheet .foot {
     margin-top: auto; padding-top: 5.4cqw;
     font-family: var(--mono);
@@ -113,6 +124,8 @@
     .sheet .qr     { width: 64mm; height: 64mm; padding: 3mm; border-radius: 1.5mm; }
     .sheet .call   { font-size: 5.2mm; margin: 10mm 0 3.5mm; max-width: 98mm; }
     .sheet .hint   { font-size: 3.3mm; max-width: 92mm; }
+    .sheet .manzil { font-size: 3mm; margin-top: 6.8mm; }
+    .sheet .manzil b { font-size: 4mm; }
     .sheet .foot   { padding-top: 8mm; font-size: 2.7mm; }
   }
 
@@ -188,6 +201,11 @@ document.getElementById('print').addEventListener('click', () => window.print())
     <p class="hint">
       Telefon kamerangizni QR kodga tuting va ochilgan sahifaga rasmlaringizni
       qo'shing. Ilova o'rnatish yoki ro'yxatdan o'tish shart emas.
+    </p>
+
+    <p class="manzil">
+      Kamera o'qimasa, brauzerga yozing:<br>
+      <b>${esc(location.host)}/e/${esc(meta.id)}</b>
     </p>
 
     <div class="foot">Chaqnoq</div>`;

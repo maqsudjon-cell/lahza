@@ -110,6 +110,22 @@ const post = (path, body) => req(path, {
   body: JSON.stringify(body),
 });
 
+/**
+ * Albom yaratish, chastota chegarasiga urilsa kutib qayta urinish bilan.
+ * Sinovlarni ketma-ket ikki marta yurgizganda ikkinchisi 429 ga tushib
+ * qolardi — bu chegaraning to'g'ri ishlayotgani, sinovning xatosi emas.
+ */
+async function createAlbum(body, label = 'albom') {
+  let res = await post('/api/event', body);
+  if (res.status === 429) {
+    const kut = Number(res.headers.get('retry-after') || 60) + 2;
+    console.log(`  \x1b[2m— chegara ishladi, ${kut}s kutilmoqda (${label})\x1b[0m`);
+    await new Promise((r) => setTimeout(r, kut * 1000));
+    res = await post('/api/event', body);
+  }
+  return res;
+}
+
 async function testCreate() {
   section('Albom yaratish');
 
@@ -130,7 +146,7 @@ async function testCreate() {
 
   // Ko'rinmas belgilar tozalanadi
   const rtl = 'Aziza‮ va Bekzod';
-  const res = await post('/api/event', { title: rtl, date: '2026-09-12' });
+  const res = await createAlbum({ title: rtl, date: '2026-09-12' }, 'asosiy');
   eq('to\'g\'ri so\'rov → 201', res.status, 201);
   const album = await res.json();
   eq('nomdagi yo\'nalish belgisi olib tashlandi', album.title, 'Aziza va Bekzod');
@@ -140,7 +156,7 @@ async function testCreate() {
   ok('muddat ~60 kun',
     Math.round((new Date(album.expiresAt) - Date.now()) / 86400000) === 60);
 
-  const uzun = await post('/api/event', { title: 'x'.repeat(300), date: '2026-09-12' });
+  const uzun = await createAlbum({ title: 'x'.repeat(300), date: '2026-09-12' }, 'uzun nom');
   eq('juda uzun nom qirqiladi', (await uzun.json()).title.length, 70);
 
   return album;
@@ -277,6 +293,21 @@ async function testServe(album, photoId) {
   eq('POST bilan bo\'lmaydi', (await req(`/f/${album.id}/p/${photoId}`, { method: 'POST' })).status, 405);
 }
 
+/* --- 5b. Qisqa manzil ---------------------------------------------------- */
+
+async function testShortUrl(album) {
+  section('Qisqa manzil');
+
+  // Chop etilgan varaqada qo'lda teriladigan ko'rinish.
+  const r = await req(`/e/${album.id}`, { redirect: 'manual' });
+  ok('301 yo\'naltirish', r.status === 301 || r.status === 0, String(r.status));
+  const loc = r.headers.get('location') || '';
+  ok('to\'g\'ri joyga yo\'naltiradi', loc.endsWith(`/e/?i=${album.id}`), loc);
+
+  eq('noto\'g\'ri id → 404', (await req('/e/AAA-BBB', { redirect: 'manual' })).status, 404);
+  eq('eski manzil ham ishlaydi', (await req(`/e/?i=${album.id}`)).status, 200);
+}
+
 /* --- 6. QR --------------------------------------------------------------- */
 
 async function testQr(album) {
@@ -369,6 +400,7 @@ if (WRITE) {
   const { photoId, count } = await testUpload(album);
   await testDelete(album);
   await testServe(album, photoId);
+  await testShortUrl(album);
   await testQr(album);
   await testZip(album, count);
   await testRateLimit();
