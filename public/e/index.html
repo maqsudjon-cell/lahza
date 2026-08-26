@@ -82,12 +82,19 @@
   }
 
   footer.site {
-    padding: 40px 0 24px;
+    padding: 40px 0 16px;
     text-align: center;
     color: var(--muted);
     font-size: .8125rem;
   }
-  footer.site a { color: var(--muted); }
+  /* Bu pastki qatordagi "Chaqnoq" — mehmon uchun mahsulotni bilib
+     olishning yagona yo'li. Avval u atrofidagi matn bilan bir xil rangda
+     va tagsiz edi, ya'ni havola ekani umuman bilinmasdi. */
+  footer.site a { color: var(--fg); display: inline-block; padding: 8px 0; }
+
+  /* Muddat tugashiga bir hafta qolganda ko'rinishi ham o'zgaradi,
+     faqat matni emas. */
+  .count-line .soon { color: var(--fg); font-weight: 500; }
 
   /* Yuklanayotgan rasm katakchasi */
   .tile.pending::after {
@@ -103,13 +110,17 @@
     color: var(--fg);
     z-index: 1;
   }
+  /* Qizil fon — yuklanmaganini, aylanma o'q esa bosib qayta urinish
+     mumkinligini bildiradi. Avval faqat "!" chiqardi: mehmon na nima
+     bo'lganini, na nima qilishni bilardi. */
+  .tile.failed { cursor: pointer; }
   .tile.failed::after {
-    content: "!";
+    content: "\21BB";
     position: absolute; inset: 0;
     display: grid; place-items: center;
     background: rgba(220, 38, 38, .82);
     background: color-mix(in oklab, #dc2626 82%, transparent);
-    color: #fff; font-weight: 700; font-size: 20px;
+    color: #fff; font-weight: 700; font-size: 22px;
   }
 </style>
 </head>
@@ -123,9 +134,16 @@
 
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Rasm">
   <button class="lb-close" id="lbClose" aria-label="Yopish">&times;</button>
+  <a class="lb-save" id="lbSave" download aria-label="Rasmni saqlash">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 3v12M7.5 10.5L12 15l4.5-4.5M4 20h16"/>
+    </svg>
+  </a>
   <button class="lb-nav prev" id="lbPrev" aria-label="Oldingi">&#8249;</button>
   <img id="lbImg" alt="">
   <button class="lb-nav next" id="lbNext" aria-label="Keyingi">&#8250;</button>
+  <div class="lb-count" id="lbCount"></div>
 </div>
 
 <script type="module">
@@ -182,15 +200,16 @@ function render(meta) {
     </div>
 
     <footer class="site">
-      <a href="/">Chaqnoq</a> bilan yaratilgan ·
-      <a href="/maxfiylik/">Maxfiylik</a>
+      <a class="link" href="/">Chaqnoq</a> bilan yaratilgan ·
+      <a class="link" href="/maxfiylik/">Maxfiylik</a>
     </footer>
   `;
   if (meta.expiresAt) {
     const days = Math.ceil((new Date(meta.expiresAt) - Date.now()) / 86400000);
     if (days > 0) {
-      document.getElementById('expiry').textContent =
-        days > 7 ? `${days} kun ochiq` : `${days} kundan keyin yopiladi`;
+      const expiry = document.getElementById('expiry');
+      expiry.textContent = days > 7 ? `${days} kun ochiq` : `${days} kundan keyin yopiladi`;
+      if (days <= 7) expiry.classList.add('soon');
     }
   }
 }
@@ -279,6 +298,8 @@ function updateCount() {
 
 const lb = document.getElementById('lb');
 const lbImg = document.getElementById('lbImg');
+const lbSave = document.getElementById('lbSave');
+const lbCount = document.getElementById('lbCount');
 let lbList = [];
 let lbIndex = -1;
 
@@ -291,7 +312,13 @@ function openLightbox(id) {
   document.body.style.overflow = 'hidden';
 }
 function showLightbox() {
-  lbImg.src = `/f/${eventId}/p/${lbList[lbIndex]}`;
+  const photoId = lbList[lbIndex];
+  lbImg.src = `/f/${eventId}/p/${photoId}`;
+  // Suratni saqlash — avval umuman yo'l yo'q edi, faqat uzoq bosish.
+  lbSave.href = lbImg.src;
+  lbSave.download = `chaqnoq-${photoId}.jpg`;
+  // Albomda qayerdaligini ko'rsatadi; usiz uzun albomda yo'nalish yo'qoladi.
+  lbCount.textContent = `${lbIndex + 1} / ${lbList.length}`;
 }
 function closeLightbox() {
   lb.classList.remove('on');
@@ -308,6 +335,24 @@ document.getElementById('lbClose').addEventListener('click', closeLightbox);
 document.getElementById('lbPrev').addEventListener('click', () => step(-1));
 document.getElementById('lbNext').addEventListener('click', () => step(1));
 lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+
+/* Barmoq bilan surish. Telefonda suratlarni ko'rishning odatiy usuli shu —
+   ilgari faqat 44px lik o'q tugmalari va klaviatura ishlardi. */
+let swipeX = null, swipeY = null;
+lb.addEventListener('touchstart', (e) => {
+  if (e.touches.length !== 1) { swipeX = null; return; }
+  swipeX = e.touches[0].clientX;
+  swipeY = e.touches[0].clientY;
+}, { passive: true });
+lb.addEventListener('touchend', (e) => {
+  if (swipeX === null) return;
+  const dx = e.changedTouches[0].clientX - swipeX;
+  const dy = e.changedTouches[0].clientY - swipeY;
+  swipeX = null;
+  // Vertikal harakat kattaroq bo'lsa — bu surish emas, tasodifiy tegish.
+  if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy) * 1.4) return;
+  step(dx < 0 ? 1 : -1);
+}, { passive: true });
 document.addEventListener('keydown', (e) => {
   if (!lb.classList.contains('on')) return;
   if (e.key === 'Escape') closeLightbox();
@@ -338,7 +383,7 @@ function buildDock() {
       </label>
       <input id="picker" type="file" accept="image/*" multiple class="sr-only">
       <p class="small muted center" style="margin:10px 0 0">
-        Ro'yxatdan o'tish shart emas · rasmlaringiz asl sifatda saqlanadi
+        Ro'yxatdan o'tish ham, ilova o'rnatish ham shart emas
       </p>
     </div>`;
   document.body.appendChild(dock);
@@ -346,6 +391,57 @@ function buildDock() {
 }
 
 let busy = false;
+
+/** Bitta rasmni siqib serverga yuboradi va yangi rasm id'sini qaytaradi. */
+async function uploadOne(file) {
+  // Siqish navbat bilan (protsessor), yuklash parallel (tarmoq).
+  const { full, thumb } = await withCpuLock(() => processImageSafe(file));
+  const fd = new FormData();
+  fd.append('full', full, 'f.jpg');
+  if (thumb) fd.append('thumb', thumb, 't.jpg');
+
+  const res = await fetch(`/api/upload/${encodeURIComponent(eventId)}`, {
+    method: 'POST', body: fd,
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const { id } = await res.json();
+  return id;
+}
+
+function finishTile(tile, id) {
+  tile.classList.remove('pending', 'failed');
+  tile.querySelector('.spinner')?.remove();
+  tile.onclick = null;
+  tile.setAttribute('aria-label', 'Rasmni ochish');
+  markReady(tile, id, false);
+}
+
+/**
+ * Yuklanmagan katakcha bosilsa qayta uriniladi. To'yxona tarmog'i uzilib
+ * turadi va bitta xato butun rasmni yo'qotmasligi kerak; avval faqat
+ * qizil "!" chiqar, mehmonda esa hech qanday yo'l qolmasdi.
+ */
+function markFailed(tile, file) {
+  tile.classList.remove('pending');
+  tile.classList.add('failed');
+  tile.querySelector('.spinner')?.remove();
+  tile.setAttribute('aria-label', 'Yuklanmadi — qayta urinish uchun bosing');
+  tile.onclick = async () => {
+    if (tile.dataset.retrying) return;
+    tile.dataset.retrying = '1';
+    tile.classList.remove('failed');
+    tile.classList.add('pending');
+    tile.insertAdjacentHTML('beforeend', '<span class="spinner"></span>');
+    try {
+      finishTile(tile, await uploadOne(file));
+      updateCount();
+    } catch (err) {
+      console.error(err);
+      markFailed(tile, file);
+    }
+    delete tile.dataset.retrying;
+  };
+}
 
 async function onPick(e) {
   const files = Array.from(e.target.files || []).filter(f => f.type.startsWith('image/'));
@@ -392,27 +488,11 @@ async function onPick(e) {
   await pool(files, CONCURRENCY, async (file, i) => {
     const tile = tiles[i];
     try {
-      // Siqish navbat bilan (protsessor), yuklash parallel (tarmoq).
-      const { full, thumb } = await withCpuLock(() => processImageSafe(file));
-      const fd = new FormData();
-      fd.append('full', full, 'f.jpg');
-      if (thumb) fd.append('thumb', thumb, 't.jpg');
-
-      const res = await fetch(`/api/upload/${encodeURIComponent(eventId)}`, {
-        method: 'POST', body: fd,
-      });
-      if (!res.ok) throw new Error(await res.text());
-      const { id } = await res.json();
-
-      tile.classList.remove('pending');
-      tile.querySelector('.spinner')?.remove();
-      markReady(tile, id, false);
+      finishTile(tile, await uploadOne(file));
       done++;
     } catch (err) {
       console.error(err);
-      tile.classList.remove('pending');
-      tile.classList.add('failed');
-      tile.querySelector('.spinner')?.remove();
+      markFailed(tile, file);
       failed++;
     }
     tick();
@@ -420,7 +500,7 @@ async function onPick(e) {
   });
 
   text.textContent = failed
-    ? `${done} ta yuklandi, ${failed} tasi yuklanmadi`
+    ? `${done} ta yuklandi, ${failed} tasi yuklanmadi — qizil katakchani bosib qayta urinib ko'ring`
     : `${done} ta rasm qo'shildi. Rahmat!`;
   bar.style.width = '100%';
   busy = false;

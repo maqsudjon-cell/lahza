@@ -148,7 +148,10 @@ img { max-width: 100%; height: auto; display: block; }
   display: inline-block;
   font-weight: 600; font-size: 1.0625rem; letter-spacing: -.03em;
   color: var(--subtle);
-  margin-bottom: 26px;
+  /* padding + margin birgalikda avvalgi 26px bo'shliqni beradi, lekin
+     bosiladigan maydonni 27px dan 41px ga chiqaradi. */
+  padding: 7px 0;
+  margin: -7px 0 19px;
 }
 .brand:hover { color: var(--fg); }
 
@@ -403,6 +406,25 @@ html.anim .reveal.shown.done { will-change: auto; transition-delay: 0ms; }
   text-shadow: 0 1px 4px rgb(0 0 0 / .7);
   pointer-events: none;
 }
+
+/* --- Pastki qism ---------------------------------------------------------
+   Avval faqat bosh sahifada bor edi va o'sha faylning ichida yozilgandi.
+   Endi umumiy: qidiruvdan huquqiy sahifaga tushgan odam ham saytning
+   qolgan qismiga va "Albom yaratish" ga yo'l topadi. */
+
+footer.site { border-top: 1px solid var(--border); padding: 16px 0; }
+footer.site .wrap {
+  display: flex; justify-content: space-between;
+  gap: 6px 16px; flex-wrap: wrap; align-items: center;
+}
+footer.site, footer.site a { color: var(--subtle); font-size: .8125rem; }
+/* Matn 21px, bosiladigan maydon esa 41px — barmoq uchun. */
+footer.site a { display: inline-block; padding: 10px 0; }
+footer.site .links { display: flex; gap: 18px; flex-wrap: wrap; }
+/* `display` ni ham qaytaramiz: yuqoridagi `footer.site a` qoidasi
+   `.btn` ning inline-flex'ini bosib ketadi va ichidagi matn
+   vertikal markazdan chiqadi. */
+footer.site .btn { display: inline-flex; padding: 9px 16px; min-height: 40px; font-size: .8125rem; }
 
 /* --- Yordamchilar -------------------------------------------------------- */
 

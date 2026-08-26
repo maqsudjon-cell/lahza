@@ -23,6 +23,15 @@
   }
   .toolbar .wrap { display: flex; gap: 12px; align-items: center; justify-content: space-between; max-width: var(--wrap); }
   .toolbar .btn { padding: 9px 18px; min-height: 40px; font-size: .875rem; }
+  /* Yonidagi tugma 40px, bu esa 22px edi — bir xil panelda ikki xil
+     o'lcham. Tag chizig'i ham qo'shildi: strelka bor deb havola ekani
+     o'z-o'zidan bilinmaydi. */
+  .toolbar .back {
+    display: inline-flex; align-items: center; min-height: 40px; padding: 9px 0;
+    text-decoration: underline; text-decoration-color: var(--border-strong);
+    text-underline-offset: 3px;
+  }
+  .toolbar .back:hover { color: var(--fg); text-decoration-color: currentColor; }
 
   /* minmax(0,1fr) shart: ustun `auto` bo'lsa varaqaning kontent kengligiga
      cho'ziladi va `max-width:100%` hech narsani cheklamay qo'yadi. */
@@ -122,7 +131,7 @@
 
 <div class="toolbar">
   <div class="wrap">
-    <a href="javascript:history.back()" class="small muted" style="text-decoration:none">&larr; Orqaga</a>
+    <a href="javascript:history.back()" class="small muted back">&larr; Orqaga</a>
     <button class="btn btn-primary" id="print" type="button">Chop etish / PDF</button>
   </div>
 </div>

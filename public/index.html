@@ -45,7 +45,8 @@
     border-bottom: 1px solid var(--border);
   }
   .nav .wrap { height: 60px; display: flex; align-items: center; justify-content: space-between; }
-  .logo { font-weight: 600; letter-spacing: -.03em; font-size: 1.0625rem; }
+  /* padding bo'lmasa bosiladigan maydon matn balandligicha — 27px. */
+  .logo { font-weight: 600; letter-spacing: -.03em; font-size: 1.0625rem; padding: 8px 0; }
   .nav .btn { padding: 8px 16px; min-height: 38px; font-size: .875rem; }
 
   section { padding: clamp(56px, 9vw, 104px) 0; }
@@ -337,11 +338,6 @@
   /* Telefondagi raqam sanab chiqadi — JS `--n` ni o'zgartiradi */
   .phone .meta .count { font-variant-numeric: tabular-nums; }
 
-  footer.site { border-top: 1px solid var(--border); padding: 16px 0; }
-  footer.site .wrap { display: flex; justify-content: space-between; gap: 6px 16px; flex-wrap: wrap; align-items: center; }
-  footer.site, footer.site a { color: var(--subtle); font-size: .8125rem; }
-  /* Barmoq uchun: matn 21px, bosiladigan maydon esa 41px. */
-  footer.site a { display: inline-block; padding: 10px 0; }
 </style>
 <script type="application/ld+json">
 {
@@ -756,7 +752,7 @@
 <footer class="site">
   <div class="wrap">
     <span>Chaqnoq'ni <a class="link" href="https://maqsudjon.com" target="_blank" rel="noopener me">Maqsudjon Polatov</a> yaratgan</span>
-    <span style="display:flex;gap:18px;flex-wrap:wrap"><a class="link" href="/boshqarish/">Albomlarim</a><a class="link" href="/maxfiylik/">Maxfiylik</a><a class="link" href="/shartlar/">Shartlar</a><a class="link" href="/manbalar/">Rasm manbalari</a></span>
+    <span class="links"><a class="link" href="/boshqarish/">Albomlarim</a><a class="link" href="/maxfiylik/">Maxfiylik</a><a class="link" href="/shartlar/">Shartlar</a><a class="link" href="/manbalar/">Rasm manbalari</a></span>
   </div>
 </footer>
 
