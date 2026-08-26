@@ -6,12 +6,17 @@
  */
 
 // Faqat ochiq sahifalar. /e/, /boshqarish/, /qr/ — shaxsiy, ular indekslanmaydi.
+//
+// `lastmod` — sahifa MATNI oxirgi marta o'zgargan sana. Uni bugungi sana
+// bilan to'ldirish xato: har kuni yangilanadigan sitemap Google uchun
+// "bu sanalar ma'nosiz" degan signal va u lastmod'ga umuman ishonmay
+// qo'yadi. Sahifani tahrirlaganda shu yerdagi sanani ham yangilang.
 const PUBLIC_PAGES = [
-  { path: '/',          priority: '1.0' },
-  { path: '/yaratish/', priority: '0.8' },
-  { path: '/maxfiylik/', priority: '0.3' },
-  { path: '/shartlar/',  priority: '0.3' },
-  { path: '/manbalar/', priority: '0.2' },
+  { path: '/',           priority: '1.0', lastmod: '2026-08-25' },
+  { path: '/yaratish/',  priority: '0.8', lastmod: '2026-08-25' },
+  { path: '/maxfiylik/', priority: '0.3', lastmod: '2026-08-25' },
+  { path: '/shartlar/',  priority: '0.3', lastmod: '2026-08-25' },
+  { path: '/manbalar/',  priority: '0.2', lastmod: '2026-08-25' },
 ];
 
 export function robots(request) {
@@ -45,12 +50,11 @@ export function robots(request) {
 
 export function sitemap(request) {
   const { origin } = new URL(request.url);
-  const today = new Date().toISOString().slice(0, 10);
 
-  const urls = PUBLIC_PAGES.map(({ path, priority }) =>
+  const urls = PUBLIC_PAGES.map(({ path, priority, lastmod }) =>
     `  <url>\n` +
     `    <loc>${origin}${path}</loc>\n` +
-    `    <lastmod>${today}</lastmod>\n` +
+    `    <lastmod>${lastmod}</lastmod>\n` +
     `    <priority>${priority}</priority>\n` +
     `  </url>`
   ).join('\n');
