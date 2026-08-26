@@ -33,6 +33,8 @@ function start() {
     setupPhoneGrid();
     setupCounters();
     setupScrollState();
+    setupProgress();
+    setupLiveAlbum();
     setTimeout(revealEverything, 2500);
   } catch (e) {
     // Animatsiya kontentdan muhimroq emas — xato bo'lsa, oddiy sahifa qoladi.
@@ -149,6 +151,97 @@ function setupPhoneGrid() {
       io.disconnect();
     }
   }, { threshold: 0.25 });
+
+  io.observe(grid);
+}
+
+/* --- Aylantirish ko'rsatkichi -------------------------------------------- */
+
+/**
+ * Panel ostidagi ingichka chiziq sahifaning qancha qismi o'qilganini
+ * ko'rsatadi. Uzun sahifada "yana qancha qoldi" degan savolga javob beradi.
+ */
+function setupProgress() {
+  const bar = document.getElementById('progress');
+  if (!bar) return;
+
+  let ticking = false;
+  const update = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
+    ticking = false;
+  };
+  addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  }, { passive: true });
+  addEventListener('resize', update, { passive: true });
+  update();
+}
+
+/* --- Jonli albom --------------------------------------------------------- */
+
+/**
+ * Telefondagi albom "to'lib turadi": vaqti-vaqti bilan bitta katakcha
+ * yangi kelgandek chaqnaydi va rasm soni oshadi.
+ *
+ * Bu bezak emas. Telegram guruhidagi havolani bosib kelgan odam matnni
+ * o'qimasdan turib ham mahsulot nima qilishini ko'radi: mehmonlar rasm
+ * qo'shyapti, albom to'lyapti.
+ *
+ * Ekrandan chiqib ketganda to'xtaydi — fon rejimida telefon batareyasini
+ * bekorga yeydigan animatsiya kerak emas.
+ */
+function setupLiveAlbum() {
+  const grid  = document.querySelector('.mini-grid');
+  const count = document.querySelector('.phone .count');
+  if (!grid || !count) return;
+
+  const tiles = [...grid.children];
+  if (!tiles.length) return;
+
+  let i = 0;
+  let timer = null;
+  let total = 0;
+
+  const tick = () => {
+    const tile = tiles[i % tiles.length];
+    i++;
+    tile.classList.remove('just-in');
+    // Klassni qayta qo'yish uchun brauzerni oraliq holatni hisoblashga
+    // majburlaymiz — aks holda animatsiya qaytadan boshlanmaydi.
+    void tile.offsetWidth;
+    tile.classList.add('just-in');
+
+    total += 1;
+    count.textContent = total;
+  };
+
+  // Boshlashdan oldin ikkita animatsiya tugashi kerak: suratlar navbat
+  // bilan chiqishi (9 x 90ms) va raqamning noldan sanalishi (1100ms).
+  // Aks holda uchalasi bir vaqtda ishlab, katakchalar yarim ochilgan
+  // holatda qolib ketadi.
+  const KIRISH_TUGASHI = 2400;
+  let boshlandi = false;
+
+  const io = new IntersectionObserver((entries) => {
+    for (const en of entries) {
+      if (en.isIntersecting) {
+        if (timer) continue;
+        const kechikish = boshlandi ? 0 : KIRISH_TUGASHI;
+        setTimeout(() => {
+          if (!grid.isConnected) return;
+          total = Number(count.textContent.replace(/\D/g, '')) || Number(count.dataset.to) || 0;
+          boshlandi = true;
+          timer = setInterval(tick, 2600);
+        }, kechikish);
+      } else if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+  }, { threshold: 0.2 });
 
   io.observe(grid);
 }

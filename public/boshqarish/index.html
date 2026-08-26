@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Albomni boshqarish · Chaqnoq</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
@@ -56,6 +60,31 @@
   .keep { border: 1px solid var(--border-strong); border-radius: var(--r-m); padding: 16px 18px; margin-top: 24px; }
   .keep strong { display: block; margin-bottom: 6px; }
   .keep p { margin: 0 0 12px; font-size: .875rem; }
+
+  /* ── Uch qadam ────────────────────────────────────────────────────────
+     Albom yaratgan odam "endi nima qilaman?" deb qolmasligi kerak.
+     Har bir qadam alohida kartochka, raqami bilan; hozir qaysi qadamda
+     turgani (rasm bor-yo'qligiga qarab) ajratib ko'rsatiladi. */
+  .step-card {
+    border: 1px solid var(--border);
+    border-radius: var(--r-l);
+    padding: clamp(18px, 3.5vw, 26px);
+    margin-bottom: 14px;
+    background: var(--elev);
+  }
+  .step-card.now { border-color: var(--border-strong); box-shadow: var(--card); }
+  .step-head { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
+  .step-head > div { min-width: 0; }
+  .step-head h2 { font-size: 1.0625rem; letter-spacing: -.02em; margin-bottom: 5px; }
+  .step-head p { margin: 0; }
+  .step-n {
+    flex: none;
+    width: 30px; height: 30px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--fg); color: var(--bg);
+    font-family: var(--mono); font-size: .8125rem; font-weight: 500;
+  }
+  .keep .actions { margin-top: 4px; }
 
   .album-item {
     display: block; padding: 16px 18px; border: 1px solid var(--border);
@@ -138,70 +167,125 @@ function render(meta, count) {
     ? Math.max(0, Math.ceil((new Date(meta.expiresAt) - Date.now()) / 86400000))
     : null;
 
+  const bosqich = count > 0 ? 3 : 1;
+
   app.innerHTML = `
     <a class="brand" href="/">Chaqnoq</a>
     <h1 style="margin-bottom:6px">${esc(meta.title)}</h1>
-    <p class="muted" style="margin-bottom:30px">${esc(formatDate(meta.date))}</p>
+    <p class="muted" style="margin-bottom:8px">${esc(formatDate(meta.date))}</p>
+    <p class="small muted" style="margin-bottom:28px">
+      Albom tayyor. Endi uchta ish qoldi — quyida tartib bilan.
+    </p>
 
-    <div class="card stack stack-24" style="margin-bottom:18px">
+    <!-- 1 -->
+    <section class="step-card${bosqich === 1 ? ' now' : ''}">
+      <div class="step-head">
+        <span class="step-n">1</span>
+        <div>
+          <h2>QR kodni chiqaring</h2>
+          <p class="small muted">Varaqani chop etib stollarga qo'ying. Printer bo'lmasa
+          — shu sahifadagi QR kodni telefon ekranida ko'rsatsangiz ham bo'ladi.</p>
+        </div>
+      </div>
       <div class="qr-card">
         <img src="/api/qr/${encodeURIComponent(meta.id)}" alt="Albom QR kodi" width="132" height="132">
+        <div class="actions">
+          <a class="btn btn-primary" href="/qr/?i=${encodeURIComponent(meta.id)}" target="_blank" rel="noopener">
+            QR varaqasini chop etish
+          </a>
+          <a class="btn btn-ghost" href="/e/?i=${encodeURIComponent(meta.id)}" target="_blank" rel="noopener">
+            Mehmon nimani ko'radi?
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="step-card${bosqich === 1 ? ' now' : ''}">
+      <div class="step-head">
+        <span class="step-n">2</span>
         <div>
-          <h3 style="margin-bottom:6px">Mehmonlar uchun havola</h3>
-          <p class="small muted" style="margin-bottom:12px">
-            Bu QR kodni stollarga qo'ying. Mehmon skanerlaydi va rasm qo'shadi —
-            ilova o'rnatmasdan, ro'yxatdan o'tmasdan.
-          </p>
-          <div class="linkbox">
-            <code id="link">${esc(guestUrl)}</code>
-            <button class="btn btn-ghost" id="copy" type="button">Nusxa</button>
-          </div>
+          <h2>Havolani mehmonlarga yuboring</h2>
+          <p class="small muted">To'y guruhiga tashlang. Kim havolani ochsa, rasm qo'sha oladi —
+          ilova o'rnatmaydi, ro'yxatdan o'tmaydi.</p>
+        </div>
+      </div>
+      <div class="linkbox">
+        <code id="link">${esc(guestUrl)}</code>
+        <button class="btn btn-ghost" id="copy" type="button">Nusxa</button>
+      </div>
+      <div class="actions" style="margin-top:12px">
+        <a class="btn btn-primary" id="tg" target="_blank" rel="noopener"
+           href="https://t.me/share/url?url=${encodeURIComponent(guestUrl)}&text=${encodeURIComponent(meta.title + ' — to\'y suratlarimizni shu yerga qo\'shing. Ilova kerak emas.')}">
+          Telegram orqali yuborish
+        </a>
+        <button class="btn btn-ghost hidden" id="share" type="button">Boshqa ilova orqali</button>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="step-card${bosqich === 3 ? ' now' : ''}">
+      <div class="step-head">
+        <span class="step-n">3</span>
+        <div>
+          <h2>To'ydan keyin yuklab oling</h2>
+          <p class="small muted">Hammasi bitta ZIP faylda. Rasmlar 1920px gacha
+          kichraytirilgan — ko'rish va odatiy chop etishga yetadi.</p>
         </div>
       </div>
 
-      <hr class="rule">
-
-      <div class="actions">
-        <a class="btn btn-primary" href="/qr/?i=${encodeURIComponent(meta.id)}" target="_blank" rel="noopener">
-          QR varaqasini chop etish
-        </a>
-        <a class="btn btn-ghost" href="/e/?i=${encodeURIComponent(meta.id)}" target="_blank" rel="noopener">
-          Albomni ko'rish
-        </a>
-      </div>
-    </div>
-
-    <div class="card stack stack-24">
       <div class="stat">
         <div><b class="mono" id="count">${count}</b><span>RASM</span></div>
         ${days !== null ? `<div><b class="mono">${days}</b><span>KUN QOLDI</span></div>` : ''}
       </div>
 
-      <hr class="rule">
+      ${count
+        ? `<a class="btn btn-primary btn-block" style="margin-top:18px"
+             href="/api/zip/${encodeURIComponent(meta.id)}?k=${encodeURIComponent(key)}">
+             ZIP faylni yuklab olish
+           </a>`
+        : `<div class="note" style="margin-top:18px">Hali rasm yo'q. Mehmonlar qo'shgani
+           sayin shu yerda ko'rinadi — sahifani yangilab turing.</div>`}
 
-      <div>
-        <h3 style="margin-bottom:6px">Barcha rasmlarni yuklab olish</h3>
-        <p class="small muted" style="margin-bottom:14px">
-          Hammasi bitta ZIP faylda. Rasmlar 1920px gacha kichraytirilgan —
-          ko'rish va odatiy chop etishga yetadi. Albom
-          ${days !== null ? `${days} kundan keyin` : 'muddati tugagach'}
-          o'chiriladi — shu vaqtgacha yuklab oling.
-        </p>
-        <a class="btn btn-primary btn-block ${count ? '' : 'hidden'}"
-           href="/api/zip/${encodeURIComponent(meta.id)}?k=${encodeURIComponent(key)}">
-          ZIP faylni yuklab olish
-        </a>
-        ${count ? '' : '<div class="note">Albomda hali rasm yo\'q.</div>'}
-      </div>
-    </div>
+      <p class="small muted" style="margin:14px 0 0">
+        Albom ${days !== null ? `${days} kundan keyin` : 'muddati tugagach'} o'chiriladi.
+        Yuklab olishni oxiriga qoldirmang.
+      </p>
+    </section>
 
     <div class="keep">
       <strong>Bu sahifaning havolasini saqlab qo'ying</strong>
       <p class="muted">Albomingizga kirishning yagona kaliti shu havola —
       parol ham, akkaunt ham yo'q. Havola yo'qolsa albomni qaytarib bo'lmaydi.
       O'zingizga yuborib qo'ying.</p>
-      <button class="btn btn-ghost" id="copyManage" type="button">Boshqaruv havolasidan nusxa olish</button>
-    </div>`;
+      <div class="actions">
+        <button class="btn btn-ghost" id="copyManage" type="button">Havoladan nusxa olish</button>
+        <a class="btn btn-ghost" id="tgManage" target="_blank" rel="noopener">Telegram'ga saqlash</a>
+      </div>
+    </div>
+
+    <p class="small muted center" style="margin-top:26px">
+      Savol bormi? <a class="link" href="/aloqa/">Aloqa va yordam</a>
+    </p>`;
+
+  document.getElementById('tgManage').href =
+    'https://t.me/share/url?url=' + encodeURIComponent(location.href) +
+    '&text=' + encodeURIComponent(meta.title + ' — albom boshqaruv havolasi. Yo\'qotmang.');
+
+  // Telefonlarda tizimning o'z ulashish oynasi — Telegram, WhatsApp,
+  // SMS, hammasi bitta joyda. Kompyuterda odatda yo'q, shuning uchun
+  // tugma faqat mavjud bo'lganda ko'rinadi.
+  const shareBtn = document.getElementById('share');
+  if (navigator.share) {
+    shareBtn.classList.remove('hidden');
+    shareBtn.addEventListener('click', () => {
+      navigator.share({
+        title: meta.title,
+        text: meta.title + ' — to\'y suratlarimizni shu yerga qo\'shing.',
+        url: guestUrl,
+      }).catch(() => { /* foydalanuvchi bekor qildi */ });
+    });
+  }
 
   document.getElementById('copy').addEventListener('click', async (e) => {
     try {

@@ -4,12 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Chaqnoq — to'y suratlaringiz mehmonlarda qolib ketmasin</title>
-<meta name="description" content="To'y suratlaringiz mehmonlarning telefonida qolib ketyaptimi? Stolga bitta QR kod qo'ying — mehmonlar rasmlarini o'zlari qo'shadi, hammasi bitta albomga to'planadi. Ilova o'rnatilmaydi, ro'yxatdan o'tilmaydi. Bepul.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="description" content="To'y mehmonlarining suratlarini bitta albomga yig'adi. Stolga bitta QR kod qo'yasiz — mehmon skanerlaydi va rasmini o'zi qo'shadi. Ertasi kuni hamma surat bitta ZIP faylda sizda. Ilova o'rnatilmaydi, ro'yxatdan o'tilmaydi, bepul.">
 <link rel="canonical" href="https://chaqnoq.uz/">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
-<meta property="og:title" content="Suratlaringiz mehmonlarning telefonida qolib ketmasin">
-<meta property="og:description" content="Stolga bitta QR kod qo'ying — mehmonlar rasmlarini o'zlari qo'shadi, hammasi bitta albomga to'planadi. Ilova ham, ro'yxatdan o'tish ham yo'q. Bepul.">
+<meta property="og:title" content="Mehmonlar suratini bitta albomga yig'amiz">
+<meta property="og:description" content="To'y yoki tadbir stoliga bitta QR kod qo'yasiz. Mehmon skanerlaydi va rasmini o'zi qo'shadi — ertasi kuni hamma surat bitta faylda sizda. Ilova ham, ro'yxatdan o'tish ham yo'q. Bepul.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="uz_UZ">
 <meta property="og:url" content="https://chaqnoq.uz/">
@@ -19,8 +23,8 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="To'yda mehmonlar kelinni telefonlarida suratga olmoqda">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Suratlaringiz mehmonlarning telefonida qolib ketmasin">
-<meta name="twitter:description" content="Stolga bitta QR kod qo'ying — mehmonlar rasmlarini o'zlari qo'shadi, hammasi bitta albomga to'planadi. Bepul.">
+<meta name="twitter:title" content="Mehmonlar suratini bitta albomga yig'amiz">
+<meta name="twitter:description" content="Stolga bitta QR kod. Mehmon skanerlaydi, rasmini qo'shadi. Ertasiga hammasi bitta faylda sizda. Bepul.">
 <meta name="twitter:image" content="https://chaqnoq.uz/assets/img/og.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,6 +49,16 @@
     border-bottom: 1px solid var(--border);
   }
   .nav .wrap { height: 60px; display: flex; align-items: center; justify-content: space-between; }
+
+  /* Panel ostidagi o'qish ko'rsatkichi. `transform` bilan — `width` ni
+     har bir aylantirishda o'zgartirish sahifani qayta joylashtiradi. */
+  .progress {
+    position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+    background: var(--rail);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    will-change: transform;
+  }
   /* padding bo'lmasa bosiladigan maydon matn balandligicha — 27px. */
   .logo { font-weight: 600; letter-spacing: -.03em; font-size: 1.0625rem; padding: 8px 0; }
   .nav .btn { padding: 8px 16px; min-height: 38px; font-size: .875rem; }
@@ -89,6 +103,7 @@
        yuklanganiga qarab o'zgaradi. Zaxira bo'lmasa telefon chetga chiqadi. */
     .hero .phone   { width: clamp(190px, 16.5vw, 232px); }
     .hero .qr-card { width: clamp(116px, 10.5vw, 146px); }
+    .hero .sc-label { font-size: .5625rem; }
   }
 
   .head { max-width: 46ch; margin-bottom: 44px; }
@@ -137,16 +152,51 @@
   .faq details[open] summary::after { content: "−"; }
   .faq details p { margin: 0 0 18px; max-width: 62ch; font-size: .9375rem; }
 
+  /* Savol silliq ochiladi. `interpolate-size` yangi imkoniyat — qo'llab
+     -quvvatlamaydigan brauzerda savol avvalgidek darhol ochiladi, ya'ni
+     hech narsa buzilmaydi. */
+  @supports (interpolate-size: allow-keywords) and selector(::details-content) {
+    html { interpolate-size: allow-keywords; }
+    .faq details::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition: block-size .32s cubic-bezier(.22,.68,.24,1), content-visibility .32s allow-discrete;
+    }
+    .faq details[open]::details-content { block-size: auto; }
+  }
+  .faq summary::after { transition: transform .2s ease; }
+  .faq details[open] summary::after { transform: rotate(180deg); }
+
 
   /* ── Mahsulot ko'rgazmasi ────────────────────────────────────────────
      Odam matnni o'qib emas, mahsulotni ko'rib tushunadi. Shuning uchun
      bosh sahifada eng katta element — telefon ekranidagi haqiqiy albom
      va uning yonida stolga qo'yiladigan QR kartochka. */
+  /* Buyumlarning PASTI tekislanadi, shunda ikkala yorliq bitta chiziqda
+     turadi. Ko'rsatkich strelkasi esa yorliq balandligicha yuqoriga
+     suriladi — u buyumlarning markazida turishi kerak, yorliq bilan
+     birgalikdagi markazda emas. */
   .showcase {
     position: relative;
-    display: flex; align-items: center; justify-content: center;
+    display: flex; align-items: flex-end; justify-content: center;
     gap: clamp(16px, 4vw, 56px);
     margin-top: clamp(44px, 7vw, 76px);
+  }
+  .sc-item { flex: none; display: flex; flex-direction: column; align-items: center; }
+
+  /* Rasmga qaramasdan ham nima bo'layotgani tushunilsin — telefonda
+     ko'rsatkich strelkasi yashiringani uchun ma'noni aynan shu ikki
+     yorliq ko'taradi. */
+  .sc-label {
+    display: block;
+    margin-top: 14px;
+    min-height: 1.4em;
+    font-family: var(--mono);
+    font-size: .625rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--subtle);
+    text-align: center;
   }
 
   /* Orqa fondagi yumshoq yorug'lik — vizualni sahifadan ajratib turadi */
@@ -224,6 +274,7 @@
     align-self: center; flex: none;
     display: flex; flex-direction: column; align-items: center; gap: 6px;
     color: var(--subtle);
+    margin-bottom: calc(1.4em + 14px); /* yorliq balandligi — buyum markaziga tushsin */
   }
   .flow span {
     font-family: var(--mono); font-size: .5625rem;
@@ -248,6 +299,7 @@
     .qr-card .c { font-size: .5rem; }
     .phone { width: min(50vw, 250px); border-radius: 30px; padding: 7px; }
     .phone-screen { border-radius: 24px; }
+    .sc-label { font-size: .5625rem; letter-spacing: .1em; margin-top: 10px; }
   }
 
   /* Bosqichlardagi kichik suratlar */
@@ -277,6 +329,16 @@
     transition-delay: var(--d, 0ms);
   }
   html.anim .mini-grid.filled img { opacity: 1; transform: none; }
+
+  /* Vaqti-vaqti bilan bitta surat "endi keldi" degandek chaqnaydi.
+     Halqa telefon ekranidan chiqib ketmasligi uchun `inset` bilan
+     ichkarida chiziladi. */
+  .mini-grid img.just-in { animation: keldi .85s cubic-bezier(.2,.9,.25,1); }
+  @keyframes keldi {
+    0%   { transform: scale(.72); opacity: .25; }
+    55%  { transform: scale(1.04); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
 
   /* Kartochkadan telefonga qarab yurgan nozik ishora */
   html.anim .flow svg path { stroke-dasharray: 46; animation: oq 2.6s ease-in-out infinite; }
@@ -358,6 +420,15 @@
    "author": {
     "@type": "Person",
     "name": "Maqsudjon Polatov",
+    "url": "https://maqsudjon.com/",
+    "sameAs": [
+     "https://t.me/mrbmp13",
+     "https://github.com/maqsudjon-cell"
+    ]
+   },
+   "provider": {
+    "@type": "Person",
+    "name": "Maqsudjon Polatov",
     "url": "https://maqsudjon.com/"
    },
    "url": "https://chaqnoq.uz/",
@@ -378,6 +449,28 @@
     "price": "0",
     "priceCurrency": "UZS",
     "availability": "https://schema.org/InStock"
+   }
+  },
+  {
+   "@type": "ContactPage",
+   "@id": "https://chaqnoq.uz/aloqa/#contact",
+   "url": "https://chaqnoq.uz/aloqa/",
+   "name": "Aloqa va yordam",
+   "inLanguage": "uz-UZ",
+   "mainEntity": {
+    "@type": "Person",
+    "name": "Maqsudjon Polatov",
+    "url": "https://maqsudjon.com/",
+    "email": "polatovmaqsudjon1@gmail.com",
+    "telephone": "+998949059493",
+    "contactPoint": {
+     "@type": "ContactPoint",
+     "contactType": "customer support",
+     "email": "polatovmaqsudjon1@gmail.com",
+     "telephone": "+998949059493",
+     "availableLanguage": ["uz", "ru", "en"],
+     "url": "https://t.me/mrbmp13"
+    }
    }
   },
   {
@@ -446,7 +539,15 @@
      "name": "Saytni kim yuritadi?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Chaqnoq'ni Maqsudjon Polatov yaratgan va o'zi yuritadi — bu katta kompaniya emas. Boshqa ishlari va aloqa manzillari maqsudjon.com da."
+      "text": "Chaqnoq'ni Maqsudjon Polatov yaratgan va o'zi yuritadi — bu katta kompaniya emas. Telegram, telefon va e-pochta chaqnoq.uz/aloqa/ sahifasida."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Yordam kerak bo'lsa kimga murojaat qilaman?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Telegram (@mrbmp13), telefon (+998 94 905 94 93) yoki e-pochta orqali. Hammasi chaqnoq.uz/aloqa/ sahifasida. Suratni o'chirish talabi ham shu yerdan yuboriladi."
      }
     }
    ]
@@ -462,6 +563,7 @@
     <a class="logo" href="/">Chaqnoq</a>
     <a class="btn btn-primary" href="/yaratish/">Albom yaratish</a>
   </div>
+  <div class="progress" id="progress" aria-hidden="true"></div>
 </nav>
 
 <a class="skip" href="#kontent">Asosiy qismga o'tish</a>
@@ -469,24 +571,27 @@
 <main id="kontent">
 <header class="hero wrap">
   <div class="hero-copy">
-  <span class="eyebrow reveal">Diqqat — to'y egalariga</span>
-  <h1 class="reveal" style="--d:70ms">Suratlaringiz yo'qoladi</h1>
+  <span class="eyebrow reveal">To'y va tadbirlar uchun</span>
+  <h1 class="reveal" style="--d:70ms">Hamma surat — bitta albomda</h1>
   <div class="rail reveal" style="--d:140ms"></div>
   <p class="lede reveal" style="--d:190ms">
-    Achinarli, lekin shunday. Mehmonlar yuzlab rasm oladi — hammasi
-    guruhlarda, story'larda qolib ketadi.<br>
-    <strong>Biz ularni bitta albomga yig'amiz. Stolga bitta QR kod — bo'ldi.</strong>
+    Stolga bitta QR kod qo'yasiz. Mehmon skanerlaydi va rasmini o'zi
+    qo'shadi — <strong>siz hech kimdan so'ramaysiz</strong>. Ertasi kuni
+    hamma surat bitta faylda sizda.
   </p>
-  <a class="btn btn-primary btn-lg reveal" style="--d:250ms" href="/yaratish/">Menga albom kerak</a>
-  <p class="small muted reveal" style="--d:300ms;margin-top:14px">Bepul, ro'yxatdan o'tmaysiz, bir daqiqada tayyor.</p>
+  <a class="btn btn-primary btn-lg reveal" style="--d:250ms" href="/yaratish/">Bepul albom yaratish</a>
+  <p class="small muted reveal" style="--d:300ms;margin-top:14px">Ilova o'rnatilmaydi · ro'yxatdan o'tilmaydi · bir daqiqada tayyor</p>
   </div>
 
   <div class="showcase reveal" style="--d:360ms">
+    <div class="sc-item">
     <div class="qr-card">
       <div class="k">Umumiy albom</div>
       <div class="n">Aziza va Bekzod</div>
       <img src="/assets/img/qr-demo.svg" alt="Albom QR kodi" width="120" height="120">
       <div class="c">Kamerani tuting va<br>rasmlaringizni qo'shing</div>
+    </div>
+    <span class="sc-label">Stolga qo'yasiz</span>
     </div>
 
     <div class="flow" aria-hidden="true">
@@ -497,6 +602,7 @@
       <span>Albomga tushadi</span>
     </div>
 
+    <div class="sc-item">
     <div class="phone">
       <div class="phone-screen">
         <div class="phone-notch"></div>
@@ -516,6 +622,8 @@
         </div>
         <div class="mini-cta">+ Rasm qo'shish</div>
       </div>
+    </div>
+    <span class="sc-label">Albomingiz to'ladi</span>
     </div>
   </div>
 </header>
@@ -729,9 +837,16 @@
     <details>
       <summary>Saytni kim yuritadi?</summary>
       <p>Chaqnoq'ni Maqsudjon Polatov yaratgan va o'zi yuritadi — bu katta
-      kompaniya emas. Boshqa ishlari va aloqa manzillari
+      kompaniya emas. Boshqa ishlari
       <a class="link" href="https://maqsudjon.com" target="_blank" rel="noopener me">maqsudjon.com</a>
       da.</p>
+    </details>
+
+    <details>
+      <summary>Yordam kerak bo'lsa kimga murojaat qilaman?</summary>
+      <p>Telegram, telefon yoki e-pochta orqali —
+      <a class="link" href="/aloqa/">aloqa sahifasida</a> hammasi bor. Suratni
+      o'chirish talabi ham shu yerdan yuboriladi.</p>
     </details>
   </div>
 </section>
@@ -752,7 +867,7 @@
 <footer class="site">
   <div class="wrap">
     <span>Chaqnoq'ni <a class="link" href="https://maqsudjon.com" target="_blank" rel="noopener me">Maqsudjon Polatov</a> yaratgan</span>
-    <span class="links"><a class="link" href="/boshqarish/">Albomlarim</a><a class="link" href="/maxfiylik/">Maxfiylik</a><a class="link" href="/shartlar/">Shartlar</a><a class="link" href="/manbalar/">Rasm manbalari</a></span>
+    <span class="links"><a class="link" href="/boshqarish/">Albomlarim</a><a class="link" href="/maxfiylik/">Maxfiylik</a><a class="link" href="/shartlar/">Shartlar</a><a class="link" href="/aloqa/">Aloqa</a><a class="link" href="/manbalar/">Rasm manbalari</a></span>
   </div>
 </footer>
 

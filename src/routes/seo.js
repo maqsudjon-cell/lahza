@@ -12,10 +12,11 @@
 // "bu sanalar ma'nosiz" degan signal va u lastmod'ga umuman ishonmay
 // qo'yadi. Sahifani tahrirlaganda shu yerdagi sanani ham yangilang.
 const PUBLIC_PAGES = [
-  { path: '/',           priority: '1.0', lastmod: '2026-08-25' },
-  { path: '/yaratish/',  priority: '0.8', lastmod: '2026-08-25' },
-  { path: '/maxfiylik/', priority: '0.3', lastmod: '2026-08-25' },
-  { path: '/shartlar/',  priority: '0.3', lastmod: '2026-08-25' },
+  { path: '/',           priority: '1.0', lastmod: '2026-08-26' },
+  { path: '/yaratish/',  priority: '0.9', lastmod: '2026-08-26' },
+  { path: '/aloqa/',     priority: '0.5', lastmod: '2026-08-26' },
+  { path: '/maxfiylik/', priority: '0.3', lastmod: '2026-08-26' },
+  { path: '/shartlar/',  priority: '0.3', lastmod: '2026-08-26' },
   { path: '/manbalar/',  priority: '0.2', lastmod: '2026-08-25' },
 ];
 
@@ -41,6 +42,7 @@ export function robots(request) {
     'User-agent: *',
     'Allow: /$',
     'Allow: /yaratish/',
+    'Allow: /aloqa/',
     'Allow: /maxfiylik/',
     'Allow: /shartlar/',
     'Allow: /manbalar/',
