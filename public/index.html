@@ -59,7 +59,41 @@
     will-change: transform;
   }
   /* padding bo'lmasa bosiladigan maydon matn balandligicha — 27px. */
-  .logo { font-weight: 600; letter-spacing: -.03em; font-size: 1.0625rem; padding: 8px 0; }
+  .logo {
+    position: relative; display: inline-block;
+    font-weight: 600; letter-spacing: -.03em; font-size: 1.0625rem; padding: 8px 0;
+  }
+
+  /* ── Brend lahzasi ─────────────────────────────────────────────────
+     Sahifa ochilganda nom bir soniya «Ta-dam!» bo'lib, chiziq rangida
+     chiqadi va o'z holiga qaytadi. Bu — mahsulotning o'zi: ochilish.
+
+     Boshlang'ich holat ATAYLAB `html.anim` ichida. JS ishlamasa yoki
+     xato bersa oddiy «Tadam» ko'rinib turadi, nom yo'qolmaydi. */
+  .logo-xitob {
+    position: absolute; left: 0; top: 8px;
+    white-space: nowrap; pointer-events: none;
+    background: var(--rail);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+    opacity: 0;
+  }
+  html.anim .logo-xitob { animation: xitobChiq 2.6s cubic-bezier(.22,.68,.24,1) .3s both; }
+  html.anim .logo-nom   { animation: nomQaytar 2.6s cubic-bezier(.22,.68,.24,1) .3s both; }
+
+  @keyframes xitobChiq {
+    0%        { opacity: 0; transform: translateY(5px) scale(.88); }
+    10%       { opacity: 1; transform: translateY(0)   scale(1.08); }
+    18%       { transform: scale(1); }
+    58%       { opacity: 1; }
+    74%, 100% { opacity: 0; }
+  }
+  /* Asl nom xitob so'ngayotganda ko'tariladi — ikkalasi bir zumda
+     ustma-ust turadi, shundan «qaytish» hissi chiqadi. */
+  @keyframes nomQaytar {
+    0%, 58%   { opacity: 0; }
+    74%, 100% { opacity: 1; }
+  }
   .nav .btn { padding: 8px 16px; min-height: 38px; font-size: .875rem; }
 
   section { padding: clamp(56px, 9vw, 104px) 0; }
@@ -465,20 +499,20 @@
 
   /* Bosqichlar birin-ketin chiqadi */
   html.anim .steps .step { opacity: 0; transform: translateY(12px);
-    transition: opacity .55s ease var(--sd, 0ms), transform .55s cubic-bezier(.22,.68,.24,1) var(--sd, 0ms); }
+    transition: opacity .4s ease var(--sd, 0ms), transform .4s cubic-bezier(.22,.68,.24,1) var(--sd, 0ms); }
   html.anim .steps.shown .step { opacity: 1; transform: none; }
-  .steps .step:nth-child(2) { --sd: 110ms; }
-  .steps .step:nth-child(3) { --sd: 220ms; }
+  .steps .step:nth-child(2) { --sd: 70ms; }
+  .steps .step:nth-child(3) { --sd: 140ms; }
 
   /* Ko'rsatkichlar ham navbat bilan */
   html.anim .specs .spec { opacity: 0; transform: translateY(12px);
-    transition: opacity .55s ease var(--sd, 0ms), transform .55s cubic-bezier(.22,.68,.24,1) var(--sd, 0ms); }
+    transition: opacity .4s ease var(--sd, 0ms), transform .4s cubic-bezier(.22,.68,.24,1) var(--sd, 0ms); }
   html.anim .specs.shown .spec { opacity: 1; transform: none; }
-  .specs .spec:nth-child(2) { --sd: 100ms; }
-  .specs .spec:nth-child(3) { --sd: 200ms; }
+  .specs .spec:nth-child(2) { --sd: 65ms; }
+  .specs .spec:nth-child(3) { --sd: 130ms; }
 
   /* Lentadagi surat sekin yaqinlashadi */
-  html.anim .band img { transform: scale(1.06); transition: transform 1.6s cubic-bezier(.22,.68,.24,1); }
+  html.anim .band img { transform: scale(1.06); transition: transform 1.1s cubic-bezier(.22,.68,.24,1); }
   html.anim .band.shown img { transform: scale(1); }
 
   /* Tugmalar bosilganda va ustiga kelganda jonli */
@@ -560,6 +594,44 @@
      "url": "https://t.me/mrbmp13"
     }
    }
+  },
+  {
+   "@type": "HowTo",
+   "@id": "https://tadam.uz/#howto",
+   "name": "To'y va bayram suratlarini bitta albomga qanday yig'ish mumkin",
+   "description": "Stolga bitta QR kod qo'yasiz. Mehmonlar skanerlaydi va rasmlarini o'zlari qo'shadi. Ertasi kuni hamma surat bitta faylda sizda.",
+   "inLanguage": "uz-UZ",
+   "totalTime": "PT1M",
+   "estimatedCost": { "@type": "MonetaryAmount", "currency": "UZS", "value": "0" },
+   "supply": [
+    { "@type": "HowToSupply", "name": "Chop etilgan A5 QR varaqasi" }
+   ],
+   "tool": [
+    { "@type": "HowToTool", "name": "Telefon brauzeri" }
+   ],
+   "step": [
+    {
+     "@type": "HowToStep",
+     "position": 1,
+     "name": "Albom yarating",
+     "text": "Tadbir nomi va sanasini yozasiz. QR varaqasi o'zi tayyor bo'ladi — chop etasiz va stolga qo'yasiz.",
+     "url": "https://tadam.uz/yaratish/"
+    },
+    {
+     "@type": "HowToStep",
+     "position": 2,
+     "name": "Mehmonlar rasm qo'shadi",
+     "text": "Mehmon kamerani QR kodga tutadi va suratini tanlaydi. Ilova o'rnatmaydi, parol o'ylamaydi, ro'yxatdan o'tmaydi.",
+     "url": "https://tadam.uz/"
+    },
+    {
+     "@type": "HowToStep",
+     "position": 3,
+     "name": "Hammasini yuklab olasiz",
+     "text": "Bitta tugma bosasiz — barcha surat bitta ZIP faylda sizda.",
+     "url": "https://tadam.uz/"
+    }
+   ]
   },
   {
    "@type": "FAQPage",
@@ -648,7 +720,10 @@
 
 <nav class="nav">
   <div class="wrap">
-    <a class="logo" href="/">Tadam</a>
+    <a class="logo" href="/" aria-label="Tadam">
+      <span class="logo-xitob" aria-hidden="true">Ta-dam!</span>
+      <span class="logo-nom" aria-hidden="true">Tadam</span>
+    </a>
     <a class="btn btn-primary" href="/yaratish/">Albom yaratish</a>
   </div>
   <div class="progress" id="progress" aria-hidden="true"></div>
@@ -660,18 +735,18 @@
 <header class="hero wrap">
   <div class="hero-copy">
   <span class="eyebrow reveal">To'y, bayram va tadbirlar uchun</span>
-  <h1 class="reveal" style="--d:70ms">Hamma surat — bitta albomda</h1>
-  <div class="rail reveal" style="--d:140ms"></div>
-  <p class="lede reveal" style="--d:190ms">
+  <h1 class="reveal" style="--d:40ms">Hamma surat — bitta albomda</h1>
+  <div class="rail reveal" style="--d:80ms"></div>
+  <p class="lede reveal" style="--d:110ms">
     Stolga bitta QR kod qo'yasiz. Mehmon skanerlaydi va rasmini o'zi
     qo'shadi — <strong>siz hech kimdan so'ramaysiz</strong>. Ertasi kuni
     hamma surat bitta faylda sizda.
   </p>
-  <a class="btn btn-primary btn-lg reveal" style="--d:250ms" href="/yaratish/">Bepul albom yaratish</a>
-  <p class="small muted reveal" style="--d:300ms;margin-top:14px">Ilova o'rnatilmaydi · ro'yxatdan o'tilmaydi · bir daqiqada tayyor</p>
+  <a class="btn btn-primary btn-lg reveal" style="--d:150ms" href="/yaratish/">Bepul albom yaratish</a>
+  <p class="small muted reveal" style="--d:185ms;margin-top:14px">Ilova o'rnatilmaydi · ro'yxatdan o'tilmaydi · bir daqiqada tayyor</p>
   </div>
 
-  <div class="showcase reveal" style="--d:360ms">
+  <div class="showcase reveal" style="--d:220ms">
     <div class="sc-item">
     <div class="qr-card">
       <div class="k">Umumiy albom</div>

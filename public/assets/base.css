@@ -352,9 +352,12 @@ input, select, textarea { max-width: 100%; min-width: 0; }
 
 html.anim .reveal {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity .65s cubic-bezier(.22,.68,.24,1),
-              transform .65s cubic-bezier(.22,.68,.24,1);
+  /* 16px dan 10px ga: uzoq siljish sekin tuyuladi va aylantirish
+     paytida "ortda qolgan" his beradi. Qisqa masofa + qisqa vaqt
+     harakatni sezdiradi, lekin kutdirmaydi. */
+  transform: translateY(10px);
+  transition: opacity .42s cubic-bezier(.22,.68,.24,1),
+              transform .42s cubic-bezier(.22,.68,.24,1);
   transition-delay: var(--d, 0ms);
   will-change: opacity, transform;
 }

@@ -143,7 +143,7 @@ function setupPhoneGrid() {
   const grid = document.querySelector('.mini-grid');
   if (!grid) return;
 
-  [...grid.children].forEach((img, i) => img.style.setProperty('--d', (i * 90) + 'ms'));
+  [...grid.children].forEach((img, i) => img.style.setProperty('--d', (i * 55) + 'ms'));
 
   const io = new IntersectionObserver((entries) => {
     for (const en of entries) {
