@@ -13,7 +13,7 @@
 # ==========================================================================
 set -euo pipefail
 
-HOST="chaqnoq.uz"
+HOST="tadam.uz"
 KEY="aadbf93700f7c63be3658b7dcb7dd34a"
 
 if [ $# -gt 0 ]; then

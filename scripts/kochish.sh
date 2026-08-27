@@ -30,14 +30,25 @@ case "$NS" in
   *) echo "   TO'XTATILDI: NS Cloudflare emas — $NS" >&2; exit 1 ;;
 esac
 
-echo "2. Yangi domen javob beryaptimi…"
-KOD=$(curl -s -o /dev/null -w '%{http_code}' -m 15 "https://$YANGI/" || echo 000)
-if [ "$KOD" != "200" ]; then
-  echo "   TO'XTATILDI: https://$YANGI -> $KOD" >&2
-  echo "   Avval Cloudflare'da Worker'ga Custom Domain qo'shing." >&2
-  exit 1
-fi
-echo "   OK: 200"
+echo "2. Yangi domen Worker'ga ulanganmi…"
+# 200 ham, eski domenga 301 ham to'g'ri javob: ikkinchisi PRIMARY_HOST
+# hali eskiligini bildiradi, ya'ni so'rov BIZNING Worker'ga yetib kelgan.
+# Muhimi — domen umuman javob berishi va javob bizdan chiqishi.
+JAVOB=$(curl -s -D - -o /dev/null -m 15 "https://$YANGI/" 2>/dev/null || true)
+KOD=$(printf '%s' "$JAVOB" | awk 'NR==1{print $2}')
+LOC=$(printf '%s' "$JAVOB" | tr -d '\r' | awk 'tolower($1)=="location:"{print $2}')
+case "$KOD" in
+  200) echo "   OK: 200 — domen allaqachon asosiy" ;;
+  301|302)
+    case "$LOC" in
+      *"$ESKI"*) echo "   OK: $KOD -> $LOC (Worker javob berdi, PRIMARY_HOST hali eski)" ;;
+      *) echo "   TO'XTATILDI: kutilmagan yo'naltirish -> $LOC" >&2; exit 1 ;;
+    esac ;;
+  *)
+    echo "   TO'XTATILDI: https://$YANGI -> ${KOD:-javobsiz}" >&2
+    echo "   Cloudflare'da Worker'ga Custom Domain qo'shilganini tekshiring." >&2
+    exit 1 ;;
+esac
 
 echo "3. Manzillar ko'chirilmoqda…"
 ./scripts/domen.sh "https://$YANGI" | sed 's/^/   /'

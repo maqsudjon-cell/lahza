@@ -24,7 +24,7 @@ bucket_name = "lahza-photos"
 # chop etilgan eski QR kodlar ham ishlashda davom etadi.
 # Yoqilgan: 2026-08-25, DNS to'liq tarqalgach.
 [vars]
-PRIMARY_HOST = "chaqnoq.uz"
+PRIMARY_HOST = "tadam.uz"
 
 # Albom yaratishga chastota chegarasi.
 #
