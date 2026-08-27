@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Albomni boshqarish · Chaqnoq</title>
+<title>Albomni boshqarish · Tadam</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -115,9 +115,9 @@ function formatDate(iso) {
   return Number.isNaN(d.getTime()) ? iso : `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
-const ALBOM_KALITI = 'chaqnoq.albums';
+const ALBOM_KALITI = 'tadam.albums';
 // Brend ikki marta o'zgargan — eski kalitlardagi albomlar yo'qolmasligi kerak.
-const ESKI_KALITLAR = ['pufak.albums', 'lahza.albums'];
+const ESKI_KALITLAR = ['chaqnoq.albums', 'pufak.albums', 'lahza.albums'];
 
 function savedAlbums() {
   try {
@@ -139,7 +139,7 @@ function savedAlbums() {
 function renderList() {
   const albums = savedAlbums();
   app.innerHTML = `
-    <a class="brand" href="/">Chaqnoq</a>
+    <a class="brand" href="/">Tadam</a>
     <h1 style="margin-bottom:8px">Albomlarim</h1>
     <p class="muted">Shu brauzerda yaratilgan albomlar.</p>
     ${albums.length
@@ -160,7 +160,7 @@ function renderList() {
 
 function render(meta, count) {
   const guestUrl = `${location.origin}/e/?i=${meta.id}`;
-  document.title = `${meta.title} · Chaqnoq`;
+  document.title = `${meta.title} · Tadam`;
 
   const days = meta.expiresAt
     ? Math.max(0, Math.ceil((new Date(meta.expiresAt) - Date.now()) / 86400000))
@@ -169,11 +169,12 @@ function render(meta, count) {
   const bosqich = count > 0 ? 3 : 1;
 
   app.innerHTML = `
-    <a class="brand" href="/">Chaqnoq</a>
+    <a class="brand" href="/">Tadam</a>
     <h1 style="margin-bottom:6px">${esc(meta.title)}</h1>
     <p class="muted" style="margin-bottom:8px">${esc(formatDate(meta.date))}</p>
     <p class="small muted" style="margin-bottom:28px">
-      Albom tayyor. Endi uchta ish qoldi — quyida tartib bilan.
+      <strong style="color:var(--fg)">Ta-dam! Albom tayyor.</strong>
+      Endi uchta ish qoldi — quyida tartib bilan.
     </p>
 
     <!-- 1 -->
@@ -331,7 +332,7 @@ function render(meta, count) {
       fetch(`/api/photos/${encodeURIComponent(id)}`),
     ]);
     if (!metaRes.ok) {
-      app.innerHTML = `<a class="brand" href="/">Chaqnoq</a>
+      app.innerHTML = `<a class="brand" href="/">Tadam</a>
         <div class="note note-err">Albom topilmadi yoki muddati tugagan.</div>`;
       return;
     }
@@ -339,7 +340,7 @@ function render(meta, count) {
     const count = photosRes.ok ? (await photosRes.json()).photos.length : 0;
     render(meta, count);
   } catch {
-    app.innerHTML = `<a class="brand" href="/">Chaqnoq</a>
+    app.innerHTML = `<a class="brand" href="/">Tadam</a>
       <div class="note note-err">Ulanishda muammo bo'ldi. Sahifani yangilang.</div>`;
   }
 })();

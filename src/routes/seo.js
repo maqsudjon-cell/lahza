@@ -5,7 +5,7 @@
  * kerak emas: `.workers.dev` da ham, o'z domenida ham to'g'ri chiqadi.
  */
 
-// Faqat ochiq sahifalar. /e/, /boshqarish/, /qr/ — shaxsiy, ular indekslanmaydi.
+// Faqat ochiq sahifalar. /e/, /boshqarish/, /qr/, /nazorat/ — shaxsiy.
 //
 // `lastmod` — sahifa MATNI oxirgi marta o'zgargan sana. Uni bugungi sana
 // bilan to'ldirish xato: har kuni yangilanadigan sitemap Google uchun
@@ -51,6 +51,7 @@ export function robots(request) {
     'Disallow: /e/',
     'Disallow: /boshqarish/',
     'Disallow: /qr/',
+    'Disallow: /nazorat/',
     'Disallow: /api/',
     'Disallow: /f/',
     '',

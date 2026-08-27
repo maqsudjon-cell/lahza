@@ -2,9 +2,10 @@ import {
   json, err, newEventId, newManageKey, metaKey,
   cleanTitle, cleanDate, readEvent, publicMeta, RETENTION_DAYS,
 } from '../../lib/store.js';
+import { telegramXabar } from './nazorat.js';
 
 /** POST /api/event — yangi albom yaratadi. */
-export async function createEvent(request, env) {
+export async function createEvent(request, env, ctx) {
   let body;
   try {
     body = await request.json();
@@ -48,6 +49,10 @@ export async function createEvent(request, env) {
   await env.PHOTOS.put(metaKey(id), JSON.stringify(meta), {
     httpMetadata: { contentType: 'application/json; charset=utf-8' },
   });
+
+  // Sayt egasiga darhol xabar (sozlangan bo'lsa). Albom yaratilishi
+  // bunga bog'liq emas — xabar ketmasa ham javob qaytaveradi.
+  telegramXabar(env, ctx, meta, new URL(request.url).origin);
 
   return json({ id, manageKey, title, date, expiresAt: meta.expiresAt }, 201);
 }

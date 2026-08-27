@@ -16,9 +16,9 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-BRAND="C H A Q N O Q"
-LINE1="Mehmonlar suratini bitta"
-LINE2="albomga yig'amiz"
+BRAND="T A D A M"
+LINE1="Ta-dam! Hamma surat"
+LINE2="bitta albomda"
 FOOT="Stolga bitta QR kod   ·   ilova o'rnatmasdan   ·   bepul"
 
 SRC="${1:-tools/og-src.jpg}"      # manba surat (yuqori aniqlikda)

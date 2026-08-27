@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Albom yaratish · Chaqnoq</title>
+<title>Albom yaratish · Tadam</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://chaqnoq.uz/yaratish/">
-<meta property="og:title" content="Albom yaratish · Chaqnoq">
+<meta property="og:title" content="Albom yaratish · Tadam">
 <meta property="og:description" content="To'y yoki tadbir uchun umumiy rasm albomi yarating. Bir daqiqada tayyor, bepul.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="uz_UZ">
@@ -36,7 +36,7 @@
 
 <div class="box">
   <div class="head">
-    <a class="brand" href="/">Chaqnoq</a>
+    <a class="brand" href="/">Tadam</a>
     <h1>Albom yarating</h1>
     <p class="muted">Bir daqiqada tayyor. Ro'yxatdan o'tish shart emas.</p>
   </div>
@@ -89,7 +89,7 @@ function showError(text) {
     kelin-kuyov o'z albomini shu telefondan qayta topa oladi. */
 function remember(entry) {
   try {
-    const key = 'chaqnoq.albums';
+    const key = 'tadam.albums';
     const all = JSON.parse(localStorage.getItem(key) || '[]');
     all.unshift(entry);
     localStorage.setItem(key, JSON.stringify(all.slice(0, 30)));

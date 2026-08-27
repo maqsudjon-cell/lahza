@@ -1,12 +1,12 @@
 /* ==========================================================================
-   Chaqnoq API sinovlari.
+   Tadam API sinovlari.
 
    Ishga tushirish:
      npx wrangler dev --port 8791     (boshqa oynada)
      npm test
 
    Boshqa manzilga qarshi ham ishlaydi:
-     BASE=https://chaqnoq.uz npm test        <- FAQAT o'qish sinovlari
+     BASE=https://tadam.uz npm test        <- FAQAT o'qish sinovlari
      BASE=... WRITE=1 npm test               <- yozadigan sinovlar ham
 
    Ataylab hech qanday kutubxona ishlatilmagan: loyihada build bosqichi
@@ -374,7 +374,7 @@ async function testZip(album, expectedCount) {
   const bytes = new Uint8Array(await r.arrayBuffer());
   eq('e\'lon qilingan hajm haqiqiy hajmga teng', bytes.length, declared);
 
-  const dir = mkdtempSync(join(tmpdir(), 'chaqnoq-'));
+  const dir = mkdtempSync(join(tmpdir(), 'tadam-'));
   const zipPath = join(dir, 'albom.zip');
   try {
     writeFileSync(zipPath, bytes);
@@ -389,6 +389,43 @@ async function testZip(album, expectedCount) {
   }
 
   eq('yo\'q albom → 404', (await req('/api/zip/zzzzzzzzz?k=x')).status, 404);
+}
+
+/* --- 7b. Nazorat sahifasi ------------------------------------------------ */
+
+async function testNazorat() {
+  section('Nazorat (sayt egasi)');
+
+  const r = await req('/api/nazorat');
+  if (r.status === 404) {
+    console.log('  \x1b[2m— ADMIN_KEY qo\'yilmagan, o\'tkazib yuborildi\x1b[0m');
+    return;
+  }
+
+  eq('kalitsiz → 403', r.status, 403);
+  eq('noto\'g\'ri kalit → 403', (await req('/api/nazorat?k=notogri')).status, 403);
+
+  const kalit = process.env.ADMIN_KEY;
+  if (!kalit) {
+    console.log('  \x1b[2m— to\'g\'ri kalit berilmadi (ADMIN_KEY=... bilan to\'liq sinaladi)\x1b[0m');
+    return;
+  }
+  const ok200 = await req(`/api/nazorat?k=${encodeURIComponent(kalit)}`);
+  eq('to\'g\'ri kalit → 200', ok200.status, 200);
+  const d = await ok200.json();
+  ok('albomlar ro\'yxati keldi', Array.isArray(d.albomlar), typeof d.albomlar);
+  ok('jami son bor', typeof d.jami === 'number', String(d.jami));
+  if (d.albomlar.length) {
+    const a = d.albomlar[0];
+    ok('albomda kerakli maydonlar bor',
+      ['id', 'title', 'date', 'createdAt', 'manageKey'].every((k) => k in a),
+      Object.keys(a).join());
+  }
+
+  const html = await (await req('/robots.txt', { cache: 'no-store' })).text();
+  ok('robots.txt nazoratni yopadi', html.includes('Disallow: /nazorat/'));
+  const sm = await (await req('/sitemap.xml', { cache: 'no-store' })).text();
+  ok('sitemap nazoratni bermaydi', !sm.includes('/nazorat/'));
 }
 
 /* --- 8. Chastota chegarasi ----------------------------------------------- */
@@ -440,6 +477,7 @@ if (WRITE) {
   await testShortUrl(album);
   await testQr(album);
   await testZip(album, count);
+  await testNazorat();
   await testRateLimit();
 } else {
   console.log('\n\x1b[2mYozadigan sinovlar o\'tkazib yuborildi (WRITE=1 bilan yoqiladi).\x1b[0m');

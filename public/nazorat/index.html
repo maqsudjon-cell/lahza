@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nazorat · Tadam</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/inter-var-latin.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/plex-mono-400-latin.woff2">
+<link rel="stylesheet" href="/assets/base.css">
+<style>
+  body { padding: 32px 0 64px; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 6px; }
+
+  .stat { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 18px; margin: 26px 0 30px; }
+  .stat b { display: block; font-size: 1.875rem; font-weight: 600; letter-spacing: -.04em; line-height: 1; margin-bottom: 6px; }
+  .stat span { font-family: var(--mono); font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase; color: var(--subtle); }
+
+  /* Har bir albom bitta qator. Eng muhimi — nom, surat soni va havolalar. */
+  .albom {
+    border-top: 1px solid var(--border);
+    padding: 16px 0;
+    display: grid; gap: 4px 16px;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .albom:last-child { border-bottom: 1px solid var(--border); }
+  .albom h2 { font-size: 1rem; font-weight: 600; letter-spacing: -.015em; margin: 0; min-width: 0; overflow-wrap: anywhere; }
+  .albom .qachon { grid-column: 2; grid-row: 1; text-align: right; font-family: var(--mono); font-size: .6875rem; color: var(--subtle); white-space: nowrap; }
+  .albom .tafsil { grid-column: 1 / -1; font-size: .875rem; color: var(--muted); }
+  .albom .havolalar { grid-column: 1 / -1; display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; font-size: .8125rem; }
+  .albom .havolalar a { display: inline-block; padding: 6px 0; }
+
+  .son { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .yangi { color: var(--fg); font-weight: 500; }
+  .bosh  { color: var(--subtle); }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="app">
+  <a class="brand" href="/">Tadam</a>
+  <div class="center"><span class="spinner" style="color:var(--muted)"></span></div>
+</div>
+
+<script type="module">
+const kalit = new URLSearchParams(location.search).get('k') || '';
+const app = document.getElementById('app');
+
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+const OYLAR = ['yanvar','fevral','mart','aprel','may','iyun',
+               'iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
+
+function sana(iso) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return `${d.getDate()} ${OYLAR[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+/** "3 daqiqa oldin" — yangi albomni bir qarashda ajratish uchun. */
+function qachon(iso) {
+  const farq = (Date.now() - new Date(iso)) / 1000;
+  if (Number.isNaN(farq)) return '';
+  if (farq < 60)    return 'hozir';
+  if (farq < 3600)  return `${Math.floor(farq / 60)} daqiqa oldin`;
+  if (farq < 86400) return `${Math.floor(farq / 3600)} soat oldin`;
+  const kun = Math.floor(farq / 86400);
+  return kun < 30 ? `${kun} kun oldin` : sana(iso);
+}
+
+function xato(matn) {
+  app.innerHTML = `<a class="brand" href="/">Tadam</a>
+    <div class="note note-err">${esc(matn)}</div>`;
+}
+
+(async function init() {
+  if (!kalit) return xato('Kalit yo\'q. Manzil oxiriga ?k=... qo\'shing.');
+
+  let d;
+  try {
+    const res = await fetch(`/api/nazorat?k=${encodeURIComponent(kalit)}`);
+    if (res.status === 403) return xato('Kalit noto\'g\'ri.');
+    if (res.status === 404) return xato('Nazorat yoqilmagan (ADMIN_KEY qo\'yilmagan).');
+    if (!res.ok) throw new Error('server');
+    d = await res.json();
+  } catch {
+    return xato('Ma\'lumot olinmadi. Sahifani yangilab ko\'ring.');
+  }
+
+  const a = d.albomlar;
+  const bugun = a.filter((x) => (Date.now() - new Date(x.createdAt)) < 86400000).length;
+  const suratli = a.filter((x) => x.photos > 0).length;
+  const suratlar = a.reduce((s, x) => s + (x.photos || 0), 0);
+
+  app.innerHTML = `
+    <a class="brand" href="/">Tadam</a>
+    <div class="head">
+      <h1>Albomlar</h1>
+      <span class="small muted mono">${new Date().toLocaleTimeString('uz-UZ')}</span>
+    </div>
+    <p class="muted" style="margin:0">Kim albom yaratganini shu yerdan ko'rasiz.</p>
+
+    <div class="stat">
+      <div><b class="son">${d.jami}</b><span>Jami albom</span></div>
+      <div><b class="son">${bugun}</b><span>Bugun</span></div>
+      <div><b class="son">${suratli}</b><span>Surat qo'shilgan</span></div>
+      <div><b class="son">${suratlar}</b><span>Jami surat</span></div>
+    </div>
+
+    ${a.length ? a.map(albom).join('') : '<div class="note">Hali albom yo&#39;q.</div>'}
+
+    <p class="small muted" style="margin-top:26px">
+      Surat soni eng yangi 40 ta albom uchun sanaladi. Albomlar 60 kundan
+      keyin o'z-o'zidan o'chadi, shuning uchun ro'yxat cheksiz o'smaydi.
+    </p>`;
+})();
+
+function albom(x) {
+  const yangi = (Date.now() - new Date(x.createdAt)) < 86400000;
+  const bosh = x.photos === 0;
+  const mehmon = `/e/${x.id}`;
+  const boshqaruv = `/boshqarish/?i=${encodeURIComponent(x.id)}&k=${encodeURIComponent(x.manageKey)}`;
+  return `
+    <div class="albom">
+      <h2>${esc(x.title)}</h2>
+      <div class="qachon${yangi ? ' yangi' : ''}">${esc(qachon(x.createdAt))}</div>
+      <div class="tafsil">
+        Tadbir: ${esc(sana(x.date + 'T00:00:00'))} ·
+        <span class="son ${bosh ? 'bosh' : ''}">${x.photos === undefined ? '—' : x.photos} ta surat</span>
+      </div>
+      <div class="havolalar">
+        <a class="link" href="${mehmon}" target="_blank" rel="noopener">Mehmon ko'rinishi</a>
+        <a class="link" href="${boshqaruv}" target="_blank" rel="noopener">Boshqaruv</a>
+        <a class="link" href="/qr/?i=${encodeURIComponent(x.id)}&k=${encodeURIComponent(x.manageKey)}" target="_blank" rel="noopener">QR varaqasi</a>
+      </div>
+    </div>`;
+}
+</script>
+</body>
+</html>

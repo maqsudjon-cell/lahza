@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Chaqnoq — Worker kirish nuqtasi.
+   Tadam — Worker kirish nuqtasi.
 
    `run_worker_first` yoqilgani uchun har bir so'rov shu yerdan o'tadi:
    avval domen tekshiriladi, keyin API va rasm yo'llari, oxirida statik
@@ -14,6 +14,7 @@ import { uploadPhoto } from './routes/upload.js';
 import { zipAlbum } from './routes/zip.js';
 import { qrSvg } from './routes/qr.js';
 import { deletePhoto } from './routes/photo.js';
+import { nazorat } from './routes/nazorat.js';
 import { serveFile } from './routes/file.js';
 import { robots, sitemap, indexNowKey } from './routes/seo.js';
 
@@ -23,13 +24,13 @@ export default {
 
     // Xavfsizlik sarlavhalari bitta joyda qo'yiladi. Har bir yo'lda alohida
     // yozilsa, yangi yo'l qo'shilganda unutiladi — shuning uchun tashqarida.
-    const response = await route(request, env, url);
+    const response = await route(request, env, url, ctx);
     if (url.pathname.startsWith('/f/')) return harden(response, { userContent: true });
     return harden(response, { html: isHtml(response) });
   },
 };
 
-async function route(request, env, url) {
+async function route(request, env, url, ctx) {
   const seg = url.pathname.split('/').filter(Boolean);
   const method = request.method;
 
@@ -71,7 +72,7 @@ async function route(request, env, url) {
       const [, resource, id] = seg;
 
       if (resource === 'event' && seg.length === 2 && method === 'POST') {
-        return await createEvent(request, env);
+        return await createEvent(request, env, ctx);
       }
       if (resource === 'event' && seg.length === 3 && method === 'GET') {
         return await getEvent(request, env, id);
@@ -91,6 +92,10 @@ async function route(request, env, url) {
       // /api/photo/{eventId}/{photoId}
       if (resource === 'photo' && seg.length === 4 && method === 'DELETE') {
         return await deletePhoto(request, env, seg[2], seg[3]);
+      }
+      // Sayt egasi uchun. ADMIN_KEY qo'yilmagan bo'lsa bu yo'l yo'q.
+      if (resource === 'nazorat' && seg.length === 2 && method === 'GET') {
+        return await nazorat(request, env);
       }
       return err('Bunday manzil yo\'q', 404);
     }

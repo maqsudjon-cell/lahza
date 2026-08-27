@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Albom · Chaqnoq</title>
+<title>Albom · Tadam</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="robots" content="noindex">
-<meta property="og:title" content="Umumiy albom · Chaqnoq">
+<meta property="og:title" content="Umumiy albom · Tadam">
 <meta property="og:description" content="Suratlaringizni albomga qo'shing — ilova o'rnatmasdan, ro'yxatdan o'tmasdan.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="uz_UZ">
@@ -90,7 +90,7 @@
     color: var(--muted);
     font-size: .8125rem;
   }
-  /* Bu pastki qatordagi "Chaqnoq" — mehmon uchun mahsulotni bilib
+  /* Bu pastki qatordagi "Tadam" — mehmon uchun mahsulotni bilib
      olishning yagona yo'li. Avval u atrofidagi matn bilan bir xil rangda
      va tagsiz edi, ya'ni havola ekani umuman bilinmasdi. */
   footer.site a { color: var(--fg); display: inline-block; padding: 8px 0; }
@@ -171,7 +171,7 @@ const app     = document.getElementById('app');
  * hal bo'lsin. Yashirin rejimda localStorage yopiq bo'lishi mumkin,
  * shuning uchun hamma joyda try/catch.
  */
-const DEL_STORE = `chaqnoq.del.${eventId}`;
+const DEL_STORE = `tadam.del.${eventId}`;
 
 function delKeys() {
   try { return JSON.parse(localStorage.getItem(DEL_STORE) || '{}'); }
@@ -221,7 +221,7 @@ function formatDate(iso) {
 }
 
 function render(meta) {
-  document.title = `${meta.title} · Chaqnoq`;
+  document.title = `${meta.title} · Tadam`;
   app.innerHTML = `
     <div class="hero">
       <h1 class="names">${escapeHtml(meta.title)}</h1>
@@ -246,7 +246,7 @@ function render(meta) {
     </div>
 
     <footer class="site">
-      <a class="link" href="/">Chaqnoq</a> bilan yaratilgan ·
+      <a class="link" href="/">Tadam</a> bilan yaratilgan ·
       <a class="link" href="/maxfiylik/">Maxfiylik</a>
     </footer>
   `;
@@ -363,7 +363,7 @@ function showLightbox() {
   lbImg.src = `/f/${eventId}/p/${photoId}`;
   // Suratni saqlash — avval umuman yo'l yo'q edi, faqat uzoq bosish.
   lbSave.href = lbImg.src;
-  lbSave.download = `chaqnoq-${photoId}.jpg`;
+  lbSave.download = `tadam-${photoId}.jpg`;
   // Albomda qayerdaligini ko'rsatadi; usiz uzun albomda yo'nalish yo'qoladi.
   lbCount.textContent = `${lbIndex + 1} / ${lbList.length}`;
 
@@ -611,7 +611,7 @@ async function onPick(e) {
 
   text.textContent = failed
     ? `${done} ta yuklandi, ${failed} tasi yuklanmadi — qizil katakchani bosib qayta urinib ko'ring`
-    : `${done} ta rasm qo'shildi. Rahmat!`;
+    : `Ta-dam! ${done} ta rasm albomda. Rahmat!`;
   bar.style.width = '100%';
   busy = false;
   setTimeout(() => wrap.classList.add('hidden'), failed ? 6000 : 2600);

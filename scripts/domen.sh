@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Domen ulangach bir marta ishga tushiriladi:
-#   ./scripts/domen.sh https://chaqnoq.uz
+#   ./scripts/domen.sh https://tadam.uz
 #
 # Sahifalardagi MUTLAQ manzillarni yangilaydi (canonical, og:url, og:image,
 # twitter:image, JSON-LD). Faqat to'liq `https://host` shaklini almashtiradi —

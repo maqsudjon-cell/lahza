@@ -40,3 +40,15 @@ PRIMARY_HOST = "chaqnoq.uz"
 name = "ALBUM_LIMIT"
 namespace_id = "1001"
 simple = { limit = 10, period = 60 }
+
+# Quyidagi uchtasi Cloudflare panelida SHIFRLANGAN o'zgaruvchi sifatida
+# qo'yiladi (Settings -> Variables and Secrets -> Encrypt). Repo ochiq
+# bo'lgani uchun ular bu yerda hech qachon yozilmaydi:
+#
+#   ADMIN_KEY       /nazorat/ sahifasini ochadigan kalit. Qo'yilmasa
+#                   sahifa umuman yo'q — 404.
+#   TELEGRAM_TOKEN  BotFather bergan bot tokeni (ixtiyoriy).
+#   TELEGRAM_CHAT   Xabar keladigan chat id (ixtiyoriy).
+#
+# Telegram o'zgaruvchilari qo'yilmasa xabar yuborilmaydi, qolgan hamma
+# narsa avvalgidek ishlaydi.
