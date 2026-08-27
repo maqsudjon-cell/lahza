@@ -342,6 +342,19 @@ async function testShortUrl(album) {
 
   eq('noto\'g\'ri id → 404', (await req('/e/AAA-BBB', { redirect: 'manual' })).status, 404);
   eq('eski manzil ham ishlaydi', (await req(`/e/?i=${album.id}`)).status, 200);
+
+  // Eng qisqa ko'rinish — chop etilgan varaqada shu turadi.
+  const q = await req(`/${album.id}`, { redirect: 'manual' });
+  ok('bir bo\'lakli manzil 301', q.status === 301, String(q.status));
+  ok('to\'g\'ri joyga', (q.headers.get('location') || '').endsWith(`/e/?i=${album.id}`),
+    q.headers.get('location'));
+
+  // Sahifa nomlari albom deb talqin qilinmasligi kerak.
+  for (const nom of ['assets', 'yaratish', 'aloqa', 'manbalar', 'nazorat']) {
+    const r = await req(`/${nom}`, { redirect: 'manual' });
+    ok(`/${nom} albom deb olinmadi`, r.status !== 301 ||
+      !(r.headers.get('location') || '').includes('/e/?i='), String(r.status));
+  }
 }
 
 /* --- 6. QR --------------------------------------------------------------- */

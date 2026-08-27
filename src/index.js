@@ -7,6 +7,20 @@
    ========================================================================== */
 
 import { err, validId } from '../lib/store.js';
+
+/**
+ * Bitta bo'lakli yo'l albom identifikatori deb qabul qilinadi
+ * (`tadam.uz/t49g2h3ky`). Quyidagilar bundan mustasno.
+ *
+ * Ko'p sahifa nomlari alifboda yo'q harf tutgani uchun (`i`, `l`, `o`)
+ * `validId` dan o'tmaydi — masalan `aloqa`, `yaratish`, `manbalar`.
+ * Lekin `assets` kabi nomlar o'tib ketadi, shuning uchun ro'yxat aniq
+ * yozilgan: kelajakda yangi sahifa qo'shilganda ham tuzoq bo'lmasin. */
+const BAND_NOMLAR = new Set([
+  'assets', 'api', 'e', 'f', 'qr', 'yaratish', 'aloqa', 'nazorat',
+  'boshqarish', 'maxfiylik', 'shartlar', 'manbalar', 'favicon',
+  'robots', 'sitemap', 'well-known', 'static', 'admin', 'www',
+]);
 import { harden, isHtml, withCache } from '../lib/headers.js';
 import { createEvent, getEvent } from './routes/event.js';
 import { listPhotos } from './routes/photos.js';
@@ -53,11 +67,16 @@ async function route(request, env, url, ctx) {
     // IndexNow kaliti — Bing va Yandex shu faylni tekshiradi
     if (url.pathname === '/aadbf93700f7c63be3658b7dcb7dd34a.txt') return indexNowKey();
 
-    // /e/{eventId} — chop etilgan varaqada qo'lda teriladigan qisqa
-    // ko'rinish. Kamerasi QR'ni o'qiy olmagan mehmon uchun yagona yo'l,
-    // shuning uchun u iloji boricha qisqa bo'lishi kerak.
+    // Chop etilgan varaqada qo'lda teriladigan manzil. Kamerasi QR'ni
+    // o'qiy olmagan mehmon uchun yagona yo'l, shuning uchun iloji
+    // boricha qisqa: `tadam.uz/t49g2h3ky`.
+    //
+    // `/e/{id}` ham qoladi — allaqachon chop etilgan varaqalar bor.
     if (seg[0] === 'e' && seg.length === 2 && validId(seg[1])) {
       return Response.redirect(`${url.origin}/e/?i=${seg[1]}`, 301);
+    }
+    if (seg.length === 1 && validId(seg[0]) && !BAND_NOMLAR.has(seg[0])) {
+      return Response.redirect(`${url.origin}/e/?i=${seg[0]}`, 301);
     }
 
     // /f/{eventId}/{p|t}/{photoId}
